@@ -13,7 +13,7 @@
       <text class="ablum-detail-swiper-title2">{{albums.length<1 ? '' : '/' + albums.length}}</text>
     </view>
     <swiper class="imageContainer" @change="handleChange" previous-margin="90rpx" next-margin="85rpx" :current="currentIdx" circular indicator-dots="false">
-      <block v-for="(ablum, swiper) in albums" :key="swiper">
+      <block v-for="(ablum, index) in albums"  :key="swiper">
         <swiper-item class="item">
           <view :class="'ablum-detail-swiper-item  ' + (swiperIndex == index ? 'ablum-detail-swiper-item-active': '')" @tap.stop="goContent" :data-pid="swiperIndex">
             <view :class="'ablum-detail-swiper-item-content ' + (swiperIndex == index ? 'ablum-detail-swiper-item-content-active': '')">
