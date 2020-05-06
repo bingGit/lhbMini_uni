@@ -78,7 +78,7 @@
 
 
 <!-- 播放列表 -->
-<modals-bottom id="modals-bottom" radius="true" :height="75 * ablums.length + 130">
+<modals-bottom id="modals-bottom" ref="modalsBottom" radius="true" :height="75 * ablums.length + 130">
   <view slot="body">
     <view @touchstart="touchmoveStart" @touchend="touchmoveEnd" class="modals-bottom-list-container">
       <view class="modals-bottom-title">课程列表</view>
@@ -108,7 +108,7 @@
 </modals-bottom>
 
 <!-- 评论列表 -->
-<modals-bottom id="modals-comment" radius="true" :height="windowH">
+<modals-bottom id="modalsComment" ref="modalsComment" radius="true" :height="windowH">
   <view slot="body">
     <view class="modals-bottom-comment-container">
 
@@ -188,7 +188,7 @@
 </modals-bottom>
 
 <!-- 写评论 -->
-<modals-bottom id="modals-bottom-write" @hideModal="hideModalFun" radius="true" :height="windowH">
+<modals-bottom id="modalsBottomWrite" ref="modalsBottomWrite" @hideModal="hideModalFun" radius="true" :height="windowH">
   <view slot="body">
     <view class="modals-bottom-write-container">
       <form @submit="formSubmit">
@@ -228,7 +228,7 @@
 </modals-bottom>
 
 <!-- 文稿 -->
-<modals-bottom id="modals-article" radius="true" :height="windowH">
+<modals-bottom id="modalsArticle" ref="modalsArticle" radius="true" :height="windowH">
   <view slot="body">
     <view @touchstart="touchmoveStart" @touchend="touchmoveEnd" class="modal-article-container">
       <view class="m-b-c-title">
@@ -291,7 +291,7 @@
 </modals-bottom>
 
 <!-- 客服弹框 -->
-<custom-modal id="customModal" :cfg="custom_cfg" confirmText="解锁" modalSize="md" title="提示" @cancelEvent="_cancelEvent" @confirmEvent="_confirmEventThird" @invitShareEvent="_invitShareEvent">
+<custom-modal id="customModal" ref="customModal" :cfg="custom_cfg" confirmText="解锁" modalSize="md" title="提示" @cancelEvent="_cancelEvent" @confirmEvent="_confirmEventThird" @invitShareEvent="_invitShareEvent">
   <view class="custom-modal">
     <view class="custom-avatar-warp">
       <view>
@@ -429,11 +429,11 @@ export default {
    */
   onReady: function () {
     console.log('ablum-content onReady2');
-    this.customModal = this.selectComponent("#customModal");
-    this.modals = this.selectComponent("#modals-bottom");
-    this.modalComment = this.selectComponent("#modals-comment");
-    this.modalWrite = this.selectComponent("#modals-bottom-write");
-    this.modalArticle = this.selectComponent("#modals-article"); //判断是播放视频or 音频
+    this.customModal = this.$refs.customModal;
+    this.modals = this.$refs.modalsBottom;
+    this.modalComment = this.$refs.modalsComment;
+    this.modalWrite = this.$refs.modalsBottomWrite;
+    this.modalArticle = this.$refs.modalsArticle; //判断是播放视频or 音频
 
     if (!getApp().globalData.g_audio_obj) {
       console.log('create getBackgroundAudioManager2');
@@ -978,7 +978,7 @@ export default {
     },
     //隐藏音频list
     hideCommentList: function () {
-      this.modals.hideModal();
+      this.modals.hideModalFun();
     },
     //展示评论列表
     showComment: function () {
@@ -1008,7 +1008,7 @@ export default {
       this.setData({
         writeHidden: true
       });
-      this.modalComment.hideModal();
+      this.modalComment.hideModalFun();
     },
     //展示写评论
     showWrite: function () {
@@ -1022,14 +1022,14 @@ export default {
       this.setData({
         writeHidden: false
       });
-      this.modalWrite.hideModal();
+      this.modalWrite.hideModalFun();
     },
     showArticle: function () {
       this.modalArticle.showModal();
     },
     //隐藏文稿
     hideArticle: function () {
-      this.modalArticle.hideModal();
+      this.modalArticle.hideModalFun();
     },
     //请求文稿数据
     reqArticle: function (pid) {
@@ -1102,7 +1102,7 @@ export default {
         });
         console.log('提交评论结果', res);
       });
-      this.modalWrite.hideModal();
+      this.modalWrite.hideModalFun();
     },
     //地图
     gotLocation: function (e) {
@@ -1180,9 +1180,9 @@ export default {
         this.setData({
           writeHidden: true
         });
-        this.modals.hideModal();
-        this.modalArticle.hideModal();
-        this.modalComment.hideModal();
+        this.modals.hideModalFun();
+        this.modalArticle.hideModalFun();
+        this.modalComment.hideModalFun();
       } else {
         this.setData({
           hideModal: false

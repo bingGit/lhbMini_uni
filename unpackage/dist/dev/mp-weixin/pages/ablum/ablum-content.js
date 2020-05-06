@@ -572,11 +572,11 @@ var step = 15;var customModal = function customModal() {Promise.all(/*! require.
       */
   onReady: function onReady() {
     console.log('ablum-content onReady2');
-    this.customModal = this.selectComponent("#customModal");
-    this.modals = this.selectComponent("#modals-bottom");
-    this.modalComment = this.selectComponent("#modals-comment");
-    this.modalWrite = this.selectComponent("#modals-bottom-write");
-    this.modalArticle = this.selectComponent("#modals-article"); //判断是播放视频or 音频
+    this.customModal = this.$refs.customModal;
+    this.modals = this.$refs.modalsBottom;
+    this.modalComment = this.$refs.modalsComment;
+    this.modalWrite = this.$refs.modalsBottomWrite;
+    this.modalArticle = this.$refs.modalsArticle; //判断是播放视频or 音频
 
     if (!getApp().globalData.g_audio_obj) {
       console.log('create getBackgroundAudioManager2');
@@ -1121,7 +1121,7 @@ var step = 15;var customModal = function customModal() {Promise.all(/*! require.
     },
     //隐藏音频list
     hideCommentList: function hideCommentList() {
-      this.modals.hideModal();
+      this.modals.hideModalFun();
     },
     //展示评论列表
     showComment: function showComment() {var _this = this;
@@ -1151,7 +1151,7 @@ var step = 15;var customModal = function customModal() {Promise.all(/*! require.
       this.setData({
         writeHidden: true });
 
-      this.modalComment.hideModal();
+      this.modalComment.hideModalFun();
     },
     //展示写评论
     showWrite: function showWrite() {
@@ -1165,14 +1165,14 @@ var step = 15;var customModal = function customModal() {Promise.all(/*! require.
       this.setData({
         writeHidden: false });
 
-      this.modalWrite.hideModal();
+      this.modalWrite.hideModalFun();
     },
     showArticle: function showArticle() {
       this.modalArticle.showModal();
     },
     //隐藏文稿
     hideArticle: function hideArticle() {
-      this.modalArticle.hideModal();
+      this.modalArticle.hideModalFun();
     },
     //请求文稿数据
     reqArticle: function reqArticle(pid) {
@@ -1245,7 +1245,7 @@ var step = 15;var customModal = function customModal() {Promise.all(/*! require.
 
         console.log('提交评论结果', res);
       });
-      this.modalWrite.hideModal();
+      this.modalWrite.hideModalFun();
     },
     //地图
     gotLocation: function gotLocation(e) {
@@ -1323,9 +1323,9 @@ var step = 15;var customModal = function customModal() {Promise.all(/*! require.
         this.setData({
           writeHidden: true });
 
-        this.modals.hideModal();
-        this.modalArticle.hideModal();
-        this.modalComment.hideModal();
+        this.modals.hideModalFun();
+        this.modalArticle.hideModalFun();
+        this.modalComment.hideModalFun();
       } else {
         this.setData({
           hideModal: false });
