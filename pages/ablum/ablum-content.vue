@@ -58,7 +58,7 @@
       <view>评论</view>
     </view>
     <!-- 文稿 -->
-    <view @tap.stop="articleData.intro.length != 0 && hasAuth ? 'showArticle' : ''" class="ablum-c-c-article" :style="articleData.intro.length == 0 || !hasAuth ? 'opacity:0.6' : ''">
+    <view @tap.stop="showArticle" class="ablum-c-c-article" :style="articleData.intro.length == 0 || !hasAuth ? 'opacity:0.6' : ''">
       <image src="https://uimg.gximg.cn/v/res/201905/23-18/wengao@3x.png"></image>
       <view>文稿</view>
     </view>
@@ -1025,6 +1025,9 @@ export default {
       this.modalWrite.hideModalFun();
     },
     showArticle: function () {
+	  if(this.$data.articleData.intro ==0 || !this.$data.hasAuth){
+		  return;
+	  }
       this.modalArticle.showModal();
     },
     //隐藏文稿
@@ -1035,7 +1038,6 @@ export default {
     reqArticle: function (pid) {
       var that = this;
       util.getRequest(getApp().globalData.g_req_data[pid].document.url, {}, res => {
-        //console.log('请求文稿数据', res);
         that.setData({
           articleData: res.data
         });

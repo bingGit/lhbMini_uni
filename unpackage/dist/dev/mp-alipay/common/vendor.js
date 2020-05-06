@@ -2508,7 +2508,7 @@ function getRequest(netUrl, data, _success2) {
     data: data,
     header: {
       cookie: cookie,
-      'x-user-agent': '79:1.3.2' },
+      'x-user-agent': '79:1.3.1' },
 
     success: function success(res) {
       _success2(res);

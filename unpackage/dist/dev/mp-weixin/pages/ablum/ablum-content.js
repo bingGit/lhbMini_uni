@@ -100,11 +100,6 @@ var render = function() {
   if (!_vm._isMounted) {
     _vm.e0 = function($event) {
       $event.stopPropagation()
-      _vm.articleData.intro.length != 0 && _vm.hasAuth ? "showArticle" : ""
-    }
-
-    _vm.e1 = function($event) {
-      $event.stopPropagation()
       _vm.moreText == "加载更多" ? "gotMore" : ""
     }
   }
@@ -1168,6 +1163,9 @@ var step = 15;var customModal = function customModal() {Promise.all(/*! require.
       this.modalWrite.hideModalFun();
     },
     showArticle: function showArticle() {
+      if (this.$data.articleData.intro == 0 || !this.$data.hasAuth) {
+        return;
+      }
       this.modalArticle.showModal();
     },
     //隐藏文稿
@@ -1178,7 +1176,6 @@ var step = 15;var customModal = function customModal() {Promise.all(/*! require.
     reqArticle: function reqArticle(pid) {
       var that = this;
       util.getRequest(getApp().globalData.g_req_data[pid].document.url, {}, function (res) {
-        //console.log('请求文稿数据', res);
         that.setData({
           articleData: res.data });
 
