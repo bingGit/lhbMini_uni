@@ -1,0 +1,85 @@
+.container{
+  border-radius: 31rpx;
+  margin: 10rpx auto 20rpx auto;
+  padding-top: 20rpx;
+  padding-bottom: 20rpx;
+}
+.inputView {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-align: end;
+  -webkit-align-items: flex-end;
+          align-items: flex-end;
+}
+.inputText {
+  font-family: PingFang-SC;
+  font-size: 30rpx;
+  width:350rpx;
+  padding-top: 20rpx;
+  height:60rpx;
+  line-height: 60rpx;
+  margin-left: 20rpx;
+}
+.lineView {
+  width:510rpx;
+  height:1px;
+  background-color:#eee;
+  margin: 0rpx 0rpx 0rpx 180rpx;
+}
+.title {
+  font-family: PingFang-SC;
+  font-size: 30rpx;
+  line-height: 60rpx;
+  margin-left: 60rpx;
+  color: #333;
+  width: 100rpx;
+}
+.code {
+  font-family: PingFang-SC;
+  font-size: 30rpx;
+  line-height: 60rpx;
+  color: #3075C6;
+  width:160rpx;
+  text-align: center
+}
+.loginBtn {
+  margin: 90rpx auto 20rpx auto;
+  width: 630rpx;
+  height: 90rpx;
+  line-height: 90rpx;
+  border-radius: 45rpx;
+  color: white;
+  -webkit-align-self: center;
+          align-self: center;
+  text-align: center;
+  background-color: #4084ec;
+}
+.thirdBtn {
+  width: 160rpx;
+  height: 100rpx;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+          flex-direction: column;
+  -webkit-align-self: center;
+          align-self: center;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+          align-items: center;
+  background-color: white;
+  padding: 0;
+}
+.loginText {
+  font-family: PingFang-SC;
+  font-size: 30rpx;
+  line-height: 40rpx;
+  color: #999;
+}
+button::after {
+  border: none;
+}
+

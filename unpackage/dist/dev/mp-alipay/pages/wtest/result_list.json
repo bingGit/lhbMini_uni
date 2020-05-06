@@ -1,0 +1,6 @@
+{
+  "defaultTitle": "答案",
+  "usingComponents": {
+    "nav-bar": "/component/nav-bar/nav-bar"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "defaultTitle": "支付结果",
+  "usingComponents": {
+    "nav-bar": "/component/nav-bar/nav-bar"
+  }
+}

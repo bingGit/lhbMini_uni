@@ -201,7 +201,8 @@ var app = getApp().globalData;var auth = function auth() {Promise.all(/*! requir
 
   },
   onReady: function onReady() {
-    this.oauthModal = this.selectComponent("#auth");
+    // this.oauthModal = this.selectComponent("#auth");
+    this.oauthModal = this.$refs.auth;
   },
   methods: {
     phoneInput: function phoneInput(e) {

@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "auth": "/component/easyModal/auth/auth",
+    "nav-bar": "/component/nav-bar/nav-bar"
+  }
+}

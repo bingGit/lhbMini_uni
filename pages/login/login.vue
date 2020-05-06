@@ -19,7 +19,7 @@
   <text class="loginText">微信登录</text>
 </button>
 </view>
-<auth id="auth" :cfg="oauth_cfg" @oauthFailEvent="oauthFailEvent" @bindOkEvent="bindOkEvent" backdrop="false">
+<auth id="auth" ref="auth" :cfg="oauth_cfg" @oauthFailEvent="oauthFailEvent" @bindOkEvent="bindOkEvent" backdrop="false">
 </auth>
 </view>
 </template>
@@ -69,7 +69,8 @@ export default {
     });
   },
   onReady: function () {
-    this.oauthModal = this.selectComponent("#auth");
+    // this.oauthModal = this.selectComponent("#auth");
+	this.oauthModal = this.$refs.auth;
   },
   methods: {
     phoneInput: function (e) {

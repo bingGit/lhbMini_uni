@@ -1,0 +1,1 @@
+<view class="modals modals-bottom-dialog" hidden="{{hideModal}}"><view data-event-opts="{{[['tap',[['hideModalFun',['$event']]]]]}}" class="modals-cancel" onTap="__e"></view><view class="{{('bottom-dialog-body bottom-pos '+(radius?'dialog-radius':''))}}" style="{{('height:'+height+'px;')}}" animation="{{animationData}}"><view><slot name="body"></slot></view></view></view>

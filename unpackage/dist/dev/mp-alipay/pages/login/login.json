@@ -1,0 +1,7 @@
+{
+  "defaultTitle": "快速登录",
+  "usingComponents": {
+    "auth": "/component/easyModal/auth/auth",
+    "nav-bar": "/component/nav-bar/nav-bar"
+  }
+}
