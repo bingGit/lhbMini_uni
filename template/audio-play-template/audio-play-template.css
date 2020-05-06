@@ -1,0 +1,35 @@
+.music-container {
+  border: 0;
+  padding-top: 0;
+  display: flex;
+  flex-direction: row;
+  background-color: #f7f7f7;
+  width: 690rpx;
+  height: 120rpx;
+  align-items: center;
+  padding-left: 32rpx;
+  padding-right: 29rpx;
+}
+
+.body-view {
+  flex-direction: column;
+  width: 76%;
+}
+.audio-loading{
+  margin-left: 25rpx;
+  font-size: 17rpx;
+  color: red;
+}
+
+.music-img {
+  width: 88rpx;
+  height: 88rpx;
+}
+
+.music-time {
+  float: right;
+  font-family: PingFangSC-Medium;
+  font-size: 22rpx;
+  color: #666;
+  letter-spacing: 0.06px;
+}

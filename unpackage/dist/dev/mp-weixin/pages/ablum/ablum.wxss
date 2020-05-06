@@ -1,0 +1,99 @@
+.ablum-list-container{
+  margin-top: 30rpx;
+}
+.ablum-list-item{
+  width: 100%;
+  text-align: center;
+}
+.ablum-list-img {
+  width: 650rpx;
+  height: 270rpx;
+  /* background-image: linear-gradient(42deg, #f0ad27 8%, #ffd138 96%); */
+  border-radius: 20rpx;
+}
+.ablum-view-c{
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+          justify-content: center;
+  width: 100%;
+  height: 367rpx;
+  margin: 10rpx auto 0 auto;
+}
+.ablum-video-img{
+  height: 367rpx;
+}
+.ablum-video {
+  width: 650rpx;
+  height: 367rpx;
+  /* background-image: linear-gradient(42deg, #f0ad27 8%, #ffd138 96%); */
+  border-radius: 20rpx;
+}
+.container {
+  width: 100%;
+  margin-bottom: 56rpx;
+}
+.bottom-bank {
+  width: 100%;
+  height: 100rpx;
+}
+.play-float {
+  position: fixed;
+  bottom: 100rpx;
+  right: 20rpx;
+}
+.play-float image {
+  height: 120rpx;
+  width: 120rpx;
+  border-radius: 50%;
+}
+.xuanzhun {
+  /* transform-origin:20% 40%; *//* animation: rotate 4s linear infinite; */
+  -webkit-animation: spin 4s linear 1s 5 alternate;
+  animation: spin 4s linear infinite;
+}
+@-webkit-keyframes spin {
+from {
+    -webkit-transform: rotate(0deg);
+}
+to {
+    -webkit-transform: rotate(360deg);
+}
+}
+@keyframes spin {
+from {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+}
+to {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+}
+}
+@-webkit-keyframes rotate {
+from {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+}
+to {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+}
+}
+@keyframes rotate {
+from {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+}
+to {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+}
+}
+

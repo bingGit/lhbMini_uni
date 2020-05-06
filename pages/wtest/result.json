@@ -1,0 +1,9 @@
+{
+  "usingComponents": {
+    "canvasdrawer": "/component/canvasdrawer/canvasdrawer",
+    "wux-circle": "/component/component_circle/circle/index",
+    "nav-bar": "/component/nav-bar/nav-bar"
+  },
+  "backgroundTextStyle": "light",
+  "navigationBarTitleText": "测试结果"
+}

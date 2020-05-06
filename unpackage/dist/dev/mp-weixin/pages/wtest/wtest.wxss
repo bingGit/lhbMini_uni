@@ -1,0 +1,125 @@
+/* pages/test/test.wxss */
+page {
+  /* background: #fffbe6; */
+}
+.img {
+  width: 140rpx;
+  height: 140rpx;
+}
+/* 页面 */
+.test_page {
+  width: 100%;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: 0 48rpx 45rpx;
+}
+.test_question_type {
+  margin-top: 24rpx;
+  width: 100%;
+  font-size: 32rpx;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  color: #fff;
+  text-align: left;
+  line-height: 32rpx;
+}
+/* 题目 */
+.test_question {
+  display: block;
+  font-size: 60rpx;
+  color: #fff;
+  letter-spacing: 0.53rpx;
+  /* line-height: 48rpx; */
+  margin-bottom: 32rpx;
+  text-align: center;
+}
+/* 音频播放 */
+.audio_img {
+  width: 150rpx;
+  height: 150rpx;
+  display: block;
+  text-align: center;
+  margin: 30rpx auto 30rpx;
+}
+/* 单选题 */
+.test_static {
+  position: relative;
+  width: 100%;
+  text-align: center;
+  margin-bottom: 48rpx;
+}
+.test_pagination {
+  position: absolute;
+  top:24rpx;
+  right: 18rpx;
+  bottom: 48rpx;
+  font-size: 24rpx;
+  color: rgb(236, 230, 230);
+}
+.test_type {
+  display: inline-block;
+  width: 135rpx;
+  font-size: 30rpx;
+  color: #fff;
+  line-height: 80rpx;
+  height: 80rpx;
+}
+.test_line_left, .test_line_right {
+  display: inline-block;
+  content: "";
+  background: rgba(0, 0, 0, 0.10);
+  width: 260rpx;
+  height: 2rpx;
+  vertical-align: middle;
+}
+/* 答案选项 */
+.test_item {
+  position: relative;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  border: 1px solid rgba(252, 249, 249, 0.4);
+  border-radius: 50px;
+  width: 100%;
+  padding: 32rpx 64rpx;
+  line-height: 48rpx;
+  font-size: 32rpx;
+  color: #fff;
+  letter-spacing: 2.64rpx;
+  margin-bottom: 16rpx;
+  display: block;
+  text-align: center;
+}
+.test_nextone_btn {
+  width: 100%;
+  /* background: rgba(255, 85, 52, 0.50); */
+  background:#35b057;
+  border-radius: 50rpx;
+  text-align: center;
+  height: 100rpx;
+  line-height: 100rpx;
+  font-size: 36rpx;
+  color: #fff;
+  letter-spacing: 1.32px;
+  margin-top: 64rpx;
+}
+.test_select {
+  background:#24C783;
+  border-radius: 50px;
+  color: #fff;
+}
+.test_error {
+  background:#EE3F68;
+  border-radius: 50px;
+  color: #fff;
+}
+.answer_icon image{
+  position: absolute;
+  top: 28rpx;
+  right: 73rpx;
+  width: 60rpx;
+  height: 60rpx;
+}
+.test_top{
+  height: 230rpx;
+}
+

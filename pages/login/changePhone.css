@@ -1,0 +1,100 @@
+/* pages/login/changePhone.wxss */
+/* pages/login/login.wxss */
+.root {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.topImage {
+  width: 750rpx;
+  position: absolute;
+  z-index: 0;
+  top: 0rpx;
+}
+.bottomImage {
+  width: 750rpx;
+  position: absolute;
+  z-index: 1;
+  bottom: 0rpx;
+}
+.mainView {
+  top: 12%;
+  width: 686rpx;
+  height: 690rpx;
+  background-color: white;
+  border-radius: 20rpx;
+  z-index: 10;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+}
+.login-title {
+  margin-left: 48rpx;
+  margin-top: 64rpx;
+  margin-bottom: 10rpx;
+  font-size: 56rpx;
+  font-weight: bold;
+  color: #222;
+}
+.login-inputView {
+  margin-left: 48rpx;
+  margin-top: 48rpx;
+  height: 90rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.login-input {
+  color: #333;
+  font-size: 36rpx;
+  width: 400rpx;
+}
+.login-input2 {
+  color: #999;
+}
+
+.login-inputLine {
+  margin: 0rpx 48rpx 0rpx 48rpx;
+  height: 1px;
+  background-color: rgba(0,0,0,0.1);
+}
+
+.getCode {
+  width: 192rpx;
+  height: 68rpx;
+  border-radius: 34rpx;
+  background: #3075C6;
+  text-align: center;
+  line-height: 68rpx;
+  transition: all ease 0.3s;
+  font-size: 32rpx;
+  color: white;
+}
+
+.loginBtn {
+  margin:100rpx 48rpx 10rpx 48rpx;
+  height: 100rpx;
+  line-height: 100rpx;
+  border-radius: 50rpx;
+  background:#4084ec;
+  font-size: 36rpx;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+  transition: all ease 0.3s;
+}
+
+.mainView2 {
+  top: 8%;
+  width: 686rpx;
+  height: 830rpx;
+  background-color: white;
+  border-radius: 20rpx;
+  z-index: 10;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+}

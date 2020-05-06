@@ -1,0 +1,68 @@
+.share-container {
+  font-family: PingFangSC-Regular;
+  /* background-color:rgba(0,0,0,.1); */
+  background-color: #fff;
+  /* opacity: 0.7; */
+  position: fixed;
+  bottom: 0px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  z-index: 11;
+}
+
+.share-item button::after {
+  background: none;
+  border: none;
+}
+
+.share-item button {
+   background: #fff; 
+   height: 95rpx;
+   line-height: 95rpx;
+   text-align: center;
+   /* padding-bottom: 2rpx; */
+}
+
+.share-item {
+  border-bottom: 1rpx solid #ededed;
+  text-align: center;
+  width: 100%;
+  /* height: 58rpx; */
+  /* margin-top: 20rpx; */
+  /* padding-bottom: 27rpx; */
+  line-height: 53rpx;
+  font-size: 32rpx;
+  color: #333;
+  letter-spacing: 1.9rpx;
+}
+
+.share-cancel {
+  /* padding-top: 16rpx;
+  padding-bottom: 27rpx; */
+  text-align: center;
+  height: 95rpx;
+  line-height: 95rpx;
+  color:black;
+  font-weight: 500;
+  box-sizing:border-box;
+}
+
+.maskLayer {
+  /* position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0.4;
+  background-color: rgba(0, 0, 0, 0.2); */
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  /* z-index: 97; */
+  background-color: rgba(0, 0, 0, 0.30);
+  top: 0rpx;
+  left: 0rpx;
+  right: 0rpx;
+  bottom: 0rpx;
+  z-index: 8;
+}

@@ -1,0 +1,11 @@
+pages {
+  position: relative;
+  z-index: 9999998;
+  background: #fff;
+}
+.home-page {
+  height: 160rpx;
+  width: 100%;
+  border: 1rpx solid red;
+  font-size: 60rpx;
+}

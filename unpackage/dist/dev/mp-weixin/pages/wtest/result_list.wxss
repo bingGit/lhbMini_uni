@@ -1,0 +1,173 @@
+/* pages/result/result.wxss */
+
+/* @import "../../dist/styles/index.css"; */
+.container{
+  padding: 60rpx 0;
+  background:#fff;
+}
+.blank{
+  width: 100%;
+  height: 50rpx;
+}
+.wux-circle_self {
+  margin-top: 50rpx;
+  display: inline-block;
+  position: relative;
+}
+.zhengque {
+  font-size: 28rpx;
+  color: #666;
+}
+._percent {
+  position: absolute;
+  /* top: 150rpx; */
+  top: 38%;
+  left: 40%;
+  font-size: 60rpx;
+  width: 160rpx;
+  text-align: center;
+}
+
+/* 数据 */
+.result_user_grade {
+  width: 660rpx;
+  margin: 60rpx auto 64rpx;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+          flex: 1;
+  -webkit-justify-content: space-around;
+          justify-content: space-around;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+          flex-direction: row;
+}
+.result_user_item {
+  width: 114rpx;
+  text-align: center;
+}
+.result_user_num_title {
+  font-size: 28rpx;
+  color: #999;
+  text-align: center;
+  margin-bottom: 12rpx;
+}
+.result_user_number {
+  font-size: 40rpx;
+  color: #262628;
+  text-align: center;
+}
+
+/* 答案 */
+.test_static {
+  position: relative;
+  width: 100%;
+  text-align: center;
+  margin-bottom: 32rpx;
+}
+.test_pagination {
+  position: absolute;
+  right: 0;
+  bottom: 48rpx;
+  font-size: 24rpx;
+  color: #999;
+}
+.test_type {
+  display: inline-block;
+  width: 138rpx;
+  font-size: 30rpx;
+  color: #999;
+  line-height: 80rpx;
+  height: 80rpx;
+}
+.test_line_left, .test_line_right {
+  display: inline-block;
+  content: "";
+  background: rgba(0, 0, 0, 0.10);
+  width: 260rpx;
+  height: 2rpx;
+  vertical-align: middle;
+}
+.test_current {
+  font-size: 36rpx;
+  color: #000;
+  letter-spacing: 0;
+  text-align: center;
+}
+
+/* 答案列表 */
+.result_word_list {
+  width: 100%;
+  padding-left: 64rpx;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  margin-bottom: 28rpx;
+}
+.result_word_list_index {
+  font-size: 24rpx;
+  color: #000;
+  letter-spacing: 0;
+  text-align: center;
+  margin-right: 11rpx;
+}
+.result_word_list_word {
+  font-size: 36rpx;
+  color: #000;
+  letter-spacing: 0;
+  margin-right: 22rpx;
+}
+.result_word_list_dec {
+  font-size: 24rpx;
+  color: #666;
+  letter-spacing: 0;
+  text-align: center;
+}
+
+/* 空盒子 */
+.block{
+  width: 100%;
+  height: 140rpx;
+}
+
+/* 页面底部button */
+.result_button {
+  width: 100%;
+  height: 100rpx;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+          justify-content: space-between;
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+          flex: 1;
+  position: fixed;
+  bottom: 0;
+}
+.result_reset, .result_share {
+  width: 50%;
+  height: 100%;
+  text-align: center;
+  line-height: 100rpx;
+  background: #d8d8d8;
+  font-size: 32rpx;
+  color: #666;
+}
+.result_share {
+  color: #fff;
+  background: #ff5534;
+}
+
+/* 错误标红 */
+.fail_select{
+  color: #ff5534;
+}
+

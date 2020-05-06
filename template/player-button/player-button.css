@@ -1,0 +1,131 @@
+.play-bttuon-view {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  /* justify-content: space-around; */
+  align-items: center;
+  width: 690rpx;
+  height: 140rpx;
+  opacity: 0.8;
+  background: #000;
+  border-radius: 20rpx;
+}
+
+.play-button-close {
+  /* border: 1rpx solid orange; */
+  margin-left: 30rpx;
+  width: 60rpx;
+  height: 60rpx;
+}
+
+.play-button-close image {
+  width: 60rpx;
+  height: 60rpx;
+}
+
+.play-button-cover {
+  margin-left: 30rpx;
+  width: 100rpx;
+  height: 100rpx;
+}
+
+.play-button-cover image {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 20rpx;
+}
+
+.play-button-content {
+  margin-left: 16rpx;
+  flex-direction: column;
+  width: 220rpx;
+  height: 100rpx;
+}
+
+.play-button-content1 {
+  margin-top: 12rpx;
+  font-family: PingFang-SC-Regular;
+  font-size: 30rpx;
+  color: #fff;
+  letter-spacing: 0;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.play-button-content2 {
+  margin-top: 13rpx;
+  opacity: 0.5;
+  font-family: PingFang-SC-Regular;
+  font-size: 20rpx;
+  color: #fff;
+  letter-spacing: 0;
+  line-height: 20rpx;
+}
+
+.play-button-content3 {
+  margin-top: 12rpx;
+  font-family: PingFang-SC-Regular;
+  font-size: 30rpx;
+  color: #fff;
+  letter-spacing: 0;
+}
+
+.play-button-contro {
+  /* border: 1rpx solid tomato; */
+  position: absolute;
+  right: 22rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  width: 200rpx;
+  height: 100rpx;
+}
+
+.play-button-prev {
+  margin-left: 4rpx;
+  width: 48rpx;
+  height: 48rpx;
+}
+
+.play-button-prev image {
+  width: 48rpx;
+  height: 48rpx;
+}
+
+.play-button-play {
+  margin-left: 20rpx;
+  width: 72rpx;
+  height: 72rpx;
+}
+
+.play-button-play image {
+  width: 72rpx;
+  height: 72rpx;
+}
+
+.play-button-next {
+  margin-left: 20rpx;
+  width: 48rpx;
+  height: 48rpx;
+}
+
+.play-button-next image {
+  width: 48rpx;
+  height: 48rpx;
+}
+
+.play-button-buy {
+  width: 140rpx;
+  height: 60rpx;
+  display: inline-block;
+  text-align: center;
+  line-height: 60rpx;
+  background: #ffbd36;
+  border-radius: 30rpx;
+  font-family: PingFang-SC-Bold;
+  font-size: 28rpx;
+  color: #222;
+  letter-spacing: 0;
+}

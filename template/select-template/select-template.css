@@ -1,0 +1,36 @@
+.select_container {
+  width: 180rpx;
+  height: 192rpx;
+  float: right;
+  margin-right: 31.9rpx;
+  display: flex;
+  flex-direction: column;
+  background: #f0f0f0;
+  border-radius: 8rpx;
+  font-family: PingFangSC-Regular;
+  font-size: 24rpx;
+  color: #333;
+  letter-spacing: 0.06rpx;
+  line-height: 24rpx;
+  z-index: 10;
+  position: absolute;
+  right: 4.9rpx;
+}
+
+.select_one {
+  height: 64rpx;
+  width: 180rpx;
+  text-align: center;
+  border-bottom: 1rpx solid #333;
+  line-height: 64rpx;
+}
+.select_foot{
+  height: 64rpx;
+  width: 180rpx;
+  text-align: center;
+  line-height: 64rpx;
+}
+
+.select-active {
+  color: #00baa2;
+}

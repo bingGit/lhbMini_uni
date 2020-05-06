@@ -1,0 +1,8 @@
+{
+  "usingComponents": {
+    "custom-modal": "/component/easyModal/custom-modal/custom-modal",
+    "modals-bottom": "/component/modals/modals",
+    "nav-bar": "/component/nav-bar/nav-bar"
+  },
+  "disableScroll": true
+}

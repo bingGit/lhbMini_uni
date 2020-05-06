@@ -1,0 +1,7 @@
+{
+  "backgroundTextStyle": "light",
+  "navigationBarTitleText": "测试",
+  "usingComponents": {
+    "nav-bar": "/component/nav-bar/nav-bar"
+  }
+}

@@ -1,0 +1,298 @@
+.comment-container {
+  /* border: 1rpx solid red; *//* width: 100%; */
+  margin: 58rpx 45rpx 90rpx 45rpx;
+}
+
+.comment-head {
+  display: flex;
+  padding-top: 5rpx;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 59rpx;
+}
+
+.comment-head-title {
+  font-family: PingFangSC-Medium;
+  font-size: 38rpx;
+  color: #333;
+  letter-spacing: 0;
+}
+
+.comment-head-no {
+  display: inline-block;
+  margin-left: 10rpx;
+  font-family: PingFangHK-Regular;
+  font-size: 22rpx;
+  color: #de4b3c;
+  letter-spacing: 0;
+}
+
+.comment-head-write {
+  position: absolute;
+  right: 33.6rpx;
+  width: 90rpx;
+  height: 90rpx;
+}
+
+.comment-body {
+  margin-top: 33rpx;
+  /* opacity: 0.1; */
+  border-bottom: 1rpx solid #ededed;
+}
+
+.comment-body-head {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.comment-name {
+  display: inline-block;
+  margin-left: 30rpx;
+  font-family: PingFangHK-Medium;
+  font-size: 28rpx;
+  color: #333;
+  letter-spacing: 0;
+}
+
+.comment-date {
+  position: absolute;
+  right: 53rpx;
+  font-family: PingFangHK-Regular;
+  font-size: 22rpx;
+  color: #656a7b;
+  letter-spacing: 0;
+}
+
+.comment-avatar {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+}
+
+.comment-content {
+  margin-top: 3rpx;
+  margin-bottom: 30rpx;
+  width: 650rpx;
+  /* text-align: center; */
+}
+
+.comment-content text {
+  display: inline-block;
+  margin-left: 95rpx;
+  font-family: PingFangHK-Regular;
+  font-size: 26rpx;
+  color: #666;
+  letter-spacing: 0;
+  line-height: 40rpx;
+  /* word-break: keep-all;
+  white-space:pre-wrap; */
+  word-wrap: break-word;
+  -moz-hyphens: auto;
+  -ms-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+
+.no-more {
+  margin-top: 30rpx;
+  text-align: center;
+}
+
+.no-more text {
+  font-family: PingFangSC-Regular;
+  font-size: 26rpx;
+  color: #999;
+  letter-spacing: 0;
+}
+
+.title {
+  width: 90%;
+  height: 30px;
+  margin: 10px auto;
+  font-weight: bold;
+  font-family: "微软雅黑";
+  font-size: 16px;
+}
+
+.int {
+  width: 90%;
+  margin: 10px auto;
+  font-size: 14px;
+  font-family: "微软雅黑";
+  color: #666;
+}
+
+.textarea {
+  position: fixed;
+  top:54rpx;
+  width: 92%;
+  height: 60%;
+  border: none;
+  margin: 10px auto 10px;
+  background: #fff;
+  padding: 15px 15px;
+  font-size: 15px;
+}
+
+.phcolor {
+  color: #333;
+  margin: 10px 10px;
+  font-size: 15px;
+  font-family: "微软雅黑";
+}
+
+.ff-hv {
+  position: fixed;
+  top: 900rpx;
+  width: 90%;
+  height: 25px;
+  background: #fff;
+  display: block;
+  margin: 0 auto;
+  color: #c9c9c9;
+  font-size: 15px;
+  text-align: right;
+  border-right: 10px solid #fff;
+  box-sizing: border-box;
+}
+
+.imgfile {
+  width: 90%;
+  height: 20px;
+  margin: 10px auto;
+  font-family: "微软雅黑";
+  font-size: 15px;
+}
+
+.imgselect {
+  width: 80px;
+  height: 80px;
+  border: 1px solid #dcdcdc;
+  text-align: center;
+  line-height: 80px;
+  font-size: 100px;
+  font-weight: light;
+  background: url("http://wxpad.cn/yunpan/cdn/imgsrc/1523702768.png");
+}
+
+.imgselect image {
+  width: 80px;
+  height: 80px;
+}
+
+.btns {
+  float: right;
+  right: 76rpx;
+  width: 26%;
+  margin: 0 auto;
+  background: #20ac19;
+  color: #fff;
+}
+
+.btn-cancle {
+  float: left;
+  left: 76rpx;
+  width: 26%;
+  margin: 0 auto;
+}
+
+.kefu {
+  width: 20px;
+  height: 20px;
+  display: block;
+  margin: 10px auto;
+}
+
+.footer {
+  width: 125px;
+  height: 30px;
+  margin: 10px auto;
+}
+
+.footer image {
+  width: 125px;
+  height: 30px;
+}
+
+.xgurl {
+  width: 90%;
+  height: 45px;
+  margin: 10px auto;
+  background: #fff;
+}
+
+.xgurl-phcolor {
+  color: #7c7c7c;
+  font-size: 15px;
+  text-indent: 10px;
+  font-family: PingFangSC-Regular;
+}
+
+.comment-textarea {
+  position: fixed;
+  z-index: 2;
+  background-color: #fff;
+  width: 100%;
+  /* background-color: rgba(0, 0, 0, 0.30); */
+}
+
+.comment-text-head {
+  height: 105rpx;
+  border-bottom: 1rpx solid #ededed;
+}
+
+.comment-text-cancel {
+  position: fixed;
+  top: 26rpx;
+  left: 30rpx;
+  color: #de4b3c;
+  font-family: PingFangSC-Regular;
+  font-size: 32rpx;
+}
+
+.comment-text-title {
+  font-family: PingFangSC-Regular;
+  position: fixed;
+  top: 26rpx;
+  left: 296rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+}
+
+.comment-text-submit {
+  font-family: PingFangSC-Regular;
+  position: fixed;
+  top: 26rpx;
+  right: 28rpx;
+  /* color: #de4b3c; */
+  color: #999;
+  font-size: 32rpx;
+}
+
+.comment-submit::after {
+  outline: none;
+  border: none;
+  list-style: none;
+  background: 0;
+}
+
+.comment-submit {
+  width: 76rpx;
+  height: 60rpx;
+  position: fixed;
+  right: 28rpx;
+  top: 10rpx;
+  opacity: 0;
+}
+
+.maskLayer-comment {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.30);
+  top: 0rpx;
+  left: 0rpx;
+  right: 0rpx;
+  bottom: 0rpx;
+}

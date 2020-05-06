@@ -1,0 +1,64 @@
+@import "../../template/ablum/ablum-detail.css";
+@import "../../template/player-button/player-button.css";
+.ablum-detail-title {
+  height: 80rpx;
+  margin-top: 34rpx;
+  margin-left: 293rpx;
+}
+
+.ablum-detail-title text:nth-child(1) {
+  font-family: PingFang-SC-Bold;
+  font-size: 36rpx;
+  color: #FFFFFF;
+  letter-spacing: 0;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.ablum-detail-title text:nth-child(2) {
+  margin-left: 140rpx;
+  font-family: PingFang-SC-Bold;
+  font-size: 26rpx;
+  color: #FFFFFF;
+  letter-spacing: 0;
+}
+
+.ablum-lock-view {
+  margin-top: 50rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ablum-lock-view-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 520rpx;
+  height: 100rpx;
+  border: 1rpx solid #FFFFFF;
+  border-radius: 50rpx;
+  text-align: center;
+  line-height:37rpx;
+  font-family: PingFang-SC-Bold;
+  font-size: 36rpx;
+  color: #FFFFFF;
+  letter-spacing: 0;
+}
+.ablum-lock-expire-text{
+  text-align: center;
+  font-size: 25rpx;
+  color: #FFFFFF;
+  opacity: 0.8;
+}
+.custom-modal {
+  padding: 25rpx 0rpx 25rpx 0rpx;
+  vertical-align: middle;
+  color: #80848f;
+}
+
+.custom-avatar-warp {
+  text-align: center;
+  margin-top: 50rpx;
+  margin-bottom: 40rpx;
+}

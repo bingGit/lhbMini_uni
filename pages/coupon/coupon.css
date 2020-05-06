@@ -1,0 +1,109 @@
+/** 订单界面 */
+
+/** 根布局 */
+
+page {
+  width: 100%;
+  height: 100%;
+  background: #fff;
+}
+
+/** 优惠券根布局 */
+
+.couponRoot {
+  display: flex;
+  flex-direction: row;
+  margin: 10rpx 16rpx;
+}
+
+/** 优惠券根布局 */
+
+.couponBackground {
+  width: 718rpx;
+  height: 240rpx;
+  position: absolute;
+  align-self: center;
+  z-index: 2;
+  
+}
+
+/** 信息根布局 */
+
+.couponContent {
+  height: 240rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  z-index: 4;
+}
+
+/** 左边信息 */
+
+.couponLeft {
+  width: 260rpx;
+}
+
+/** 右边信息 */
+
+.couponRight {
+  width: 458rpx;
+  padding-left: 30rpx;
+  padding-right: 30rpx;
+}
+
+/** 价格 */
+
+.couponPrice {
+  color: #ff5534;
+  font-size: 70rpx;
+  align-self: center;
+}
+
+/** 单位 */
+
+.couponUnit {
+  color: #ff5534;
+  font-size: 30rpx;
+  align-self: center;
+}
+
+/** 标题 */
+
+.couponTitle {
+  color: #222;
+  font-size: 36rpx;
+}
+
+/** 介绍 */
+
+.couponIntro {
+  color: #222;
+  font-size: 24rpx;
+  margin-top: 14rpx;
+}
+
+/** 时间 */
+
+.couponTime {
+  color: #666;
+  font-size: 24rpx;
+  margin-top: 30rpx;
+}
+
+/** 优惠券过期图标 */
+
+.couponOverTime {
+  width: 120rpx;
+  height: 120rpx;
+  position: fixed;
+  align-self: center;
+  z-index: 6;
+  top: 10rpx;
+  right: 16rpx;
+}
+
+/** 优惠券过期文本 */
+
+.overTime {
+  color: #d3d3d3;
+}

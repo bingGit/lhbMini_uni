@@ -1,0 +1,5 @@
+{
+  "usingComponents": {
+    "auth": "/component/easyModal/auth/auth"
+  }
+}

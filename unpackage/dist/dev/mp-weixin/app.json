@@ -1,0 +1,57 @@
+{
+  "pages": [
+    "pages/ablum/ablum",
+    "pages/login/changePhone",
+    "pages/coupon/coupon",
+    "pages/order/order",
+    "pages/navbar/navbar",
+    "pages/wtest/result",
+    "pages/pay/pay",
+    "pages/deal/deal",
+    "pages/wtest/wtest",
+    "pages/wtest/rank",
+    "pages/login/login",
+    "pages/login/bindingPhone",
+    "pages/webview/award",
+    "pages/my/my",
+    "pages/wtest/result_list",
+    "pages/ablum/ablum-content",
+    "pages/ablum/ablum-detail"
+  ],
+  "subPackages": [],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#3075C6",
+    "navigationBarTitleText": "刘洪波讲单词",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#ccc",
+    "navigationStyle": "custom"
+  },
+  "tabBar": {
+    "color": "#fff",
+    "selectedColor": "#ededed",
+    "backgroundColor": "#606acb",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/ablum/ablum",
+        "text": "讲单词",
+        "iconPath": "/static/pages/images/main.png",
+        "selectedIconPath": "/static/pages/images/main_select.png"
+      },
+      {
+        "pagePath": "pages/my/my",
+        "text": "我的",
+        "iconPath": "/static/pages/images/my.png",
+        "selectedIconPath": "/static/pages/images/my_select.png"
+      }
+    ]
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于小程序位置接口的效果展示"
+    }
+  },
+  "usingComponents": {},
+  "sitemapLocation": "sitemap21.json"
+}
