@@ -306,21 +306,12 @@ var manager = wx.createInnerAudioContext();var navBar = function navBar() {__web
     }
 
     console.log('testUrl---', urls);
-    wx.request({
-      url: urls,
-      data: {},
-      header: {
-        'content-type': 'application/json' // 默认值
-      },
-
-
-      success: function success(res) {
-        if (res.statusCode == 200) {
-          wx.hideLoading();
-          that.queryData(res.data.data, index); //获取上一级小程序传过来的数据，判断是哪一套题
-        }
-      } });
-
+    util.getRequest(urls, {}, function (res) {
+      if (res.statusCode == 200) {
+        wx.hideLoading();
+        that.queryData(res.data.data, index); //获取上一级小程序传过来的数据，判断是哪一套题
+      }
+    });
 
     this.setData({
       test_id: id });
@@ -347,7 +338,7 @@ var manager = wx.createInnerAudioContext();var navBar = function navBar() {__web
     console.log('onHIde');
   },
   onUnload: function onUnload() {
-    clearInterval(this.timer_daojishi);
+    clearInterval(this.$data.timer_daojishi);
     console.log('onUnLoad');
   },
   methods: {
@@ -355,13 +346,13 @@ var manager = wx.createInnerAudioContext();var navBar = function navBar() {__web
     add_select: function add_select(e) {
       var that = this;
 
-      if (that.select_flag != null) {
+      if (this.$data.select_flag != null) {
         return;
       }
 
       var selected_idx = e.currentTarget.dataset.index;
-      var data = that._data_list;
-      var right_idx = data[that.current_queation_index - 1].right;
+      var data = that.$data._data_list;
+      var right_idx = data[that.$data.current_queation_index - 1].right;
       that.setData({
         right_idx: right_idx,
         select_flag: selected_idx,
@@ -380,9 +371,9 @@ var manager = wx.createInnerAudioContext();var navBar = function navBar() {__web
     //用户测试用时
     use_time: function use_time() {
       var that = this;
-      that.use_time_timer = setInterval(function () {
+      this.$data.use_time_timer = setInterval(function () {
         that.setData({
-          use_time_total: that.use_time_total + 1 });
+          use_time_total: that.$data.use_time_total + 1 });
 
       }, 1000);
     },
@@ -390,33 +381,33 @@ var manager = wx.createInnerAudioContext();var navBar = function navBar() {__web
     test_nextone_btn_end: function test_nextone_btn_end(flag) {
       var that = this;
 
-      if (that.user_select) {
+      if (that.$data.user_select) {
         that.setData({
           user_select: false });
 
-        var index = that.current_queation_index;
-        if (flag != "dao") clearInterval(that.timer_daojishi); //如果是倒计时时间到？？？
+        var index = that.$data.current_queation_index;
+        if (flag != "dao") clearInterval(that.$data.timer_daojishi); //如果是倒计时时间到？？？
 
-        if (index == that.totla_question - 1) {
+        if (index == that.$data.totla_question - 1) {
           that.setData({
             button_text: "查看成绩" });
 
         }
 
-        if (index <= that.totla_question) {
-          if (index <= that.totla_question - 1) {
+        if (index <= that.$data.totla_question) {
+          if (index <= that.$data.totla_question - 1) {
             that.setData({
               test_nextone_btn_flag: false,
-              current_queation_index: that.current_queation_index + 1 });
+              current_queation_index: that.$data.current_queation_index + 1 });
 
             that.daojishi();
           }
 
           that.bindData();
 
-          if (index == that.totla_question) {
-            clearInterval(that.use_time_timer);
-            clearInterval(that.timer_daojishi);
+          if (index == that.$data.totla_question) {
+            clearInterval(that.$data.use_time_timer);
+            clearInterval(that.$data.timer_daojishi);
             that.jump_retult_page();
           }
         }
@@ -424,15 +415,15 @@ var manager = wx.createInnerAudioContext();var navBar = function navBar() {__web
     },
     // 倒计时
     daojishi: function daojishi(_total) {
-      var total = this.duration || 1;
+      var total = this.$data.duration || 1;
       if (total <= 1) return;
-      clearInterval(this.timer_daojishi);
+      clearInterval(this.$data.timer_daojishi);
       var that = this;
       that.setData({
         test_timer: total });
 
       var flag_dao = "dao";
-      that.timer_daojishi = setInterval(function () {
+      that.$data.timer_daojishi = setInterval(function () {
         total--;
 
         if (total > 0) {
@@ -445,7 +436,7 @@ var manager = wx.createInnerAudioContext();var navBar = function navBar() {__web
           that.setData({
             user_select: true });
 
-          clearInterval(that.timer_daojishi);
+          clearInterval(that.$data.timer_daojishi);
           that.setData({
             data_right: -1 });
 
@@ -457,39 +448,38 @@ var manager = wx.createInnerAudioContext();var navBar = function navBar() {__web
     correct_num: function correct_num(right) {
       var that = this;
       var _right = right;
-      var select_flag = that.select_flag;
+      var select_flag = that.$data.select_flag;
       if (select_flag == null || _right == null || _right, right.length == 0) return;
 
       if (select_flag == _right) {
-        var correct_num = that.correct_number + 1;
+        var correct_num = that.$data.correct_number + 1;
 
-        if (correct_num <= that.totla_question) {
+        if (correct_num <= that.$data.totla_question) {
           that.setData({
             correct_number: correct_num });
 
-          that.result_data_fail_css.push(0);
+          that.$data.result_data_fail_css.push(0);
         }
       } else {
-        that.result_data_fail_css.push(1);
+        that.$data.result_data_fail_css.push(1);
       }
     },
     //最后一题
     jump_retult_page: function jump_retult_page() {
       //console.log(this.data.result_data_fail_css)
-      getApp().globalData.result_data_fail_css = this.result_data_fail_css; //赋值给全局变量
+      getApp().globalData.result_data_fail_css = this.$data.result_data_fail_css; //赋值给全局变量
 
       wx.navigateTo({
-        url: '/pages/wtest/result?correct_number=' + this.correct_number + "&use_time_total=" + this.use_time_total + "&totla_question=" + this.totla_question + "&test_id=" + this.test_id //把用的时间，做对多少题，总共的题目
+        url: '/pages/wtest/result?correct_number=' + this.$data.correct_number + "&use_time_total=" + this.$data.use_time_total + "&totla_question=" + this.$data.totla_question + "&test_id=" + this.$data.test_id //把用的时间，做对多少题，总共的题目
       });
 
     },
     //获取数据
     queryData: function queryData(data, index) {
       var _data = data; //此处的index还不确定
-      //console.log(data,_data);return;
+      // console.log('data',_data);return;
 
       var result = _data.result; //结果页单词展示
-
       var _data_title = _data.desc;
       var _data_total = _data.total;
       var duration = _data.duration;
@@ -511,8 +501,8 @@ var manager = wx.createInnerAudioContext();var navBar = function navBar() {__web
     bindData: function bindData() {
       //通过改变索引达到改变题目
       var that = this;
-      var data = that._data_list;
-      var current_index = that.current_queation_index; //当前第几题的索引
+      var data = that.$data._data_list;
+      var current_index = that.$data.current_queation_index; //当前第几题的索引
 
       var type = data[current_index - 1].type; //判断题目类型：音频或者文字
 
@@ -521,11 +511,11 @@ var manager = wx.createInnerAudioContext();var navBar = function navBar() {__web
       var right = data[current_index - 1].right;
       var url = data[current_index - 1].url;
       var question = data[current_index - 1].question;
-      that.correct_num(that.data_right);
+      that.correct_num(this.$data.data_right);
 
       if (type == 1) {
         console.log('hidden_audio');
-        that.setData({
+        this.setData({
           hidden_text: true,
           hidden_audio: false,
           category: category || '听力类' });
@@ -626,7 +616,7 @@ var manager = wx.createInnerAudioContext();var navBar = function navBar() {__web
 
       }
 
-      manager.src = this.audio_src || '';
+      manager.src = this.$data.audio_src || '';
       manager.title = '测试题';
       manager.obeyMuteSwitch = false;
       manager.play();
