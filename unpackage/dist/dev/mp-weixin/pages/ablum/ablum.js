@@ -416,7 +416,9 @@ var unitUrl = "https://v.xueweigui.com/ApiWordCourse/unitList?book_id=";var auth
         coverPlay: true //观看试播放
       });
 
-      this.videoContext.play();
+      setTimeout(function () {
+        that.videoContext.play();
+      }, 1000);
       getApp().globalData.g_has_index_toggle = false;
 
       if (getApp().globalData.g_audio_playing) {

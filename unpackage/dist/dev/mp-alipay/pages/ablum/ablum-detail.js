@@ -387,7 +387,7 @@ var customModal = function customModal() {Promise.all(/*! require.ensure | compo
       * 生命周期函数--监听页面初次渲染完成
       */
   onReady: function onReady() {
-    this.customModal = this.selectComponent("#customModal");
+    this.customModal = this.$refs.customModal;
   },
 
   /**

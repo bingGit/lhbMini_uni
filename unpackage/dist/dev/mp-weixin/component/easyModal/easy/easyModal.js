@@ -179,7 +179,7 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.default = 
       throw new Error("小程序sdk暂不支持节点操作selectComponent");
     }
 
-    this.baseModal = this.selectComponent('#baseModal');
+    this.baseModal = this.$refs.baseModal;
   },
   methods: {
     show: function show() {

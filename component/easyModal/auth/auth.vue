@@ -1,7 +1,7 @@
 <template>
 <view>
 <!-- 登录提示 -->
-<base-modal id="baseModal" :modalSize="modalSize" :animated="animated" :backdrop="backdrop">
+<base-modal id="baseModal" ref="baseModalRef" :modalSize="modalSize" :animated="animated" :backdrop="backdrop">
   <view slot="header" class="modal-header">
     <text>{{title}}</text>
   </view>
@@ -34,7 +34,7 @@
 </base-modal>
 
 <!-- 授权提示 -->
-<base-modal id="oauthTip" :modalSize="modalSize" :animated="animated" :backdrop="backdrop">
+<base-modal id="oauthTip" ref="oauthTipRef" :modalSize="modalSize" :animated="animated" :backdrop="backdrop">
   <view slot="header" class="modal-header">
     <!-- <text>{{oauthTitle}}</text> -->
   </view>
@@ -131,8 +131,10 @@ export default {
     // }
 
 
-    this.baseModal = this.selectComponent('#baseModal');
-    this.oauthModal = this.selectComponent('#oauthTip'); // this.baseModal.showModal();
+    //this.baseModal = this.selectComponent('#baseModal');
+	this.baseModal = this.$refs.baseModalRef;
+    //this.oauthModal = this.selectComponent('#oauthTip'); // this.baseModal.showModal();
+	this.oauthModal = this.$refs.oauthTipRef;
     // this.baseModal.showModal();
     // this.oauthCheck();
     // this.wxLogin();

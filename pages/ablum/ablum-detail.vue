@@ -97,7 +97,7 @@
 </view>
 
 <!-- 客服弹框 -->
-<custom-modal id="customModal" :cfg="custom_cfg" confirmText="解锁" modalSize="md" title="提示" @cancelEvent="_cancelEvent" @confirmEvent="_confirmEventThird" @invitShareEvent="invitShareEventFun">
+<custom-modal id="customModal" ref="customModal" :cfg="custom_cfg" confirmText="解锁" modalSize="md" title="提示" @cancelEvent="_cancelEvent" @confirmEvent="_confirmEventThird" @invitShareEvent="invitShareEventFun">
   <view class="custom-modal">
     <view class="custom-avatar-warp">
       <view>
@@ -255,7 +255,7 @@ export default {
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady: function () {
-    this.customModal = this.selectComponent("#customModal");
+	this.customModal = this.$refs.customModal;
   },
 
   /**

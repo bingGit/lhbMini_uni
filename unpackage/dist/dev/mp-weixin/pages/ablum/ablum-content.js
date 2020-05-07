@@ -869,6 +869,12 @@ var step = 15;var customModal = function customModal() {Promise.all(/*! require.
         getApp().globalData.g_try_time = getApp().globalData.g_req_data[currentIdx].try_time;
       }, 1000);
     },
+    _invitShareEvent: function _invitShareEvent() {
+      console.log('_invitShareEvent');
+    },
+    _confirmEventThird: function _confirmEventThird() {
+      console.log('_confirmEventThird');
+    },
     //保存收听记录
     saveListenRecord: function saveListenRecord() {
       var _reg = {
@@ -1144,7 +1150,7 @@ var step = 15;var customModal = function customModal() {Promise.all(/*! require.
     },
     hideComment: function hideComment() {
       this.setData({
-        writeHidden: true });
+        writeHidden: false });
 
       this.modalComment.hideModalFun();
     },
@@ -1229,9 +1235,13 @@ var step = 15;var customModal = function customModal() {Promise.all(/*! require.
         title: '评论成功',
         icon: 'none' });
       //todo 提交评论
+      this.setData({
+        writeHidden: false,
+        textareaValue: '' });
 
+      var userInfo = wx.getStorageSync('userinfo');
       util.getRequest(this.commentWData.comment.submit_url, {
-        uid: 10775054,
+        uid: userInfo.uid || '10775054',
         //todo uid
         content: content,
         place: that.address },

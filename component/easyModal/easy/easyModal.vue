@@ -1,7 +1,7 @@
 <template>
-<base-modal id="baseModal" :modalSize="modalSize" :animated="animated" :backdrop="backdrop">
+<base-modal id="baseModal" ref="baseModal" :modalSize="modalSize" :animated="animated" :backdrop="backdrop">
     <view slot="header" class="modal-header">
-        <text>{{title}}</text>
+        <text>{{title}}</text>
     </view>
 
      <view slot="body" class="modal-body">
@@ -63,7 +63,7 @@ export default {
       throw new Error("小程序sdk暂不支持节点操作selectComponent");
     }
 
-    this.baseModal = this.selectComponent('#baseModal');
+	this.baseModal = this.$refs.baseModal;
   },
   methods: {
     show: function () {

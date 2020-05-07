@@ -192,7 +192,8 @@ var baseModal = function baseModal() {__webpack_require__.e(/*! require.ensure |
       throw new Error("小程序sdk暂不支持节点操作selectComponent");
     }
 
-    this.baseModal = this.selectComponent('#baseModal');
+    //this.baseModal = this.selectComponent('#baseModal');
+    this.baseModal = this.$refs.baseModalRef;
   },
   methods: {
     show: function show() {

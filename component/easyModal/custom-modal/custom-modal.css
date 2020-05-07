@@ -51,6 +51,10 @@
   border: 0;
   padding: 0;
   border-top: 1rpx solid #eded;
+  background-color: #FFFFFF;
+}
+.modal-footer-button::after{
+	border: none;
 }
 
 .btn-contact::after {

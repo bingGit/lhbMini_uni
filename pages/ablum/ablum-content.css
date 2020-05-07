@@ -488,6 +488,7 @@ page {
   position: fixed;
   bottom: 70rpx;
   right: 30rpx;
+  z-index: 9999;
 }
 
 .comment-btn cover-image {

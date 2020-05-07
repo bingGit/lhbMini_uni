@@ -247,8 +247,10 @@ var baseModal = function baseModal() {__webpack_require__.e(/*! require.ensure |
     // }
 
 
-    this.baseModal = this.selectComponent('#baseModal');
-    this.oauthModal = this.selectComponent('#oauthTip'); // this.baseModal.showModal();
+    //this.baseModal = this.selectComponent('#baseModal');
+    this.baseModal = this.$refs.baseModalRef;
+    //this.oauthModal = this.selectComponent('#oauthTip'); // this.baseModal.showModal();
+    this.oauthModal = this.$refs.oauthTipRef;
     // this.baseModal.showModal();
     // this.oauthCheck();
     // this.wxLogin();
