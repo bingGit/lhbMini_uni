@@ -548,6 +548,7 @@ page {
   position: fixed;
   bottom: 70rpx;
   right: 30rpx;
+  z-index: 9999;
 }
 .comment-btn cover-image {
   width: 100rpx;
@@ -695,6 +696,9 @@ page {
   width: 130rpx;
   height: 50rpx;
   line-height: 50rpx;
+}
+button{
+	border: none;
 }
 .btn-defalu::after {
   border: none;

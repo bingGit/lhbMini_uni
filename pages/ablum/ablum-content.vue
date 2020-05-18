@@ -1,6 +1,6 @@
 <template>
 <view>
-<nav-bar :navbar-data="nvabarData"></nav-bar>
+<nav-bar v-if="!navBarHidden"  :navbar-data="nvabarData"></nav-bar>
 <view class="ablum-content-container">
   <view class="ablum-c-cover">
     <image :src="cover"></image>
@@ -78,7 +78,7 @@
 
 
 <!-- 播放列表 -->
-<modals-bottom id="modals-bottom" ref="modalsBottom" radius="true" :height="75 * ablums.length + 130">
+<modals-bottom id="modals-bottom" ref="modalsBottom" radius="radius" :height="75 * ablums.length + 130">
   <view slot="body">
     <view @touchstart="touchmoveStart" @touchend="touchmoveEnd" class="modals-bottom-list-container">
       <view class="modals-bottom-title">课程列表</view>
@@ -108,7 +108,7 @@
 </modals-bottom>
 
 <!-- 评论列表 -->
-<modals-bottom id="modalsComment" ref="modalsComment" radius="true" :height="windowH">
+<modals-bottom id="modalsComment" ref="modalsComment" radius="radius" :height="windowH">
   <view slot="body">
     <view class="modals-bottom-comment-container">
 
@@ -123,7 +123,7 @@
       </view>
 
       <!-- 评论按钮 -->
-      <cover-view :hidden="writeHidden" class="comment-btn" @tap.stop="showWrite">
+      <cover-view :hidden="writeHidden" class="comment-btn" @click="showWrite">
         <cover-image src="https://uimg.gximg.cn/v/res/201907/05-15/ic_lecture_input.png"></cover-image>
       </cover-view>
 
@@ -188,7 +188,7 @@
 </modals-bottom>
 
 <!-- 写评论 -->
-<modals-bottom id="modalsBottomWrite" ref="modalsBottomWrite" @hideModal="hideModalFun" radius="true" :height="windowH">
+<modals-bottom id="modalsBottomWrite" ref="modalsBottomWrite" @hideModal="hideModalFun" radius="radius" :height="windowH">
   <view slot="body">
     <view class="modals-bottom-write-container">
       <form @submit="formSubmit">
@@ -228,7 +228,7 @@
 </modals-bottom>
 
 <!-- 文稿 -->
-<modals-bottom id="modalsArticle" ref="modalsArticle" radius="true" :height="windowH">
+<modals-bottom id="modalsArticle" ref="modalsArticle" radius="radius" :height="windowH">
   <view slot="body">
     <view @touchstart="touchmoveStart" @touchend="touchmoveEnd" class="modal-article-container">
       <view class="m-b-c-title">
@@ -315,6 +315,7 @@ import navBar from "../../component/nav-bar/nav-bar";
 export default {
   data() {
     return {
+	  radius:true,
       isListening: false,
       hasAuth: true,
       seeker: 0,
@@ -379,7 +380,8 @@ export default {
       authMsg: "",
       playerHidden: false,
       max: 0,
-      touchStartY: ""
+      touchStartY: "",
+	  navBarHidden:false//自定义菜单是否隐藏
     };
   },
 
@@ -454,7 +456,6 @@ export default {
    */
   onShow: function () {
     console.log('on show'); //从其它页面操作音频控制同步本页
-
     let isPlaying = false;
     let tryListen = false;
 
@@ -498,6 +499,12 @@ export default {
     });
     this.isCurrentEvnet();
     this.reqArticle(this.pid);
+	//自定义菜单隐藏判断
+	if(getApp().globalData.g_app == 'alipay'){
+		this.setData({
+			navBarHidden: true
+		})
+	}
   },
 
   /**
@@ -580,6 +587,7 @@ export default {
       }
 
       console.log('init play2--pid', pid);
+	  getApp().globalData.g_audio_obj.stop();
       getApp().globalData.g_audio_pid = pid;
       getApp().globalData.g_audio_idx = 0;
       getApp().globalData.g_audio_obj.src = getApp().globalData.g_req_data[pid]['audio'][0]['url'];
@@ -753,6 +761,15 @@ export default {
     //监听事件
     audioListen: function () {
       var that = this;
+	  console.log(
+	  'audio-listen',
+	  getApp().globalData.g_audio_duration,
+	  getApp().globalData.g_audio_ablum_id,
+	  getApp().globalData.g_audio_ablum_temid,
+	  getApp().globalData.g_audio_idx,
+	  this.idx,
+	  this.$data.idx
+	  );
 
       if (getApp().globalData.g_audio_duration != null && getApp().globalData.g_audio_ablum_id == getApp().globalData.g_audio_ablum_temid && getApp().globalData.g_audio_idx == this.idx) {
         console.log('app.globalData.g_audio_max', getApp().globalData.g_audio_max);
@@ -796,7 +813,7 @@ export default {
         getApp().globalData.g_audio_title = getApp().globalData.g_req_data[getApp().globalData.g_audio_pid]['audio'][getApp().globalData.g_audio_idx]['title'];
         getApp().globalData.g_audio_tryListen = false;
         getApp().globalData.g_audio_ablum_id = getApp().globalData.g_audio_ablum_temid; // app.globalData.g_audio_pid = that.data.pid;
-
+        getApp().globalData.g_audio_obj.coverImgUrl = getApp().globalData.g_req_data[getApp().globalData.g_audio_pid]['cover'];
         that.setData({
           isPlaying: true,
           tryListen: false,
@@ -850,31 +867,31 @@ export default {
           timeStep: num,
           seeker: seeker
         }); //todo 开通权限后需要重新请求数据 设为非试听
-
+		//console.log('ablum-content-',getApp().globalData.g_audio_auth,getApp().globalData.g_audio_obj.currentTime >= getApp().globalData.g_try_time);
         if (!getApp().globalData.g_audio_auth && getApp().globalData.g_audio_obj.currentTime >= getApp().globalData.g_try_time) {
+		  console.log('***********试听', seeker);
           getApp().globalData.g_audio_obj.stop();
           getApp().globalData.g_audio_obj.stop();
           getApp().globalData.g_audio_obj.stop();
           getApp().globalData.g_audio_tryListen = true;
+		  
           that.setData({
             tryListen: true,
             seeker: getApp().globalData.g_try_time
-          });
-          console.log('***********试听', seeker);
-          util.throttle(function () {
-            wx.showModal({
-              title: '提示',
-              content: '购买后,可听全部课程',
-              success: function (res) {
-                if (res.confirm) {
-                  that.goCustom();
-                }
-              }
-            });
-          }, 10)();
+          }); 
+		  util.throttle(function () {
+		    wx.showModal({
+		      title: '提示',
+		      content: '购买后,可听全部课程',
+		      success: function (res) {
+		        if (res.confirm) {
+		          that.goCustom();
+		        }
+		      }
+		    });
+		  }, 10)();
           return;
         }
-
         getApp().globalData.g_audio_timeStep = num;
         getApp().globalData.g_audio_seeker = seeker;
       });
@@ -883,30 +900,40 @@ export default {
       console.log('gocustom--');
       var system = wx.getSystemInfoSync().system;
       var that = this;
-
+	  console.log('g_app',getApp().globalData.g_app);
+	  if(getApp().globalData.g_app == 'alipay'){
+	  		  util.aliPay(this.authMsg.order_url);
+	  		  return;
+	  }
       if (system.indexOf('iOS') === -1) {
         util.payAction(this.authMsg.order_url, function () {
           getApp().globalData.g_audio_auth = true;
           that.setData({
             hasAuth: true
           });
-        }); // let url = this.data.authMsg.order_url || '';
-        // wx.navigateTo({
-        //   url: '../order/order?url=' + url,
-        // })
+        }); 
       } else {
         this.customModal.show();
       }
     },
     bindChangeTap: function (event) {
       let seeker = event.detail.value; //console.log('bindChangeTap', seeker);
-
+	  let that = this;
       if (!this.hasAuth && seeker > getApp().globalData.g_try_time) {
+		console.log('****bindChangeTap');
+		wx.showModal({
+		  title: '提示',
+		  content: '购买后,可听全部课程',
+		  success: function (res) {
+		    if (res.confirm) {
+		      that.goCustom();
+		    }
+		  }
+		});
         getApp().globalData.g_audio_obj.seek(parseInt(getApp().globalData.g_try_time));
+		getApp().globalData.g_audio_obj.stop();
         return;
       }
-
-      let that = this;
       if (seeker == 0) return;
       let timeSlider = seeker * 10;
 
@@ -1018,6 +1045,7 @@ export default {
     },
     //展示写评论
     showWrite: function () {
+		console.log('##write',);
       this.setData({
         writeHidden: true
       });
@@ -1121,6 +1149,7 @@ export default {
       var that = this;
       wx.chooseLocation({
         success: function (res) {
+			console.log('##address',res);
           var location = {
             name: res.name,
             address: res.address,
@@ -1129,11 +1158,12 @@ export default {
           };
           that.setData({
             location: location,
-            address: res.name,
+            address: res.name || res.address,
             hasLocation: true
           });
         },
         fail: function () {
+			console.log('##fail');
           wx.getSetting({
             success: function (res) {
               var statu = res.authSetting; //console.log('auth-stauts-',res);
@@ -1221,7 +1251,22 @@ export default {
       that.setData({
         seeker: des
       });
-      console.log('fast--', des);
+	  
+	  if (!that.hasAuth && des > getApp().globalData.g_try_time) {
+	  		console.log('****fastTap');
+	  		wx.showModal({
+	  		  title: '提示',
+	  		  content: '购买后,可听全部课程',
+	  		  success: function (res) {
+	  		    if (res.confirm) {
+	  		      that.goCustom();
+	  		    }
+	  		  }
+	  		});
+	    getApp().globalData.g_audio_obj.seek(parseInt(getApp().globalData.g_try_time));
+	  	getApp().globalData.g_audio_obj.stop();
+	}
+	  
     }, 200),
     //后退
     backTap: util.throttle(function () {
@@ -1232,6 +1277,20 @@ export default {
       that.setData({
         seeker: des
       });
+	  if (!that.hasAuth && des > getApp().globalData.g_try_time) {
+	    		console.log('****fastTap');
+	    		wx.showModal({
+	    		  title: '提示',
+	    		  content: '购买后,可听全部课程',
+	    		  success: function (res) {
+	    		    if (res.confirm) {
+	    		      that.goCustom();
+	    		    }
+	    		  }
+	    		});
+	      getApp().globalData.g_audio_obj.seek(parseInt(getApp().globalData.g_try_time));
+	      getApp().globalData.g_audio_obj.stop();
+	  }
       console.log('back--', des);
     }, 200)
   }

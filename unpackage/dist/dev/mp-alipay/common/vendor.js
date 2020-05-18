@@ -2284,7 +2284,7 @@ uni$1;exports.default = _default;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(wx) {var CryptoJS = __webpack_require__(/*! ./cryptojs.js */ 13);
+/* WEBPACK VAR INJECTION */(function(wx, uni) {var _regeneratorRuntime = __webpack_require__(/*! ./node_modules/@vue/babel-preset-app/node_modules/@babel/runtime/regenerator */ 13);function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {try {var info = gen[key](arg);var value = info.value;} catch (error) {reject(error);return;}if (info.done) {resolve(value);} else {Promise.resolve(value).then(_next, _throw);}}function _asyncToGenerator(fn) {return function () {var self = this,args = arguments;return new Promise(function (resolve, reject) {var gen = fn.apply(self, args);function _next(value) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);}function _throw(err) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);}_next(undefined);});};}function ownKeys(object, enumerableOnly) {var keys = Object.keys(object);if (Object.getOwnPropertySymbols) {var symbols = Object.getOwnPropertySymbols(object);if (enumerableOnly) symbols = symbols.filter(function (sym) {return Object.getOwnPropertyDescriptor(object, sym).enumerable;});keys.push.apply(keys, symbols);}return keys;}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};if (i % 2) {ownKeys(Object(source), true).forEach(function (key) {_defineProperty(target, key, source[key]);});} else if (Object.getOwnPropertyDescriptors) {Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));} else {ownKeys(Object(source)).forEach(function (key) {Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));});}}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}var CryptoJS = __webpack_require__(/*! ./cryptojs.js */ 16);
 
 var source = 1; //copy 需修改
 
@@ -2294,6 +2294,8 @@ var uidKey = 'uid1'; //copy 需修改
 var cookieKey = 'cookie'; //copy 需修改
 
 var userKey = 'user'; //copy 需修改
+
+var aliUserIdKey = ''; //ali用户id
 
 var userInfoKey = 'userInfo'; //copy 需修
 
@@ -2495,10 +2497,9 @@ function saveListentedStorage(audio_id) {
 } //带cookie请求
 
 
-function getRequest(netUrl, data, _success2) {
+function getRequest(netUrl, data) {var _success2 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
   netUrl = decodeURIComponent(netUrl);
   var cookie = getCookie();
-
   if (!data) {
     data = {};
   }
@@ -2507,17 +2508,13 @@ function getRequest(netUrl, data, _success2) {
     url: netUrl.replace("http:", "https:").replace("v.guixue.com", "v.xueweigui.com").replace("fast.guixue.com", "v.xueweigui.com"),
     data: data,
     header: {
-      cookie: cookie,
-      'x-user-agent': '79:1.3.1' },
+      'x-user-agent': '78:1.0.0' },
 
     success: function success(res) {
       _success2(res);
     },
     fail: function fail(res) {
-      wx.showToast({
-        title: res.errMsg,
-        icon: 'none' });
-
+      console.error('http-request', res.errMsg);
     } });
 
 } //log 记录
@@ -2580,13 +2577,242 @@ function getCookie() {
   for (var key in cookieObj) {
     cookieStr += key + '=' + cookieObj[key] + ';';
   }
-
   return cookieStr;
 } //写评论
 
+/**********************alipay start**********************/
+/**
+                                                            * 获取用户授权
+                                                            */
+function aliGetAuthCode() {var scopeCode = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'auth_user';
+  return new Promise(function (resolve, reject) {
+    my.getAuthCode({
+      scopes: scopeCode,
+      success: function success(auth) {
+        resolve(auth);
+      },
+      fail: function fail(err) {
+        reject(_objectSpread({}, err, { message: '授权失败' }));
+      } });
 
-function comment() {} //格式化时间 &&解锁
+  });
+}
+/**
+   * 获取用户信息
+   * @param {Object} authCode
+   */
+function getUserByAuthCode(authCode) {
+  var url = 'https://passport.xueweigui.com/oauth/getAliPayAccess';
+  var data = { type: 44, code: authCode };
+  return new Promise(function (resolve, reject) {
+    getRequest(url, data, function (res) {
+      if (res.data.e == '9999') {
+        var cookie = wx.getStorageSync(cookieKey);
+        if (!cookie.alipay_user_id) {
+          // console.log('getUserByAuthCode not user cookie',cookie);
+          // cookie['alipay_user_id'] = res.data.data.user_id;
+          wx.setStorageSync('alipay_user_id', res.data.data.user_id);
+          var _cookie = Object.values(cookie);
+          console.log('getUserByAuthCode not user cookie', _cookie);
+          saveCookie(_cookie);
+        }
+        resolve(res.data);
+      } else {
+        reject(_objectSpread({}, res.data, { message: '获取用户信息失败' }));
+      }
+    });
+  });
+}
+function showToast(message) {var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'none';
+  my.showToast({
+    type: type,
+    content: message,
+    duration: 3000 });
 
+}
+/**
+   * 创建支付交易订单
+   * @param {Object} authCode
+   * @param {Object} uid
+   */
+function getTradeNo(authCode, uid) {
+  var url = '';
+  var reqData = {
+    total_amount: '0.01',
+    out_trade_no: "".concat(new Date().getTime(), "_demo_pay"),
+    scene: 'bar_code',
+    auth_code: authCode,
+    subject: '小程序支付演示DEMO',
+    buyer_id: uid };
+
+  return new Promise(function (resolve, reject) {
+    getRequest(url, reqData, function (res) {
+      if (res.data.e == '9999') {
+        resolve(res.data);
+      } else {
+        reject(_objectSpread({}, res.data, { message: '获取用户信息失败' }));
+      }
+    });
+  });
+}
+/**
+   * 发起支付
+   * @param {Object} tradeNo
+   */
+function cashPaymentTrade(tradeNo) {
+  return new Promise(function (resolve, reject) {
+    my.tradePay({
+      tradeNO: tradeNo,
+      success: function success(result) {
+        if (result.resultCode != 9000) {
+          resolve(_objectSpread({
+            status: false,
+            message: result.memo },
+          result));
+
+        } else {
+          resolve(_objectSpread({
+            status: true,
+            message: '支付成功' },
+          result));
+
+        }
+      },
+      fail: function fail(err) {
+        reject(_objectSpread({
+          status: false,
+          message: '支付异常' },
+        err));
+
+      } });
+
+  });
+}
+/**
+   * 支付宝支付
+   */function
+aliPay(_x) {return _aliPay.apply(this, arguments);}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+                                                     * ali 获取用户信息授权ß
+                                                     */function _aliPay() {_aliPay = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee(url) {var aliGetAuthCodeMsg, user, tradeMsg, payStatus;return _regeneratorRuntime.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:console.log('alipay', url);_context.prev = 1;_context.next = 4;return aliGetAuthCode();case 4:aliGetAuthCodeMsg = _context.sent;_context.next = 7;return getUserByAuthCode(aliGetAuthCodeMsg.authCode);case 7:user = _context.sent;_context.next = 10;return xwgPay(url);case 10:tradeMsg = _context.sent;_context.next = 13;return cashPaymentTrade(tradeMsg.trade_no);case 13:payStatus = _context.sent;payStatus.status ? showToast('支付成功') : showToast(payStatus.message);_context.next = 20;break;case 17:_context.prev = 17;_context.t0 = _context["catch"](1); //showToast(error.message);
+            console.log('alipay-error', _context.t0);case 20:case "end":return _context.stop();}}}, _callee, null, [[1, 17]]);}));return _aliPay.apply(this, arguments);}function aliOauth() {return _aliOauth.apply(this, arguments);}
+
+
+
+
+
+
+
+
+/**********************alipay end **********************/
+
+/**********************平台支付 star**********************/
+
+/**
+                                                         * 请求下单接口
+                                                         * @param {Object} url
+                                                         */function _aliOauth() {_aliOauth = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee2() {var auth;return _regeneratorRuntime.wrap(function _callee2$(_context2) {while (1) {switch (_context2.prev = _context2.next) {case 0:_context2.prev = 0;_context2.next = 3;return aliGetAuthCode();case 3:auth = _context2.sent;console.log('alipay', auth); // const user = await getUserByAuthCode(auth.authCode);//user.userId
+            _context2.next = 10;break;case 7:_context2.prev = 7;_context2.t0 = _context2["catch"](0);console.log('alipay-error', _context2.t0);case 10:case "end":return _context2.stop();}}}, _callee2, null, [[0, 7]]);}));return _aliOauth.apply(this, arguments);}function payMorderShow(url) {
+  var data = { channel: 52 };
+  return new Promise(function (resolve, reject) {
+    getRequest(url, data, function (res) {
+      if (res.data.e == '9999') {
+        resolve(res.data);
+      } else {
+        reject(_objectSpread({}, res.data, { message: '获取下单信息失败' }));
+      }
+    });
+  });
+}
+
+/**
+   * 请求下单支付接口
+   * @param {Object} url
+   */
+function payMorderBuy(url) {
+  return new Promise(function (resolve, reject) {
+    getRequest(url, { channel: 52 }, function (res) {
+      if (res.data.e == '9999') {
+        resolve(res.data);
+      } else {
+        reject(_objectSpread({}, res.data, { message: '请求下单支付接口信息失败' }));
+      }
+    });
+  });
+}
+
+/**
+   * 请求确认接口
+   * @param {Object} url
+   */
+function payMorderConfirm(url) {
+  return new Promise(function (resolve, reject) {
+    getRequest(url, { channel: 52 }, function (res) {
+      if (res.data.e == '9999' && res.data.payment.sdk.length > 0) {
+        resolve(res.data);
+      } else {
+        reject(_objectSpread({}, res.data, { message: '请求确认接口失败' }));
+      }
+    });
+  });
+}
+
+/**
+   * 请求平台支付接口
+   * @param {Object} url
+   */
+function payDeposit(url) {
+  return new Promise(function (resolve, reject) {
+    getRequest(url + '&amount=0.01', { channel: 52 }, function (res) {
+      if (res.data.e == '9999') {
+        resolve(res.data);
+      } else {
+        reject(_objectSpread({}, res.data, { message: '请求平台支付接口失败' }));
+      }
+    });
+  });
+}
+
+/**
+   * 支付流程
+   * @param {type} url 
+   */function
+xwgPay(_x2) {return _xwgPay.apply(this, arguments);}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**********************平台支付 end**********************/function _xwgPay() {_xwgPay = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee3(url) {var payMorderShowMsg, payMorderBuyMsg, payMorderConfirmMsg, payDepositMsg;return _regeneratorRuntime.wrap(function _callee3$(_context3) {while (1) {switch (_context3.prev = _context3.next) {case 0:_context3.prev = 0;uni.showLoading({ title: '请求加载中' });setTimeout(function () {uni.hideLoading();}, 1000);_context3.next = 5;return payMorderShow(url);case 5:payMorderShowMsg = _context3.sent;_context3.next = 8;return payMorderBuy(payMorderShowMsg.buyurl);case 8:payMorderBuyMsg = _context3.sent;_context3.next = 11;return payMorderConfirm(payMorderBuyMsg.r.payurl);case 11:payMorderConfirmMsg = _context3.sent;_context3.next = 14;return payDeposit(payMorderConfirmMsg.payment.sdk[0].url);case 14:payDepositMsg = _context3.sent;return _context3.abrupt("return", payDepositMsg);case 18:_context3.prev = 18;_context3.t0 = _context3["catch"](0);showToast(_context3.t0.message);console.log('xwg-pay-error', _context3.t0);case 22:case "end":return _context3.stop();}}}, _callee3, null, [[0, 18]]);}));return _xwgPay.apply(this, arguments);}
 
 function formCreateTime(data) {
   var lockData = wx.getStorageSync('lockData') || [];
@@ -2625,7 +2851,6 @@ function saveUserOpenid() {
   }
 } //获取&存储cookie
 
-
 function reqCookie(code) {
   wx.getUserInfo({
     success: function success(res) {
@@ -2644,7 +2869,8 @@ function reqCookie(code) {
 }
 
 function saveUser(res) {
-  saveCookie(res.header["Set-Cookie"]); //保存用户信息
+  var cookieVal = res.header['Set-Cookie'] || res.header['set-cookie'];
+  saveCookie(cookieVal); //保存用户信息
 
   saveUserDb(res);
 } //保存用户信息入库
@@ -3275,6 +3501,7 @@ function secret(string) {var ivs = arguments.length > 1 && arguments[1] !== unde
 }
 
 function saveCookie(cookieStr) {
+  cookieStr = Array.isArray(cookieStr) ? cookieStr.join(';') : cookieStr;
   var cookieArr = cookieStr.split(";");
   var newCookie = {};
 
@@ -3309,8 +3536,9 @@ function saveCookie(cookieStr) {
   }
 
   var openid = wx.getStorageSync('openid');
+  var alipay_user_id = wx.getStorageSync('alipay_user_id');
   newCookie['openid'] = openid;
-  console.log(newCookie);
+  newCookie['alipay_user_id'] = alipay_user_id;
   wx.setStorageSync('cookie', newCookie);
 }
 /**
@@ -3329,16 +3557,15 @@ function throttle(fn, gapTime) {
 
   return function () {
     var _nowTime = +new Date();
-
+    console.log('***throttle', _nowTime, _lastTime, _nowTime - _lastTime);
     if (_nowTime - _lastTime > gapTime || !_lastTime) {
-      console.log('2343243', gapTime, _nowTime, _lastTime, _nowTime - _lastTime);
+      console.log('***2343243', gapTime, _nowTime, _lastTime, _nowTime - _lastTime);
       fn.apply(this, arguments); //将this和参数传给原函数
 
       _lastTime = _nowTime;
     }
   };
 }
-
 function debounce(fn, delay) {
   // 持久化一个定时器 timer
   var timer = null; // 闭包函数可以访问 timer
@@ -3358,8 +3585,6 @@ function debounce(fn, delay) {
 /**
    * 支付
    */
-
-
 function payAction(url) {var fn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
   console.log('payActin', url);
   getRequest(url, null, function (netData1) {
@@ -3473,6 +3698,8 @@ module.exports = {
   throttle: throttle,
   debounce: debounce,
   payAction: payAction,
+  aliOauth: aliOauth,
+  aliPay: aliPay,
   AJAX: function AJAX(url) {var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};var fn = arguments.length > 2 ? arguments[2] : undefined;var method = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "get";var header = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
     wx.request({
       url: url,
@@ -3493,11 +3720,802 @@ module.exports = {
       } });
 
   } };
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-alipay/dist/index.js */ 1)["default"]))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-alipay/dist/index.js */ 1)["default"], __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-alipay/dist/index.js */ 1)["default"]))
 
 /***/ }),
 
 /***/ 13:
+/*!*********************************************************************************************!*\
+  !*** ./node_modules/@vue/babel-preset-app/node_modules/@babel/runtime/regenerator/index.js ***!
+  \*********************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(/*! regenerator-runtime */ 14);
+
+/***/ }),
+
+/***/ 14:
+/*!************************************************************!*\
+  !*** ./node_modules/regenerator-runtime/runtime-module.js ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/**
+ * Copyright (c) 2014-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+// This method of obtaining a reference to the global object needs to be
+// kept identical to the way it is obtained in runtime.js
+var g = (function() {
+  return this || (typeof self === "object" && self);
+})() || Function("return this")();
+
+// Use `getOwnPropertyNames` because not all browsers support calling
+// `hasOwnProperty` on the global `self` object in a worker. See #183.
+var hadRuntime = g.regeneratorRuntime &&
+  Object.getOwnPropertyNames(g).indexOf("regeneratorRuntime") >= 0;
+
+// Save the old regeneratorRuntime in case it needs to be restored later.
+var oldRuntime = hadRuntime && g.regeneratorRuntime;
+
+// Force reevalutation of runtime.js.
+g.regeneratorRuntime = undefined;
+
+module.exports = __webpack_require__(/*! ./runtime */ 15);
+
+if (hadRuntime) {
+  // Restore the original runtime.
+  g.regeneratorRuntime = oldRuntime;
+} else {
+  // Remove the global property added by runtime.js.
+  try {
+    delete g.regeneratorRuntime;
+  } catch(e) {
+    g.regeneratorRuntime = undefined;
+  }
+}
+
+
+/***/ }),
+
+/***/ 15:
+/*!*****************************************************!*\
+  !*** ./node_modules/regenerator-runtime/runtime.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/**
+ * Copyright (c) 2014-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+!(function(global) {
+  "use strict";
+
+  var Op = Object.prototype;
+  var hasOwn = Op.hasOwnProperty;
+  var undefined; // More compressible than void 0.
+  var $Symbol = typeof Symbol === "function" ? Symbol : {};
+  var iteratorSymbol = $Symbol.iterator || "@@iterator";
+  var asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator";
+  var toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
+
+  var inModule = typeof module === "object";
+  var runtime = global.regeneratorRuntime;
+  if (runtime) {
+    if (inModule) {
+      // If regeneratorRuntime is defined globally and we're in a module,
+      // make the exports object identical to regeneratorRuntime.
+      module.exports = runtime;
+    }
+    // Don't bother evaluating the rest of this file if the runtime was
+    // already defined globally.
+    return;
+  }
+
+  // Define the runtime globally (as expected by generated code) as either
+  // module.exports (if we're in a module) or a new, empty object.
+  runtime = global.regeneratorRuntime = inModule ? module.exports : {};
+
+  function wrap(innerFn, outerFn, self, tryLocsList) {
+    // If outerFn provided and outerFn.prototype is a Generator, then outerFn.prototype instanceof Generator.
+    var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator;
+    var generator = Object.create(protoGenerator.prototype);
+    var context = new Context(tryLocsList || []);
+
+    // The ._invoke method unifies the implementations of the .next,
+    // .throw, and .return methods.
+    generator._invoke = makeInvokeMethod(innerFn, self, context);
+
+    return generator;
+  }
+  runtime.wrap = wrap;
+
+  // Try/catch helper to minimize deoptimizations. Returns a completion
+  // record like context.tryEntries[i].completion. This interface could
+  // have been (and was previously) designed to take a closure to be
+  // invoked without arguments, but in all the cases we care about we
+  // already have an existing method we want to call, so there's no need
+  // to create a new function object. We can even get away with assuming
+  // the method takes exactly one argument, since that happens to be true
+  // in every case, so we don't have to touch the arguments object. The
+  // only additional allocation required is the completion record, which
+  // has a stable shape and so hopefully should be cheap to allocate.
+  function tryCatch(fn, obj, arg) {
+    try {
+      return { type: "normal", arg: fn.call(obj, arg) };
+    } catch (err) {
+      return { type: "throw", arg: err };
+    }
+  }
+
+  var GenStateSuspendedStart = "suspendedStart";
+  var GenStateSuspendedYield = "suspendedYield";
+  var GenStateExecuting = "executing";
+  var GenStateCompleted = "completed";
+
+  // Returning this object from the innerFn has the same effect as
+  // breaking out of the dispatch switch statement.
+  var ContinueSentinel = {};
+
+  // Dummy constructor functions that we use as the .constructor and
+  // .constructor.prototype properties for functions that return Generator
+  // objects. For full spec compliance, you may wish to configure your
+  // minifier not to mangle the names of these two functions.
+  function Generator() {}
+  function GeneratorFunction() {}
+  function GeneratorFunctionPrototype() {}
+
+  // This is a polyfill for %IteratorPrototype% for environments that
+  // don't natively support it.
+  var IteratorPrototype = {};
+  IteratorPrototype[iteratorSymbol] = function () {
+    return this;
+  };
+
+  var getProto = Object.getPrototypeOf;
+  var NativeIteratorPrototype = getProto && getProto(getProto(values([])));
+  if (NativeIteratorPrototype &&
+      NativeIteratorPrototype !== Op &&
+      hasOwn.call(NativeIteratorPrototype, iteratorSymbol)) {
+    // This environment has a native %IteratorPrototype%; use it instead
+    // of the polyfill.
+    IteratorPrototype = NativeIteratorPrototype;
+  }
+
+  var Gp = GeneratorFunctionPrototype.prototype =
+    Generator.prototype = Object.create(IteratorPrototype);
+  GeneratorFunction.prototype = Gp.constructor = GeneratorFunctionPrototype;
+  GeneratorFunctionPrototype.constructor = GeneratorFunction;
+  GeneratorFunctionPrototype[toStringTagSymbol] =
+    GeneratorFunction.displayName = "GeneratorFunction";
+
+  // Helper for defining the .next, .throw, and .return methods of the
+  // Iterator interface in terms of a single ._invoke method.
+  function defineIteratorMethods(prototype) {
+    ["next", "throw", "return"].forEach(function(method) {
+      prototype[method] = function(arg) {
+        return this._invoke(method, arg);
+      };
+    });
+  }
+
+  runtime.isGeneratorFunction = function(genFun) {
+    var ctor = typeof genFun === "function" && genFun.constructor;
+    return ctor
+      ? ctor === GeneratorFunction ||
+        // For the native GeneratorFunction constructor, the best we can
+        // do is to check its .name property.
+        (ctor.displayName || ctor.name) === "GeneratorFunction"
+      : false;
+  };
+
+  runtime.mark = function(genFun) {
+    if (Object.setPrototypeOf) {
+      Object.setPrototypeOf(genFun, GeneratorFunctionPrototype);
+    } else {
+      genFun.__proto__ = GeneratorFunctionPrototype;
+      if (!(toStringTagSymbol in genFun)) {
+        genFun[toStringTagSymbol] = "GeneratorFunction";
+      }
+    }
+    genFun.prototype = Object.create(Gp);
+    return genFun;
+  };
+
+  // Within the body of any async function, `await x` is transformed to
+  // `yield regeneratorRuntime.awrap(x)`, so that the runtime can test
+  // `hasOwn.call(value, "__await")` to determine if the yielded value is
+  // meant to be awaited.
+  runtime.awrap = function(arg) {
+    return { __await: arg };
+  };
+
+  function AsyncIterator(generator) {
+    function invoke(method, arg, resolve, reject) {
+      var record = tryCatch(generator[method], generator, arg);
+      if (record.type === "throw") {
+        reject(record.arg);
+      } else {
+        var result = record.arg;
+        var value = result.value;
+        if (value &&
+            typeof value === "object" &&
+            hasOwn.call(value, "__await")) {
+          return Promise.resolve(value.__await).then(function(value) {
+            invoke("next", value, resolve, reject);
+          }, function(err) {
+            invoke("throw", err, resolve, reject);
+          });
+        }
+
+        return Promise.resolve(value).then(function(unwrapped) {
+          // When a yielded Promise is resolved, its final value becomes
+          // the .value of the Promise<{value,done}> result for the
+          // current iteration.
+          result.value = unwrapped;
+          resolve(result);
+        }, function(error) {
+          // If a rejected Promise was yielded, throw the rejection back
+          // into the async generator function so it can be handled there.
+          return invoke("throw", error, resolve, reject);
+        });
+      }
+    }
+
+    var previousPromise;
+
+    function enqueue(method, arg) {
+      function callInvokeWithMethodAndArg() {
+        return new Promise(function(resolve, reject) {
+          invoke(method, arg, resolve, reject);
+        });
+      }
+
+      return previousPromise =
+        // If enqueue has been called before, then we want to wait until
+        // all previous Promises have been resolved before calling invoke,
+        // so that results are always delivered in the correct order. If
+        // enqueue has not been called before, then it is important to
+        // call invoke immediately, without waiting on a callback to fire,
+        // so that the async generator function has the opportunity to do
+        // any necessary setup in a predictable way. This predictability
+        // is why the Promise constructor synchronously invokes its
+        // executor callback, and why async functions synchronously
+        // execute code before the first await. Since we implement simple
+        // async functions in terms of async generators, it is especially
+        // important to get this right, even though it requires care.
+        previousPromise ? previousPromise.then(
+          callInvokeWithMethodAndArg,
+          // Avoid propagating failures to Promises returned by later
+          // invocations of the iterator.
+          callInvokeWithMethodAndArg
+        ) : callInvokeWithMethodAndArg();
+    }
+
+    // Define the unified helper method that is used to implement .next,
+    // .throw, and .return (see defineIteratorMethods).
+    this._invoke = enqueue;
+  }
+
+  defineIteratorMethods(AsyncIterator.prototype);
+  AsyncIterator.prototype[asyncIteratorSymbol] = function () {
+    return this;
+  };
+  runtime.AsyncIterator = AsyncIterator;
+
+  // Note that simple async functions are implemented on top of
+  // AsyncIterator objects; they just return a Promise for the value of
+  // the final result produced by the iterator.
+  runtime.async = function(innerFn, outerFn, self, tryLocsList) {
+    var iter = new AsyncIterator(
+      wrap(innerFn, outerFn, self, tryLocsList)
+    );
+
+    return runtime.isGeneratorFunction(outerFn)
+      ? iter // If outerFn is a generator, return the full iterator.
+      : iter.next().then(function(result) {
+          return result.done ? result.value : iter.next();
+        });
+  };
+
+  function makeInvokeMethod(innerFn, self, context) {
+    var state = GenStateSuspendedStart;
+
+    return function invoke(method, arg) {
+      if (state === GenStateExecuting) {
+        throw new Error("Generator is already running");
+      }
+
+      if (state === GenStateCompleted) {
+        if (method === "throw") {
+          throw arg;
+        }
+
+        // Be forgiving, per 25.3.3.3.3 of the spec:
+        // https://people.mozilla.org/~jorendorff/es6-draft.html#sec-generatorresume
+        return doneResult();
+      }
+
+      context.method = method;
+      context.arg = arg;
+
+      while (true) {
+        var delegate = context.delegate;
+        if (delegate) {
+          var delegateResult = maybeInvokeDelegate(delegate, context);
+          if (delegateResult) {
+            if (delegateResult === ContinueSentinel) continue;
+            return delegateResult;
+          }
+        }
+
+        if (context.method === "next") {
+          // Setting context._sent for legacy support of Babel's
+          // function.sent implementation.
+          context.sent = context._sent = context.arg;
+
+        } else if (context.method === "throw") {
+          if (state === GenStateSuspendedStart) {
+            state = GenStateCompleted;
+            throw context.arg;
+          }
+
+          context.dispatchException(context.arg);
+
+        } else if (context.method === "return") {
+          context.abrupt("return", context.arg);
+        }
+
+        state = GenStateExecuting;
+
+        var record = tryCatch(innerFn, self, context);
+        if (record.type === "normal") {
+          // If an exception is thrown from innerFn, we leave state ===
+          // GenStateExecuting and loop back for another invocation.
+          state = context.done
+            ? GenStateCompleted
+            : GenStateSuspendedYield;
+
+          if (record.arg === ContinueSentinel) {
+            continue;
+          }
+
+          return {
+            value: record.arg,
+            done: context.done
+          };
+
+        } else if (record.type === "throw") {
+          state = GenStateCompleted;
+          // Dispatch the exception by looping back around to the
+          // context.dispatchException(context.arg) call above.
+          context.method = "throw";
+          context.arg = record.arg;
+        }
+      }
+    };
+  }
+
+  // Call delegate.iterator[context.method](context.arg) and handle the
+  // result, either by returning a { value, done } result from the
+  // delegate iterator, or by modifying context.method and context.arg,
+  // setting context.delegate to null, and returning the ContinueSentinel.
+  function maybeInvokeDelegate(delegate, context) {
+    var method = delegate.iterator[context.method];
+    if (method === undefined) {
+      // A .throw or .return when the delegate iterator has no .throw
+      // method always terminates the yield* loop.
+      context.delegate = null;
+
+      if (context.method === "throw") {
+        if (delegate.iterator.return) {
+          // If the delegate iterator has a return method, give it a
+          // chance to clean up.
+          context.method = "return";
+          context.arg = undefined;
+          maybeInvokeDelegate(delegate, context);
+
+          if (context.method === "throw") {
+            // If maybeInvokeDelegate(context) changed context.method from
+            // "return" to "throw", let that override the TypeError below.
+            return ContinueSentinel;
+          }
+        }
+
+        context.method = "throw";
+        context.arg = new TypeError(
+          "The iterator does not provide a 'throw' method");
+      }
+
+      return ContinueSentinel;
+    }
+
+    var record = tryCatch(method, delegate.iterator, context.arg);
+
+    if (record.type === "throw") {
+      context.method = "throw";
+      context.arg = record.arg;
+      context.delegate = null;
+      return ContinueSentinel;
+    }
+
+    var info = record.arg;
+
+    if (! info) {
+      context.method = "throw";
+      context.arg = new TypeError("iterator result is not an object");
+      context.delegate = null;
+      return ContinueSentinel;
+    }
+
+    if (info.done) {
+      // Assign the result of the finished delegate to the temporary
+      // variable specified by delegate.resultName (see delegateYield).
+      context[delegate.resultName] = info.value;
+
+      // Resume execution at the desired location (see delegateYield).
+      context.next = delegate.nextLoc;
+
+      // If context.method was "throw" but the delegate handled the
+      // exception, let the outer generator proceed normally. If
+      // context.method was "next", forget context.arg since it has been
+      // "consumed" by the delegate iterator. If context.method was
+      // "return", allow the original .return call to continue in the
+      // outer generator.
+      if (context.method !== "return") {
+        context.method = "next";
+        context.arg = undefined;
+      }
+
+    } else {
+      // Re-yield the result returned by the delegate method.
+      return info;
+    }
+
+    // The delegate iterator is finished, so forget it and continue with
+    // the outer generator.
+    context.delegate = null;
+    return ContinueSentinel;
+  }
+
+  // Define Generator.prototype.{next,throw,return} in terms of the
+  // unified ._invoke helper method.
+  defineIteratorMethods(Gp);
+
+  Gp[toStringTagSymbol] = "Generator";
+
+  // A Generator should always return itself as the iterator object when the
+  // @@iterator function is called on it. Some browsers' implementations of the
+  // iterator prototype chain incorrectly implement this, causing the Generator
+  // object to not be returned from this call. This ensures that doesn't happen.
+  // See https://github.com/facebook/regenerator/issues/274 for more details.
+  Gp[iteratorSymbol] = function() {
+    return this;
+  };
+
+  Gp.toString = function() {
+    return "[object Generator]";
+  };
+
+  function pushTryEntry(locs) {
+    var entry = { tryLoc: locs[0] };
+
+    if (1 in locs) {
+      entry.catchLoc = locs[1];
+    }
+
+    if (2 in locs) {
+      entry.finallyLoc = locs[2];
+      entry.afterLoc = locs[3];
+    }
+
+    this.tryEntries.push(entry);
+  }
+
+  function resetTryEntry(entry) {
+    var record = entry.completion || {};
+    record.type = "normal";
+    delete record.arg;
+    entry.completion = record;
+  }
+
+  function Context(tryLocsList) {
+    // The root entry object (effectively a try statement without a catch
+    // or a finally block) gives us a place to store values thrown from
+    // locations where there is no enclosing try statement.
+    this.tryEntries = [{ tryLoc: "root" }];
+    tryLocsList.forEach(pushTryEntry, this);
+    this.reset(true);
+  }
+
+  runtime.keys = function(object) {
+    var keys = [];
+    for (var key in object) {
+      keys.push(key);
+    }
+    keys.reverse();
+
+    // Rather than returning an object with a next method, we keep
+    // things simple and return the next function itself.
+    return function next() {
+      while (keys.length) {
+        var key = keys.pop();
+        if (key in object) {
+          next.value = key;
+          next.done = false;
+          return next;
+        }
+      }
+
+      // To avoid creating an additional object, we just hang the .value
+      // and .done properties off the next function object itself. This
+      // also ensures that the minifier will not anonymize the function.
+      next.done = true;
+      return next;
+    };
+  };
+
+  function values(iterable) {
+    if (iterable) {
+      var iteratorMethod = iterable[iteratorSymbol];
+      if (iteratorMethod) {
+        return iteratorMethod.call(iterable);
+      }
+
+      if (typeof iterable.next === "function") {
+        return iterable;
+      }
+
+      if (!isNaN(iterable.length)) {
+        var i = -1, next = function next() {
+          while (++i < iterable.length) {
+            if (hasOwn.call(iterable, i)) {
+              next.value = iterable[i];
+              next.done = false;
+              return next;
+            }
+          }
+
+          next.value = undefined;
+          next.done = true;
+
+          return next;
+        };
+
+        return next.next = next;
+      }
+    }
+
+    // Return an iterator with no values.
+    return { next: doneResult };
+  }
+  runtime.values = values;
+
+  function doneResult() {
+    return { value: undefined, done: true };
+  }
+
+  Context.prototype = {
+    constructor: Context,
+
+    reset: function(skipTempReset) {
+      this.prev = 0;
+      this.next = 0;
+      // Resetting context._sent for legacy support of Babel's
+      // function.sent implementation.
+      this.sent = this._sent = undefined;
+      this.done = false;
+      this.delegate = null;
+
+      this.method = "next";
+      this.arg = undefined;
+
+      this.tryEntries.forEach(resetTryEntry);
+
+      if (!skipTempReset) {
+        for (var name in this) {
+          // Not sure about the optimal order of these conditions:
+          if (name.charAt(0) === "t" &&
+              hasOwn.call(this, name) &&
+              !isNaN(+name.slice(1))) {
+            this[name] = undefined;
+          }
+        }
+      }
+    },
+
+    stop: function() {
+      this.done = true;
+
+      var rootEntry = this.tryEntries[0];
+      var rootRecord = rootEntry.completion;
+      if (rootRecord.type === "throw") {
+        throw rootRecord.arg;
+      }
+
+      return this.rval;
+    },
+
+    dispatchException: function(exception) {
+      if (this.done) {
+        throw exception;
+      }
+
+      var context = this;
+      function handle(loc, caught) {
+        record.type = "throw";
+        record.arg = exception;
+        context.next = loc;
+
+        if (caught) {
+          // If the dispatched exception was caught by a catch block,
+          // then let that catch block handle the exception normally.
+          context.method = "next";
+          context.arg = undefined;
+        }
+
+        return !! caught;
+      }
+
+      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+        var entry = this.tryEntries[i];
+        var record = entry.completion;
+
+        if (entry.tryLoc === "root") {
+          // Exception thrown outside of any try block that could handle
+          // it, so set the completion value of the entire function to
+          // throw the exception.
+          return handle("end");
+        }
+
+        if (entry.tryLoc <= this.prev) {
+          var hasCatch = hasOwn.call(entry, "catchLoc");
+          var hasFinally = hasOwn.call(entry, "finallyLoc");
+
+          if (hasCatch && hasFinally) {
+            if (this.prev < entry.catchLoc) {
+              return handle(entry.catchLoc, true);
+            } else if (this.prev < entry.finallyLoc) {
+              return handle(entry.finallyLoc);
+            }
+
+          } else if (hasCatch) {
+            if (this.prev < entry.catchLoc) {
+              return handle(entry.catchLoc, true);
+            }
+
+          } else if (hasFinally) {
+            if (this.prev < entry.finallyLoc) {
+              return handle(entry.finallyLoc);
+            }
+
+          } else {
+            throw new Error("try statement without catch or finally");
+          }
+        }
+      }
+    },
+
+    abrupt: function(type, arg) {
+      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+        var entry = this.tryEntries[i];
+        if (entry.tryLoc <= this.prev &&
+            hasOwn.call(entry, "finallyLoc") &&
+            this.prev < entry.finallyLoc) {
+          var finallyEntry = entry;
+          break;
+        }
+      }
+
+      if (finallyEntry &&
+          (type === "break" ||
+           type === "continue") &&
+          finallyEntry.tryLoc <= arg &&
+          arg <= finallyEntry.finallyLoc) {
+        // Ignore the finally entry if control is not jumping to a
+        // location outside the try/catch block.
+        finallyEntry = null;
+      }
+
+      var record = finallyEntry ? finallyEntry.completion : {};
+      record.type = type;
+      record.arg = arg;
+
+      if (finallyEntry) {
+        this.method = "next";
+        this.next = finallyEntry.finallyLoc;
+        return ContinueSentinel;
+      }
+
+      return this.complete(record);
+    },
+
+    complete: function(record, afterLoc) {
+      if (record.type === "throw") {
+        throw record.arg;
+      }
+
+      if (record.type === "break" ||
+          record.type === "continue") {
+        this.next = record.arg;
+      } else if (record.type === "return") {
+        this.rval = this.arg = record.arg;
+        this.method = "return";
+        this.next = "end";
+      } else if (record.type === "normal" && afterLoc) {
+        this.next = afterLoc;
+      }
+
+      return ContinueSentinel;
+    },
+
+    finish: function(finallyLoc) {
+      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+        var entry = this.tryEntries[i];
+        if (entry.finallyLoc === finallyLoc) {
+          this.complete(entry.completion, entry.afterLoc);
+          resetTryEntry(entry);
+          return ContinueSentinel;
+        }
+      }
+    },
+
+    "catch": function(tryLoc) {
+      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+        var entry = this.tryEntries[i];
+        if (entry.tryLoc === tryLoc) {
+          var record = entry.completion;
+          if (record.type === "throw") {
+            var thrown = record.arg;
+            resetTryEntry(entry);
+          }
+          return thrown;
+        }
+      }
+
+      // The context.catch method must only be called with a location
+      // argument that corresponds to a known catch block.
+      throw new Error("illegal catch attempt");
+    },
+
+    delegateYield: function(iterable, resultName, nextLoc) {
+      this.delegate = {
+        iterator: values(iterable),
+        resultName: resultName,
+        nextLoc: nextLoc
+      };
+
+      if (this.method === "next") {
+        // Deliberately forget the last sent value so that we don't
+        // accidentally pass it on to the delegate.
+        this.arg = undefined;
+      }
+
+      return ContinueSentinel;
+    }
+  };
+})(
+  // In sloppy mode, unbound `this` refers to the global object, fallback to
+  // Function constructor if we're in global strict mode. That is sadly a form
+  // of indirect eval which violates Content Security Policy.
+  (function() {
+    return this || (typeof self === "object" && self);
+  })() || Function("return this")()
+);
+
+
+/***/ }),
+
+/***/ 16:
 /*!************************************************************!*\
   !*** /Users/bing/lhbWordMiniProgram_uni/utils/cryptojs.js ***!
   \************************************************************/
@@ -4459,7 +5477,7 @@ module.exports = CryptoJS;
 
 /***/ }),
 
-/***/ 16:
+/***/ 19:
 /*!**********************************************************************************************************!*\
   !*** ./node_modules/@dcloudio/vue-cli-plugin-uni/packages/vue-loader/lib/runtime/componentNormalizer.js ***!
   \**********************************************************************************************************/
@@ -4585,246 +5603,6 @@ function normalizeComponent (
   }
 }
 
-
-/***/ }),
-
-/***/ 196:
-/*!****************************************************************!*\
-  !*** /Users/bing/lhbWordMiniProgram_uni/utils/canvas-share.js ***!
-  \****************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-/* WEBPACK VAR INJECTION */(function(wx) {function _createForOfIteratorHelper(o) {if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {if (Array.isArray(o) || (o = _unsupportedIterableToArray(o))) {var i = 0;var F = function F() {};return { s: F, n: function n() {if (i >= o.length) return { done: true };return { done: false, value: o[i++] };}, e: function e(_e) {throw _e;}, f: F };}throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");}var it,normalCompletion = true,didErr = false,err;return { s: function s() {it = o[Symbol.iterator]();}, n: function n() {var step = it.next();normalCompletion = step.done;return step;}, e: function e(_e2) {didErr = true;err = _e2;}, f: function f() {try {if (!normalCompletion && it.return != null) it.return();} finally {if (didErr) throw err;}} };}function _unsupportedIterableToArray(o, minLen) {if (!o) return;if (typeof o === "string") return _arrayLikeToArray(o, minLen);var n = Object.prototype.toString.call(o).slice(8, -1);if (n === "Object" && o.constructor) n = o.constructor.name;if (n === "Map" || n === "Set") return Array.from(n);if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);}function _arrayLikeToArray(arr, len) {if (len == null || len > arr.length) len = arr.length;for (var i = 0, arr2 = new Array(len); i < len; i++) {arr2[i] = arr[i];}return arr2;}var lineHeight = 20;
-var windowWidth;
-var windowHeight;
-var offset;
-var contentHeight;
-/***** */
-
-/*****邀请分享图 */
-
-function getInviteImg(qr) {
-  var avatarurl_width = 60; //绘制的头像宽度
-
-  var avatarurl_heigth = 60; //绘制的头像高度
-
-  var that = this;
-  wx.getSystemInfo({
-    success: function success(res) {
-      windowWidth = res.windowWidth;
-      windowHeight = res.windowHeight;
-      offset = res.windowWidth * 0.25 / 2;
-    } });
-
-  var ctx = wx.createCanvasContext('myCanvas');
-  var contentHeight = windowHeight;
-  ctx.rect(0, 0, windowWidth, contentHeight);
-  ctx.setFillStyle("pink");
-  ctx.fill();
-  ctx.drawImage("/static/image/icon/zhuli.jpg", 0, 0, windowWidth, windowHeight * 0.56); //底部
-  //ctx.rect(20, windowHeight-200, windowWidth * 0.7, windowHeight - 440);
-  // ctx.setFillStyle('pink')
-  // ctx.setFillStyle("pink");  
-  // ctx.rect(0, windowHeight*0.55 , windowHeight, 100)
-  // ctx.fill()
-
-  ctx.setFillStyle('black');
-  ctx.setFontSize(12);
-  ctx.fillText('我正在听刘洪波讲单词故事', 30, windowHeight - 230);
-  ctx.fillText('帮我点个赞吧', 30, windowHeight - 210);
-  ctx.setFontSize(8);
-  ctx.setFillStyle('#333');
-  ctx.fillText('长按识别二维码为单唱点赞', 30, windowHeight - 190);
-  ctx.drawImage("/static/image/think.png", windowWidth * 0.7, windowHeight * 0.56, 80, 80);
-  ctx.save(); // // Draw coordinates
-
-  var avatarurl_x = 40; //绘制的头像在画布上的位置
-
-  var avatarurl_y = windowHeight * 0.5; //绘制的头像在画布上的位置
-  //ctx.arc(avatarurl_width / 2 + avatarurl_x, avatarurl_heigth / 2 + avatarurl_y, avatarurl_width / 2, 0, Math.PI * 2)
-  //ctx.setFillStyle('#fff')
-  //ctx.fill();
-  //ctx.clip()
-
-  ctx.drawImage('https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJTRwcfGSQYQ57ZeWI6LxhwpxyJBibvI1WZKkuKZqTqvtBDRLPFYmYNNs1EQFtM2Wz5lHjbz1eiaUhA/132', avatarurl_x, avatarurl_y, avatarurl_width, avatarurl_heigth);
-  ctx.restore();
-  ctx.draw();
-  return contentHeight;
-} //设置文字大小，并填充颜色。
-
-
-function drawFont(ctx, content, height, size, offset, color) {
-  ctx.setFontSize(size);
-  ctx.setFillStyle(color);
-  ctx.fillText(content, offset, height);
-}
-/***单词分享图 */
-
-
-function getData(that) {var title = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';var desc = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';var content = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';var listenNum = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;var url = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : '';
-  wx.getSystemInfo({
-    success: function success(res) {
-      windowWidth = res.windowWidth;
-      windowHeight = res.windowHeight;
-      offset = res.windowWidth * 0.25 / 2;
-    } });
-
-  var i = 0;
-  var lineNum = 1;
-  var thinkStr = '';
-  var filterList = [];
-  var thinkList = [];
-  var pattern = new RegExp('<p.*?>(.*?)<\/p>', 'gi');
-  var pattenContent = content.match(pattern); // for (let i in pattenContent){
-  //   thinkList.push(pattenContent[i].replace(/<[^>]+>/g, ""));
-  //   lineNum += 1;
-  // }
-
-  for (var _i in pattenContent) {
-    filterList.push(pattenContent[_i].replace(/<[^>]+>/g, ""));
-  }
-
-  var fialContent = filterList.join('') + '\n';var _iterator = _createForOfIteratorHelper(
-
-  fialContent),_step;try {for (_iterator.s(); !(_step = _iterator.n()).done;) {var item = _step.value;
-      if (item === '\n') {
-        thinkList.push(thinkStr);
-        thinkList.push('a');
-        i = 0;
-        thinkStr = '';
-        lineNum += 1;
-      } else if (i === 20) {
-        thinkList.push(thinkStr);
-        i = 1;
-        thinkStr = item;
-        lineNum += 1;
-      } else {
-        thinkStr += item;
-        i += 1;
-      }
-    } // thinkList.push(thinkStr);
-  } catch (err) {_iterator.e(err);} finally {_iterator.f();}
-
-  createNewImg(lineNum, title, desc, thinkList, listenNum, url);
-  return windowHeight - 50;
-} //画矩形，也是整块画布的大小，宽度是屏幕宽度，高度根据内容多少来动态设置。
-
-
-function drawSquare(ctx, height) {
-  ctx.rect(0, 0, windowWidth, height);
-  ctx.setFillStyle("#00BAA2");
-  ctx.fill();
-} //画线。
-
-
-function drawLine(ctx, height) {
-  ctx.beginPath();
-  ctx.moveTo(offset, height);
-  ctx.lineTo(windowWidth - offset, height);
-  ctx.stroke('#eee');
-  ctx.closePath();
-}
-
-function drawWhiteSquare(ctx, height) {
-  ctx.rect(20, windowWidth * 0.18, windowWidth * 0.89, height);
-  ctx.setFillStyle("#fff");
-  ctx.fill();
-}
-
-function drawListenFont(ctx, content, height, size) {
-  ctx.setFontSize(size);
-  ctx.setFillStyle("#999999");
-  ctx.fillText(content, windowWidth * 0.72, height);
-}
-
-function getImageInfo(url) {
-  var cache;
-  return new Promise(function (resolve, reject) {
-    if (cache) {
-      resolve(cache);
-    } else {
-      var objExp = new RegExp(/^http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?/);
-
-      if (objExp.test(url)) {
-        wx.getImageInfo({
-          src: url,
-          complete: function complete(res) {
-            if (res.errMsg === 'getImageInfo:ok') {
-              cache = res.path;
-              resolve(res.path);
-            } else {}
-          } });
-
-      } else {
-        cache = url;
-        resolve(url);
-      }
-    }
-  });
-  return cache;
-} //根据文字多少动态计算高度，然后依次画出矩形，文字，横线和小程序码。
-
-
-function createNewImg(lineNum, title, desc, thinkList, listenNum, url) {
-  var that = this;
-  var ctx = wx.createCanvasContext('myCanvas'); // contentHeight = lineNum * lineHeight + 500;
-
-  contentHeight = windowHeight;
-  drawSquare(ctx, windowHeight); //logo
-
-  ctx.drawImage("/static/image/icon/img_sharecard_white_logo.png", 20, windowHeight * 0.02, windowWidth * 0.25, windowHeight * 0.06);
-  drawLine(ctx, lineNum * lineHeight + 120); //text
-
-  drawFont(ctx, '英语真经派 学为贵出品', windowHeight * 0.062, 12, windowWidth * 0.6, '#fff'); //白底
-
-  drawWhiteSquare(ctx, windowHeight * 0.66); //banner图
-
-  var imgUrl = 'https' + url.substring(4);
-  console.log(imgUrl);
-  wx.downloadFile({
-    url: "https://uimg.gximg.cn/v/words/liuhongbo/images/201807/3.png",
-    success: function success(res) {
-      wx.setStorageSync('tmpPath', res.tempFilePath);
-      tmpPath = res.tempFilePath;
-      console.log(res); //ctx.drawImage(res.tempFilePath, 20, windowHeight * 0.11, windowWidth * 0.89, contentHeight * 0.3);
-    } });
-
-  var tmpPath = wx.getStorageInfoSync('tmpPath');
-  console.log(tmpPath);
-  ctx.drawImage(tmpPath, 20, windowHeight * 0.11, windowWidth * 0.89, contentHeight * 0.3);
-  var text_word_height = 300; // drawListenFont(ctx, listenNum + '人收听', text_word_height, 12);
-
-  if (title.length > 0) {
-    drawFont(ctx, title, text_word_height, 19, offset, '#666666');
-    var descHeight = text_word_height + 25;
-  } else {
-    var descHeight = text_word_height;
-  }
-
-  drawFont(ctx, desc, descHeight, 19, offset, '#666666');
-  var height = text_word_height + 50;
-  ctx.setFontSize(15);var _iterator2 = _createForOfIteratorHelper(
-
-  thinkList),_step2;try {for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {var item = _step2.value;
-      if (item !== 'a') {
-        drawFont(ctx, item, height, 13, offset, '#666666');
-        height += lineHeight;
-      }
-    }} catch (err) {_iterator2.e(err);} finally {_iterator2.f();}
-
-  var author_height = contentHeight - 90;
-  drawFont(ctx, '刘洪波讲单词', author_height, 19, offset - 20, '#fff');
-  drawFont(ctx, '每个单词背后都有属于它的故事', author_height + 20, 12, offset - 20, '#fff'); //小程序码
-
-  ctx.drawImage("/static/image/icon/mini_qr.png", windowWidth * 0.77, author_height - 32, 66, 66);
-  ctx.draw();
-}
-
-module.exports = {
-  getData: getData,
-  getInviteImg: getInviteImg };
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-alipay/dist/index.js */ 1)["default"]))
 
 /***/ }),
 
@@ -10858,6 +11636,246 @@ internalMixin(Vue);
 
 /***/ }),
 
+/***/ 206:
+/*!****************************************************************!*\
+  !*** /Users/bing/lhbWordMiniProgram_uni/utils/canvas-share.js ***!
+  \****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(wx) {function _createForOfIteratorHelper(o) {if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {if (Array.isArray(o) || (o = _unsupportedIterableToArray(o))) {var i = 0;var F = function F() {};return { s: F, n: function n() {if (i >= o.length) return { done: true };return { done: false, value: o[i++] };}, e: function e(_e) {throw _e;}, f: F };}throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");}var it,normalCompletion = true,didErr = false,err;return { s: function s() {it = o[Symbol.iterator]();}, n: function n() {var step = it.next();normalCompletion = step.done;return step;}, e: function e(_e2) {didErr = true;err = _e2;}, f: function f() {try {if (!normalCompletion && it.return != null) it.return();} finally {if (didErr) throw err;}} };}function _unsupportedIterableToArray(o, minLen) {if (!o) return;if (typeof o === "string") return _arrayLikeToArray(o, minLen);var n = Object.prototype.toString.call(o).slice(8, -1);if (n === "Object" && o.constructor) n = o.constructor.name;if (n === "Map" || n === "Set") return Array.from(n);if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);}function _arrayLikeToArray(arr, len) {if (len == null || len > arr.length) len = arr.length;for (var i = 0, arr2 = new Array(len); i < len; i++) {arr2[i] = arr[i];}return arr2;}var lineHeight = 20;
+var windowWidth;
+var windowHeight;
+var offset;
+var contentHeight;
+/***** */
+
+/*****邀请分享图 */
+
+function getInviteImg(qr) {
+  var avatarurl_width = 60; //绘制的头像宽度
+
+  var avatarurl_heigth = 60; //绘制的头像高度
+
+  var that = this;
+  wx.getSystemInfo({
+    success: function success(res) {
+      windowWidth = res.windowWidth;
+      windowHeight = res.windowHeight;
+      offset = res.windowWidth * 0.25 / 2;
+    } });
+
+  var ctx = wx.createCanvasContext('myCanvas');
+  var contentHeight = windowHeight;
+  ctx.rect(0, 0, windowWidth, contentHeight);
+  ctx.setFillStyle("pink");
+  ctx.fill();
+  ctx.drawImage("/static/image/icon/zhuli.jpg", 0, 0, windowWidth, windowHeight * 0.56); //底部
+  //ctx.rect(20, windowHeight-200, windowWidth * 0.7, windowHeight - 440);
+  // ctx.setFillStyle('pink')
+  // ctx.setFillStyle("pink");  
+  // ctx.rect(0, windowHeight*0.55 , windowHeight, 100)
+  // ctx.fill()
+
+  ctx.setFillStyle('black');
+  ctx.setFontSize(12);
+  ctx.fillText('我正在听刘洪波讲单词故事', 30, windowHeight - 230);
+  ctx.fillText('帮我点个赞吧', 30, windowHeight - 210);
+  ctx.setFontSize(8);
+  ctx.setFillStyle('#333');
+  ctx.fillText('长按识别二维码为单唱点赞', 30, windowHeight - 190);
+  ctx.drawImage("/static/image/think.png", windowWidth * 0.7, windowHeight * 0.56, 80, 80);
+  ctx.save(); // // Draw coordinates
+
+  var avatarurl_x = 40; //绘制的头像在画布上的位置
+
+  var avatarurl_y = windowHeight * 0.5; //绘制的头像在画布上的位置
+  //ctx.arc(avatarurl_width / 2 + avatarurl_x, avatarurl_heigth / 2 + avatarurl_y, avatarurl_width / 2, 0, Math.PI * 2)
+  //ctx.setFillStyle('#fff')
+  //ctx.fill();
+  //ctx.clip()
+
+  ctx.drawImage('https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJTRwcfGSQYQ57ZeWI6LxhwpxyJBibvI1WZKkuKZqTqvtBDRLPFYmYNNs1EQFtM2Wz5lHjbz1eiaUhA/132', avatarurl_x, avatarurl_y, avatarurl_width, avatarurl_heigth);
+  ctx.restore();
+  ctx.draw();
+  return contentHeight;
+} //设置文字大小，并填充颜色。
+
+
+function drawFont(ctx, content, height, size, offset, color) {
+  ctx.setFontSize(size);
+  ctx.setFillStyle(color);
+  ctx.fillText(content, offset, height);
+}
+/***单词分享图 */
+
+
+function getData(that) {var title = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';var desc = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';var content = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';var listenNum = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;var url = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : '';
+  wx.getSystemInfo({
+    success: function success(res) {
+      windowWidth = res.windowWidth;
+      windowHeight = res.windowHeight;
+      offset = res.windowWidth * 0.25 / 2;
+    } });
+
+  var i = 0;
+  var lineNum = 1;
+  var thinkStr = '';
+  var filterList = [];
+  var thinkList = [];
+  var pattern = new RegExp('<p.*?>(.*?)<\/p>', 'gi');
+  var pattenContent = content.match(pattern); // for (let i in pattenContent){
+  //   thinkList.push(pattenContent[i].replace(/<[^>]+>/g, ""));
+  //   lineNum += 1;
+  // }
+
+  for (var _i in pattenContent) {
+    filterList.push(pattenContent[_i].replace(/<[^>]+>/g, ""));
+  }
+
+  var fialContent = filterList.join('') + '\n';var _iterator = _createForOfIteratorHelper(
+
+  fialContent),_step;try {for (_iterator.s(); !(_step = _iterator.n()).done;) {var item = _step.value;
+      if (item === '\n') {
+        thinkList.push(thinkStr);
+        thinkList.push('a');
+        i = 0;
+        thinkStr = '';
+        lineNum += 1;
+      } else if (i === 20) {
+        thinkList.push(thinkStr);
+        i = 1;
+        thinkStr = item;
+        lineNum += 1;
+      } else {
+        thinkStr += item;
+        i += 1;
+      }
+    } // thinkList.push(thinkStr);
+  } catch (err) {_iterator.e(err);} finally {_iterator.f();}
+
+  createNewImg(lineNum, title, desc, thinkList, listenNum, url);
+  return windowHeight - 50;
+} //画矩形，也是整块画布的大小，宽度是屏幕宽度，高度根据内容多少来动态设置。
+
+
+function drawSquare(ctx, height) {
+  ctx.rect(0, 0, windowWidth, height);
+  ctx.setFillStyle("#00BAA2");
+  ctx.fill();
+} //画线。
+
+
+function drawLine(ctx, height) {
+  ctx.beginPath();
+  ctx.moveTo(offset, height);
+  ctx.lineTo(windowWidth - offset, height);
+  ctx.stroke('#eee');
+  ctx.closePath();
+}
+
+function drawWhiteSquare(ctx, height) {
+  ctx.rect(20, windowWidth * 0.18, windowWidth * 0.89, height);
+  ctx.setFillStyle("#fff");
+  ctx.fill();
+}
+
+function drawListenFont(ctx, content, height, size) {
+  ctx.setFontSize(size);
+  ctx.setFillStyle("#999999");
+  ctx.fillText(content, windowWidth * 0.72, height);
+}
+
+function getImageInfo(url) {
+  var cache;
+  return new Promise(function (resolve, reject) {
+    if (cache) {
+      resolve(cache);
+    } else {
+      var objExp = new RegExp(/^http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?/);
+
+      if (objExp.test(url)) {
+        wx.getImageInfo({
+          src: url,
+          complete: function complete(res) {
+            if (res.errMsg === 'getImageInfo:ok') {
+              cache = res.path;
+              resolve(res.path);
+            } else {}
+          } });
+
+      } else {
+        cache = url;
+        resolve(url);
+      }
+    }
+  });
+  return cache;
+} //根据文字多少动态计算高度，然后依次画出矩形，文字，横线和小程序码。
+
+
+function createNewImg(lineNum, title, desc, thinkList, listenNum, url) {
+  var that = this;
+  var ctx = wx.createCanvasContext('myCanvas'); // contentHeight = lineNum * lineHeight + 500;
+
+  contentHeight = windowHeight;
+  drawSquare(ctx, windowHeight); //logo
+
+  ctx.drawImage("/static/image/icon/img_sharecard_white_logo.png", 20, windowHeight * 0.02, windowWidth * 0.25, windowHeight * 0.06);
+  drawLine(ctx, lineNum * lineHeight + 120); //text
+
+  drawFont(ctx, '英语真经派 学为贵出品', windowHeight * 0.062, 12, windowWidth * 0.6, '#fff'); //白底
+
+  drawWhiteSquare(ctx, windowHeight * 0.66); //banner图
+
+  var imgUrl = 'https' + url.substring(4);
+  console.log(imgUrl);
+  wx.downloadFile({
+    url: "https://uimg.gximg.cn/v/words/liuhongbo/images/201807/3.png",
+    success: function success(res) {
+      wx.setStorageSync('tmpPath', res.tempFilePath);
+      tmpPath = res.tempFilePath;
+      console.log(res); //ctx.drawImage(res.tempFilePath, 20, windowHeight * 0.11, windowWidth * 0.89, contentHeight * 0.3);
+    } });
+
+  var tmpPath = wx.getStorageInfoSync('tmpPath');
+  console.log(tmpPath);
+  ctx.drawImage(tmpPath, 20, windowHeight * 0.11, windowWidth * 0.89, contentHeight * 0.3);
+  var text_word_height = 300; // drawListenFont(ctx, listenNum + '人收听', text_word_height, 12);
+
+  if (title.length > 0) {
+    drawFont(ctx, title, text_word_height, 19, offset, '#666666');
+    var descHeight = text_word_height + 25;
+  } else {
+    var descHeight = text_word_height;
+  }
+
+  drawFont(ctx, desc, descHeight, 19, offset, '#666666');
+  var height = text_word_height + 50;
+  ctx.setFontSize(15);var _iterator2 = _createForOfIteratorHelper(
+
+  thinkList),_step2;try {for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {var item = _step2.value;
+      if (item !== 'a') {
+        drawFont(ctx, item, height, 13, offset, '#666666');
+        height += lineHeight;
+      }
+    }} catch (err) {_iterator2.e(err);} finally {_iterator2.f();}
+
+  var author_height = contentHeight - 90;
+  drawFont(ctx, '刘洪波讲单词', author_height, 19, offset - 20, '#fff');
+  drawFont(ctx, '每个单词背后都有属于它的故事', author_height + 20, 12, offset - 20, '#fff'); //小程序码
+
+  ctx.drawImage("/static/image/icon/mini_qr.png", windowWidth * 0.77, author_height - 32, 66, 66);
+  ctx.draw();
+}
+
+module.exports = {
+  getData: getData,
+  getInviteImg: getInviteImg };
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-alipay/dist/index.js */ 1)["default"]))
+
+/***/ }),
+
 /***/ 3:
 /*!***********************************!*\
   !*** (webpack)/buildin/global.js ***!
@@ -10889,7 +11907,7 @@ module.exports = g;
 
 /***/ }),
 
-/***/ 31:
+/***/ 34:
 /*!*******************************************************!*\
   !*** /Users/bing/lhbWordMiniProgram_uni/utils/md5.js ***!
   \*******************************************************/
@@ -11146,7 +12164,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 40:
+/***/ 43:
 /*!****************************************************************!*\
   !*** /Users/bing/lhbWordMiniProgram_uni/utils/displayUtils.js ***!
   \****************************************************************/
@@ -11178,171 +12196,6 @@ function showsToast(showTitle, showIcon, showDuration) {
 
 module.exports = {
   showsToast: showsToast };
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-alipay/dist/index.js */ 1)["default"]))
-
-/***/ }),
-
-/***/ 49:
-/*!*************************************************************!*\
-  !*** /Users/bing/lhbWordMiniProgram_uni/utils/enterHelp.js ***!
-  \*************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-/* WEBPACK VAR INJECTION */(function(wx) {var util = __webpack_require__(/*! ./util.js */ 12);
-
-function enterWithDic(dic) {
-  console.log(dic.product_type);
-
-  if (dic.appid) {
-    wx.navigateToMiniProgram({
-      appId: dic.appid,
-      envVersion: 'release',
-
-      success: function success(res) {// 打开成功
-      } });
-
-
-  } else {
-    var url = encodeURIComponent(dic.url);
-    console.log('dic', dic);
-
-    switch (dic.product_type) {
-      case '2':
-        //入门真经
-        wx.navigateTo({
-          url: '../course/course?url=' + url });
-
-        break;
-
-      case '3':
-        // 课程详情界面
-        wx.navigateTo({
-          url: '../courseDetail/courseDetail?url=' + url });
-
-        break;
-
-      case '22':
-        //会员
-        wx.navigateTo({
-          url: '../myVip/myVip?url=' + url });
-
-        break;
-
-      case '30':
-        // 我的订单
-        wx.navigateTo({
-          url: '../order/myOrder' });
-
-        break;
-
-      case '32':
-        //绑定手机号
-        wx.navigateTo({
-          url: '../login/bindingPhone' });
-
-        break;
-
-      case '34':
-        //更换手机号
-        wx.navigateTo({
-          url: '../login/changePhone' });
-
-        break;
-
-      case '231':
-        //直播间
-        if (!util.isLogin()) {
-          wx.navigateTo({
-            url: '../login/login' });
-
-        } else {
-          wx.navigateTo({
-            url: '../livevc/livevc?url=' + url });
-
-        }
-
-        break;
-
-      case '239':
-        //回放
-        if (!util.isLogin()) {
-          wx.navigateTo({
-            url: '../login/login' });
-
-        } else {
-          wx.navigateTo({
-            url: '../livevc/vodvc?url=' + url });
-
-        }
-
-        break;
-
-      case '310':
-        // 确认订单界面
-        var system = wx.getSystemInfoSync().system;
-
-        if (system.indexOf('iOS') >= 0) {
-          wx.showModal({
-            title: '前往雅思学为贵APP进行购买',
-            content: '基于微信小程序平台运营规范，小程序暂不支持购买，请前往学为贵雅思APP完成购买',
-            showCancel: false,
-            confirmText: '知道了' });
-
-        } else {
-          wx.navigateTo({
-            url: '../order/order?url=' + url });
-
-        }
-
-        break;
-
-      case '9100':
-        //我的课程
-        wx.navigateTo({
-          url: '../myCourse/myCourse?url=' + url });
-
-        break;
-
-      case '9998':
-        //跳转音频(活动需要,结束可删除)
-        wx.navigateTo({
-          url: '../audio/audio' });
-
-        break;
-
-      case '9999':
-        wx.navigateTo({
-          url: '../webview/webview?url=' + url });
-
-        break;
-
-      default:
-        var urls = decodeURIComponent(url);
-
-        if (urls.indexOf('isrank') !== -1) {
-          console.log('is test count', urls, getQueryString(urls, 'id'));
-          util.updateHot(wx.getStorageSync('userinfo')['uid'] || 0, getQueryString(urls, 'id'), 0, 4);
-        }
-
-        wx.navigateTo({
-          url: urls });
-
-        break;}
-
-  }
-}
-
-function getQueryString(url, name) {
-  var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-  var r = url.substr(1).match(reg); //search,查询？后面的参数，并匹配正则
-
-  if (r != null) return unescape(r[2]);
-  return null;
-}
-
-module.exports = {
-  enterWithDic: enterWithDic };
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-alipay/dist/index.js */ 1)["default"]))
 
 /***/ }),
@@ -12230,6 +13083,171 @@ function main() {
 }
 
 main();
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-alipay/dist/index.js */ 1)["default"]))
+
+/***/ }),
+
+/***/ 52:
+/*!*************************************************************!*\
+  !*** /Users/bing/lhbWordMiniProgram_uni/utils/enterHelp.js ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(wx) {var util = __webpack_require__(/*! ./util.js */ 12);
+
+function enterWithDic(dic) {
+  console.log(dic.product_type);
+
+  if (dic.appid) {
+    wx.navigateToMiniProgram({
+      appId: dic.appid,
+      envVersion: 'release',
+
+      success: function success(res) {// 打开成功
+      } });
+
+
+  } else {
+    var url = encodeURIComponent(dic.url);
+    console.log('dic', dic);
+
+    switch (dic.product_type) {
+      case '2':
+        //入门真经
+        wx.navigateTo({
+          url: '../course/course?url=' + url });
+
+        break;
+
+      case '3':
+        // 课程详情界面
+        wx.navigateTo({
+          url: '../courseDetail/courseDetail?url=' + url });
+
+        break;
+
+      case '22':
+        //会员
+        wx.navigateTo({
+          url: '../myVip/myVip?url=' + url });
+
+        break;
+
+      case '30':
+        // 我的订单
+        wx.navigateTo({
+          url: '../order/myOrder' });
+
+        break;
+
+      case '32':
+        //绑定手机号
+        wx.navigateTo({
+          url: '../login/bindingPhone' });
+
+        break;
+
+      case '34':
+        //更换手机号
+        wx.navigateTo({
+          url: '../login/changePhone' });
+
+        break;
+
+      case '231':
+        //直播间
+        if (!util.isLogin()) {
+          wx.navigateTo({
+            url: '../login/login' });
+
+        } else {
+          wx.navigateTo({
+            url: '../livevc/livevc?url=' + url });
+
+        }
+
+        break;
+
+      case '239':
+        //回放
+        if (!util.isLogin()) {
+          wx.navigateTo({
+            url: '../login/login' });
+
+        } else {
+          wx.navigateTo({
+            url: '../livevc/vodvc?url=' + url });
+
+        }
+
+        break;
+
+      case '310':
+        // 确认订单界面
+        var system = wx.getSystemInfoSync().system;
+
+        if (system.indexOf('iOS') >= 0) {
+          wx.showModal({
+            title: '前往雅思学为贵APP进行购买',
+            content: '基于微信小程序平台运营规范，小程序暂不支持购买，请前往学为贵雅思APP完成购买',
+            showCancel: false,
+            confirmText: '知道了' });
+
+        } else {
+          wx.navigateTo({
+            url: '../order/order?url=' + url });
+
+        }
+
+        break;
+
+      case '9100':
+        //我的课程
+        wx.navigateTo({
+          url: '../myCourse/myCourse?url=' + url });
+
+        break;
+
+      case '9998':
+        //跳转音频(活动需要,结束可删除)
+        wx.navigateTo({
+          url: '../audio/audio' });
+
+        break;
+
+      case '9999':
+        wx.navigateTo({
+          url: '../webview/webview?url=' + url });
+
+        break;
+
+      default:
+        var urls = decodeURIComponent(url);
+
+        if (urls.indexOf('isrank') !== -1) {
+          console.log('is test count', urls, getQueryString(urls, 'id'));
+          util.updateHot(wx.getStorageSync('userinfo')['uid'] || 0, getQueryString(urls, 'id'), 0, 4);
+        }
+
+        wx.navigateTo({
+          url: urls });
+
+        break;}
+
+  }
+}
+
+function getQueryString(url, name) {
+  var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+  var r = url.substr(1).match(reg); //search,查询？后面的参数，并匹配正则
+
+  if (r != null) return unescape(r[2]);
+  return null;
+}
+
+module.exports = {
+  enterWithDic: enterWithDic };
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-alipay/dist/index.js */ 1)["default"]))
 
 /***/ }),

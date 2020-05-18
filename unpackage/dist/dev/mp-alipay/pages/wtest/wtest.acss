@@ -14,7 +14,7 @@ page {
   padding: 0 48rpx 45rpx;
 }
 .test_question_type {
-  margin-top: 24rpx;
+  /* margin-top: 24rpx; */
   width: 100%;
   font-size: 32rpx;
   -webkit-box-sizing: border-box;
@@ -29,6 +29,7 @@ page {
   font-size: 60rpx;
   color: #fff;
   letter-spacing: 0.53rpx;
+  padding-top: 82rpx;
   /* line-height: 48rpx; */
   margin-bottom: 32rpx;
   text-align: center;
@@ -77,8 +78,8 @@ page {
   position: relative;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
-  border: 1px solid rgba(252, 249, 249, 0.4);
-  border-radius: 50px;
+  border: 1rpx solid rgba(252, 249, 249, 0.4);
+  border-radius: 50rpx;
   width: 100%;
   padding: 32rpx 64rpx;
   line-height: 48rpx;
@@ -99,17 +100,17 @@ page {
   line-height: 100rpx;
   font-size: 36rpx;
   color: #fff;
-  letter-spacing: 1.32px;
+  letter-spacing: 1.32rpx;
   margin-top: 64rpx;
 }
 .test_select {
   background:#24C783;
-  border-radius: 50px;
+  border-radius: 50rpx;
   color: #fff;
 }
 .test_error {
   background:#EE3F68;
-  border-radius: 50px;
+  border-radius: 50rpx;
   color: #fff;
 }
 .answer_icon image{

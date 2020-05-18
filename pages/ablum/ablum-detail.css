@@ -2,7 +2,7 @@
 @import "../../template/player-button/player-button.css";
 .ablum-detail-title {
   height: 80rpx;
-  margin-top: 34rpx;
+  padding-top: 34rpx;
   margin-left: 293rpx;
 }
 
@@ -24,10 +24,11 @@
 }
 
 .ablum-lock-view {
-  margin-top: 50rpx;
+  padding-top: 50rpx;
   display: flex;
   justify-content: center;
   align-items: center;
+  /* background: #5057CF; */
 }
 
 .ablum-lock-view-text {

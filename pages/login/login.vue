@@ -1,6 +1,6 @@
 <template>
 <view>
-<nav-bar :navbar-data="nvabarData"></nav-bar>
+<nav-bar v-if="!navBarHidden" :navbar-data="nvabarData"></nav-bar>
 <view class="container" style="background-color:white">
   <view class="inputView" style="margin-top:80rpx">
     <view class="title">手机号</view>
@@ -14,13 +14,13 @@
   </view>
   <view class="lineView"></view>
   <view class="loginBtn" @tap="loginClick">登录</view>
-<button class="thirdBtn" @tap="thirdClick" open-type="getUserInfo" @getuserinfo="getUserInfo">
+<!-- <button class="thirdBtn" @tap="thirdClick" open-type="getAuthorize" scope="userInfo" @onGetAuthorize="onGetAuthorize"  @getuserinfo="getUserInfo">
   <image src="/static/pages/images/weixin_icon.png" mode="aspectFit" style="width: 60rpx; height: 60rpx;"></image>
   <text class="loginText">微信登录</text>
-</button>
+</button> -->
 </view>
-<auth id="auth" ref="auth" :cfg="oauth_cfg" @oauthFailEvent="oauthFailEvent" @bindOkEvent="bindOkEvent" backdrop="false">
-</auth>
+<!-- <auth id="auth" ref="auth" :cfg="oauth_cfg" @oauthFailEvent="oauthFailEvent" @bindOkEvent="bindOkEvent" backdrop="false">
+</auth> -->
 </view>
 </template>
 
@@ -49,12 +49,13 @@ export default {
         showCapsule: 1,
         // 是否显示左上角胶囊按钮 1 显示 0 不显示
         title: '登录'
-      }
+      },
+	  navBarHidden:false//自定义菜单是否隐藏
     };
   },
 
   components: {
-    auth,
+    // auth,
     navBar
   },
   props: {},
@@ -72,12 +73,29 @@ export default {
     // this.oauthModal = this.selectComponent("#auth");
 	this.oauthModal = this.$refs.auth;
   },
+  onShow:function(){
+	  //自定义菜单隐藏判断
+	  if(getApp().globalData.g_app == 'alipay'){
+	  	this.setData({
+	  		navBarHidden: true
+	  	})
+	  }
+  },
   methods: {
     phoneInput: function (e) {
       this.setData({
         phoneNumber: e.detail.value
       });
     },
+	onGetAuthorize(res) {  
+	                 my.getOpenUserInfo({  
+	                  fail: (res) => {  
+	                  },  
+	                  success: (res) => {  
+	                    let userInfo = JSON.parse(res.response).response // 以下方的报文格式解析两层 response  
+	                  }  
+	                });  
+	},
     codeInput: function (e) {
       this.setData({
         codeNumber: e.detail.value
@@ -104,10 +122,12 @@ export default {
           mobile: that.phoneNumber,
           k: md5.hexMD5(keyStr)
         };
-        util.getRequest("https://passport.xueweigui.com/mobile/sendOnlyMobile", data, function (res) {
-          console.log(res.data);
+        util.getRequest("https://passport.xueweigui.com/mobile/sendOnlyMobile?bb=bb&db_cache=1", data, function (res) {
+          console.log(res);
 
           if (res.data.e == '9999') {
+			  wx.showToast({
+			   title: '发送成功' });
             that.codeStart();
           } else {
             wx.showToast({
@@ -139,8 +159,9 @@ export default {
     },
     //验证码登录
     loginClick: function () {
-      var that = this;
-
+      var that = this
+	  //alipay 授权
+	  //util.aliOauth();
       if (that.enable) {
         if (that.phoneNumber.length == 0) {
           wx.showToast({
@@ -171,20 +192,22 @@ export default {
             captcha: that.codeNumber
           };
           util.getRequest("https://passport.xueweigui.com/mobile/fastloginreg", data, function (res) {
-            wx.showToast({
-              title: '登录成功'
-            });
             console.log(res);
-
             if (res.data.e == '9999') {
+			  wx.showToast({
+			    title: '登录成功'
+			  });
               setTimeout(function () {
                 getApp().globalData.g_is_login = true;
-                util.saveCookie(res.header["Set-Cookie"]);
+				let cookieVal = res.header['Set-Cookie'] || res.header['set-cookie'];
+				console.log('cookie-save',cookieVal);
+				util.saveCookie(cookieVal);
+                //util.saveCookie(res.header["Set-Cookie"]);
                 wx.navigateBack();
               }, 1500);
             } else {
               wx.showToast({
-                title: res.data.m,
+                title: '手机号或验证码错误',
                 icon: 'none'
               });
             }
@@ -242,10 +265,20 @@ export default {
       console.log(data);
       util.getRequest("https://passport.xueweigui.com/mobile/oauthlogin?type=22", data, function (res) {
         console.log(res);
-
         if (res.data.e == '9999') {
-          util.saveCookie(res.header["Set-Cookie"]);
-          wx.navigateBack();
+			console.log('getApp().globalData.g_app',getApp().globalData.g_app);
+			let cookie_key = 'Set-Cookie';
+			let cookieVal = '';
+			if(getApp().globalData.g_app == 'alipay'){
+			   //cookie_key = 'set-cookie';
+			   //cookieVal = res.header[cookie_key][0];
+			} else {
+				cookieVal = res.header[cookie_key];
+			}
+			cookieVal = res.header[cookie_key];
+			console.log('set-cookie',cookieVal);
+			util.saveCookie(cookieVal);
+            wx.navigateBack();
         } else {
           wx.showToast({
             title: res.data.m,

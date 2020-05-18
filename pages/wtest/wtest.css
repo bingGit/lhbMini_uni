@@ -15,7 +15,7 @@ page {
 }
 
 .test_question_type {
-  margin-top: 24rpx;
+  /* margin-top: 24rpx; */
   width: 100%;
   font-size: 32rpx;
   box-sizing: border-box;
@@ -31,6 +31,7 @@ page {
   font-size: 60rpx;
   color: #fff;
   letter-spacing: 0.53rpx;
+  padding-top: 82rpx;
   /* line-height: 48rpx; */
   margin-bottom: 32rpx;
   text-align: center;

@@ -1,8 +1,8 @@
 <template>
 <view>
-<nav-bar :navbar-data="nvabarData"></nav-bar>
-<auth id="auth" :cfg="oauth_cfg" @oauthFailEvent="oauthFailEvent" @bindOkEvent="bindOkEvent" backdrop="false">
-</auth>
+<nav-bar  v-if="!navBarHidden" :navbar-data="nvabarData"></nav-bar>
+<!-- <auth id="auth" :cfg="oauth_cfg" @oauthFailEvent="oauthFailEvent" @bindOkEvent="bindOkEvent" backdrop="false">
+</auth> -->
 <!-- <movable-area style="height: {{win_height}}px; width: 100%;"> -->
   <view class="container">
     <!-- <scroll-view style='height:{{win_height}}px;' scroll-y> -->
@@ -15,10 +15,13 @@
     </view>
 
     <view v-if="album['product_type'] == 7010" class="ablum-view-c">
-      <video autoplay="false" :muted="muted" custom-cache="false" class="ablum-video" objectFit="fill" enable-play-gesture="true" id="myVideo" :src="coverHidden ? album['url'] : ''" controls>
-        <cover-image @tap.stop="videoPlay" :data-idx="idx" :data-url="album['url']" :data-id="album['id']" :hidden="coverHidden" class="ablum-list-img ablum-video-img" :src="album['cover']"></cover-image>
-        <!-- <image wx:if="{{selectId != album['id']}}" class='ablum-list-img ablum-video-img' src="{{album['cover']}}" mode='aspectFill'></image> -->
-      </video>
+		<block v-if="coverHidden">
+			<video autoplay="false"  custom-cache="false" class="ablum-video" objectFit="fill" enable-play-gesture="true" id="myVideo" :src="coverHidden ? album['url'] : ''" controls>
+			</video>
+		</block>
+		<block v-else>
+			<cover-image @click="videoPlay" :data-idx="idx" :data-url="album['url']" :data-id="album['id']" :hidden="coverHidden" class="ablum-list-img ablum-video-img" :src="album['cover']"></cover-image>
+		</block>
     </view>
   </view>
 
@@ -69,7 +72,8 @@ export default {
       },
       selectId: "",
       videoPlaying: false,
-      coverPlay: false
+      coverPlay: false,
+	  navBarHidden:true//自定义菜单是否隐藏
     };
   },
 
@@ -94,6 +98,7 @@ export default {
     }); //判断是播放视频or 音频
 
     if (!getApp().globalData.g_audio_obj) {
+		console.log('ablum-create-background-manager')
       getApp().globalData.g_audio_obj = wx.getBackgroundAudioManager();
     }
   },
@@ -153,6 +158,16 @@ export default {
     }
 
     this.screenResize();
+	//自定义菜单隐藏判断
+	if(getApp().globalData.g_app == 'alipay'){
+		this.setData({
+			navBarHidden: true
+		})
+	}
+	//为了防止切换页面后  onTimeUpdate失效
+	getApp().globalData.g_audio_obj.onTimeUpdate((res)=>{
+	    // console.log('backgroundAudioManager onTimeUpdate onTimeUpdate ')
+	});
   },
 
   /**
@@ -265,6 +280,9 @@ export default {
     },
     //播放视频触发
     videoPlay: function (event) {
+	  if(!getApp().globalData.g_is_login){
+		  return;
+	  }
       var that = this;
       this.setData({
         coverHidden: true,
@@ -302,7 +320,7 @@ export default {
       var lastState,
           nowState = 0;
       let lastTime = Date.now();
-      wx.startAccelerometer();
+      //wx.startAccelerometer();
       wx.onAccelerometerChange(res => {
         const now = Date.now(); // 500ms检测一次
 
@@ -385,40 +403,6 @@ export default {
       getApp().globalData.g_audio_ablum_temid = util.getListenRecord().tmp_id || 0; //console.log('go-detail--', util.getListenRecord(),util.getListenRecord().tmp_id);
 
       this.reqBookData();
-    },
-    //监听操作
-    audioManagerLister: function () {
-      var that = this; //监听背景音频播放错误事件
-
-      getApp().globalData.g_audio_obj.onError(function () {
-        console.log('onError0');
-      }); //监听背景音频播放事件
-
-      getApp().globalData.g_audio_obj.onPlay(function () {
-        that.setData({
-          playFloating: true
-        });
-        console.log('onPlay0');
-      }); //监听背景音频暂停事件
-
-      getApp().globalData.g_audio_obj.onPause(function () {
-        that.setData({
-          playFloating: false
-        });
-        console.log('onPause0');
-      });
-      getApp().globalData.g_audio_obj.onEnded(function () {
-        that.setData({
-          playFloating: false
-        });
-        console.log('onEnded0');
-      });
-      getApp().globalData.g_audio_obj.onStop(function () {
-        that.setData({
-          playFloating: false
-        });
-        console.log('onStop0');
-      });
     }
   }
 };

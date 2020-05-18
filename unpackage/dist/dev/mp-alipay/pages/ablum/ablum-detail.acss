@@ -326,7 +326,7 @@
 }
 .ablum-detail-title {
   height: 80rpx;
-  margin-top: 34rpx;
+  padding-top: 34rpx;
   margin-left: 293rpx;
 }
 .ablum-detail-title text:nth-child(1) {
@@ -345,7 +345,7 @@
   letter-spacing: 0;
 }
 .ablum-lock-view {
-  margin-top: 50rpx;
+  padding-top: 50rpx;
   display: -webkit-box;
   display: -webkit-flex;
   display: flex;
@@ -355,6 +355,7 @@
   -webkit-box-align: center;
   -webkit-align-items: center;
           align-items: center;
+  /* background: #5057CF; */
 }
 .ablum-lock-view-text {
   display: -webkit-box;

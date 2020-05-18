@@ -620,6 +620,9 @@ page {
   height: 50rpx;
   line-height: 50rpx;
 }
+button{
+	border: none;
+}
 
 .btn-defalu::after {
   border: none;

@@ -3,7 +3,7 @@
   border-radius: 31rpx;
   width: 720rpx;
   height: 400rpx;
-  margin: 10rpx auto 20rpx auto;
+  margin: 0rpx auto 20rpx auto;
   padding-top: 20rpx;
 }
 .inputView {
@@ -21,7 +21,7 @@
 }
 .lineView {
   width: 510rpx;
-  height: 1px;
+  height: 1rpx;
   background-color: #eee;
   margin: 0rpx 0rpx 0rpx 180rpx;
 }

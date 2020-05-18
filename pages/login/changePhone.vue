@@ -1,7 +1,7 @@
 <template>
 <view>
 <!--pages/login/changePhone.wxml-->
-<nav-bar :navbar-data="nvabarData"></nav-bar>
+<nav-bar  v-if="!navBarHidden" :navbar-data="nvabarData"></nav-bar>
 <view class="root">
 	<!-- <image src="../../images/login/login_top.png" mode="widthFix" class="topImage"></image> -->
 	<!-- <image src="../../images/login/login_bottom.png" mode="widthFix" class="bottomImage"></image> -->
@@ -49,7 +49,8 @@ export default {
         showCapsule: 1,
         // 是否显示左上角胶囊按钮 1 显示 0 不显示
         title: '更换手机号'
-      }
+      },
+	  navBarHidden:false//自定义菜单是否隐藏
     };
   },
 
@@ -71,7 +72,14 @@ export default {
   /**
    * 生命周期函数--监听页面显示
    */
-  onShow: function () {},
+  onShow: function () {
+	  //自定义菜单隐藏判断
+	  if(getApp().globalData.g_app == 'alipay'){
+	  	this.setData({
+	  		navBarHidden: true
+	  	})
+	  }
+  },
 
   /**
    * 生命周期函数--监听页面隐藏

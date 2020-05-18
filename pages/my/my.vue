@@ -1,7 +1,7 @@
 <template>
 <view>
 <!--pages/my/my.wxml-->
-<nav-bar :navbar-data="nvabarData"></nav-bar>
+<nav-bar v-if="!navBarHidden" :navbar-data="nvabarData"></nav-bar>
 <view class="container">
   <view v-if="isLogin" class="topTitle">
     <image class="avatar" :src="avatar" @tap="avatarClick"></image>
@@ -23,15 +23,15 @@
     </view>
     <button v-else class="list listflex" open-type="contact" :send-message-title="item.message_title" :send-message-img="item.img" show-message-card="true" :send-message-path="item.path">
       <view>{{item.title}}</view>
-      <image src="/static/pages/images/right.png" mode="aspectFit" style="width:28rpx;height:40rpx"></image>
+      <image src="/static/pages/images/right.png" mode="aspectFit" style="width:22rpx;height:40rpx;margin-right: 30rpx;"></image>
     </button>
   </block>
 
 
 
 </view>
-<auth id="auth" @oauthFailEvent="oauthFailEvent" @bindOkEvent="bindOkEvent" backdrop="false">
-</auth>
+<!-- <auth id="auth" @oauthFailEvent="oauthFailEvent" @bindOkEvent="bindOkEvent" backdrop="false">
+</auth> -->
 </view>
 </template>
 
@@ -61,34 +61,33 @@ export default {
         showCapsule: 1,
         // 是否显示左上角胶囊按钮 1 显示 0 不显示
         title: '我的'
-      }
+      },
+	  navBarHidden:false//自定义菜单是否隐藏s
     };
   },
 
   components: {
     easyModal,
     canvasdrawer,
-    auth,
+    // auth,
     navBar
   },
   props: {},
   onLoad: function () {
     if (!util.isLogin()) {
       console.log('go login');
-      wx.navigateTo({
-        url: '../login/login'
-      });
     }
   },
   onReady: function () {
     this.oauthModal = this.selectComponent("#auth");
   },
   onShow: function () {
+	console.log('my-onshow',util.isLogin());
     if (util.isLogin()) {
       this.setData({
         isLogin: true
       });
-      this.requestData();
+	  this.requestData();
     } else {
       wx.removeStorageSync(userKey);
       wx.removeStorageSync(userinfo);
@@ -96,8 +95,13 @@ export default {
         isLogin: false
       });
     }
-
     getApp().globalData.g_has_index_toggle = true;
+	//自定义菜单隐藏判断
+	if(getApp().globalData.g_app == 'alipay'){
+		this.setData({
+			navBarHidden: true
+		})
+	}
   },
   methods: {
     listClick: function (e) {
@@ -125,8 +129,10 @@ export default {
       enterHelp.enterWithDic(e.currentTarget.dataset.dic);
     },
     exitClick: function (e) {
+		console.log('exitClick');
       wx.removeStorageSync('cookie');
       wx.removeStorageSync(userKey);
+	  wx.removeStorageSync('alipay_user_id');
       wx.removeStorageSync(userinfo);
       this.setData({
         isLogin: false,
@@ -137,6 +143,8 @@ export default {
         identity: ""
       });
       getApp().globalData.g_is_login = false;
+	  
+	  util.getRequest("https://passport.xueweigui.com/login/logout",{json:true});
     },
     avatarClick: function () {// if (!util.isLogin()) {
       //   wx.navigateTo({
@@ -145,6 +153,9 @@ export default {
       // }
     },
     loginClick: function (e) {
+		//alipay 授权
+	  //util.aliOauth();
+	  this.exitClick();
       wx.navigateTo({
         url: '../login/login'
       });
@@ -156,8 +167,11 @@ export default {
     requestData: function () {
       var that = this;
       util.getRequest("https://v.xueweigui.com/apiWeChat/home?wechat=104", {}, function (res) {
+		if(res.data.e != '9999') {
+			that.exitClick();
+			return;
+		}
         var identity = '';
-
         if (res.data.userinfo.identity == '221' || res.data.userinfo.identity == '222' || res.data.userinfo.identity == '223' || res.data.userinfo.identity == '224') {
           identity = res.data.userinfo.identity; //wx.setStorageSync('identity', identity)
         } else {//wx.setStorageSync('identity', '0')

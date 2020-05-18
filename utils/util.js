@@ -9,6 +9,8 @@ const cookieKey = 'cookie'; //copy 需修改
 
 const userKey = 'user'; //copy 需修改
 
+const aliUserIdKey = ''; //ali用户id
+
 const userInfoKey = 'userInfo'; //copy 需修
 
 const oauthType = 25; //copy 需修改改
@@ -171,7 +173,7 @@ function postRequest(netUrl, data, success) {
     data: data,
     header: {
       'content-type': "application/x-www-form-urlencoded",
-      cookie: cookie
+       cookie: cookie
     },
     method: 'POST',
     success: function (res) {
@@ -209,10 +211,9 @@ function saveListentedStorage(audio_id) {
 } //带cookie请求
 
 
-function getRequest(netUrl, data, success) {
+function getRequest(netUrl, data, success = function(){}) {
   netUrl = decodeURIComponent(netUrl);
   var cookie = getCookie();
-
   if (!data) {
     data = {};
   }
@@ -221,17 +222,13 @@ function getRequest(netUrl, data, success) {
     url: netUrl.replace("http:", "https:").replace("v.guixue.com", "v.xueweigui.com").replace("fast.guixue.com", "v.xueweigui.com"),
     data: data,
     header: {
-      cookie: cookie,
-      'x-user-agent': '79:1.3.2'
+      'x-user-agent': '78:1.0.0'
     },
     success: function (res) {
       success(res);
     },
     fail: function (res) {
-      wx.showToast({
-        title: res.errMsg,
-        icon: 'none'
-      });
+		console.error('http-request',res.errMsg);
     }
   });
 } //log 记录
@@ -294,13 +291,242 @@ function getCookie() {
   for (var key in cookieObj) {
     cookieStr += key + '=' + cookieObj[key] + ';';
   }
-
   return cookieStr;
 } //写评论
 
+/**********************alipay start**********************/
+/**
+ * 获取用户授权
+ */
+function aliGetAuthCode(scopeCode  = 'auth_user'){
+	return new Promise((resolve, reject) => {
+		my.getAuthCode({
+			scopes:scopeCode,
+			success:(auth) => {
+				resolve(auth);
+			},
+			fail:(err) => {
+				reject({...err, message:'授权失败'});
+			}
+		})
+	});
+}
+/**
+ * 获取用户信息
+ * @param {Object} authCode
+ */
+function getUserByAuthCode(authCode){
+	let url = 'https://passport.xueweigui.com/oauth/getAliPayAccess';
+	let data = {type:44,code:authCode};
+	return new Promise((resolve, reject) =>{
+		getRequest(url, data ,(res)=>{
+			if(res.data.e == '9999') {
+				let cookie = wx.getStorageSync(cookieKey);
+				if(!cookie.alipay_user_id){
+					// console.log('getUserByAuthCode not user cookie',cookie);
+					// cookie['alipay_user_id'] = res.data.data.user_id;
+					wx.setStorageSync('alipay_user_id',res.data.data.user_id);
+					let _cookie = Object.values(cookie);
+					console.log('getUserByAuthCode not user cookie',_cookie);
+					saveCookie(_cookie);
+				}
+				resolve(res.data);
+			} else {
+				reject({...res.data,message:'获取用户信息失败'})
+			}
+		});
+	});
+}
+function showToast(message, type = 'none') {
+	my.showToast({
+	  type,
+	  content: message,
+	  duration: 3000
+	});
+}
+/**
+ * 创建支付交易订单
+ * @param {Object} authCode
+ * @param {Object} uid
+ */
+function getTradeNo(authCode, uid){
+	let url = '';
+	let reqData = {
+		total_amount: '0.01',
+		out_trade_no: `${new Date().getTime()}_demo_pay`,
+		scene: 'bar_code',
+		auth_code: authCode,
+		subject: '小程序支付演示DEMO',
+		buyer_id: uid
+	};
+	return new Promise((resolve, reject) => {
+		getRequest(url, reqData,(res)=>{
+			if(res.data.e == '9999') {
+				resolve(res.data);
+			} else {
+				reject({...res.data,message:'获取用户信息失败'})
+			}
+		});
+	});
+}
+/**
+ * 发起支付
+ * @param {Object} tradeNo
+ */
+function cashPaymentTrade(tradeNo){
+	return new Promise((resolve, reject) => {
+		my.tradePay({
+			tradeNO: tradeNo,
+			success: (result) => {
+			  if (result.resultCode != 9000) {
+				resolve({
+				  status: false,
+				  message: result.memo,
+				  ...result
+				});
+			  } else {
+				resolve({
+				  status: true,
+				  message: '支付成功',
+				  ...result
+				});
+			  }
+			},
+			fail: (err) => {
+			  reject({
+				status: false,
+				message: '支付异常',
+				...err
+			  });
+			}
+		});
+	});
+}
+/**
+ * 支付宝支付
+ */
+async function aliPay(url){
+	console.log('alipay',url);
+	try{
+	  // const apiOauthMsg  = aliOauth();
+	  const aliGetAuthCodeMsg = await aliGetAuthCode();
+	  const user = await getUserByAuthCode(aliGetAuthCodeMsg.authCode);//user.userId
+	  // return;	
+	  const tradeMsg = await xwgPay(url);
+	  const payStatus = await cashPaymentTrade(tradeMsg.trade_no);
+	  payStatus.status ? showToast('支付成功') : showToast(payStatus.message);
+	} catch (error){
+	  //showToast(error.message);
+	  console.log('alipay-error', error);
+	}
+}
 
-function comment() {} //格式化时间 &&解锁
+/**
+ * ali 获取用户信息授权ß
+ */
+async function aliOauth(){
+	try{
+	  const auth = await aliGetAuthCode();
+	  console.log('alipay',auth);
+	  // const user = await getUserByAuthCode(auth.authCode);//user.userId
+	} catch (error){
+	  console.log('alipay-error', error);
+	}
+}
+/**********************alipay end **********************/
 
+/**********************平台支付 star**********************/
+
+/**
+ * 请求下单接口
+ * @param {Object} url
+ */
+function payMorderShow(url){
+	let data = {channel:52};
+	return new Promise((resolve, reject) =>{
+		getRequest(url, data ,(res)=>{
+			if(res.data.e == '9999') {
+				resolve(res.data);
+			} else {
+				reject({...res.data,message:'获取下单信息失败'})
+			}
+		});
+	});
+}
+
+/**
+ * 请求下单支付接口
+ * @param {Object} url
+ */
+function payMorderBuy(url){
+	return new Promise((resolve, reject) =>{
+		getRequest(url, {channel:52} ,(res)=>{
+			if(res.data.e == '9999') {
+				resolve(res.data);
+			} else {
+				reject({...res.data,message:'请求下单支付接口信息失败'})
+			}
+		});
+	});
+}
+
+/**
+ * 请求确认接口
+ * @param {Object} url
+ */
+function payMorderConfirm(url){
+	return new Promise((resolve, reject) =>{
+		getRequest(url, {channel:52} ,(res)=>{
+			if(res.data.e == '9999' && res.data.payment.sdk.length > 0) {
+				resolve(res.data);
+			} else {
+				reject({...res.data,message:'请求确认接口失败'})
+			}
+		});
+	});
+}
+
+/**
+ * 请求平台支付接口
+ * @param {Object} url
+ */
+function payDeposit(url){
+	return new Promise((resolve, reject) =>{
+		getRequest(url + '&amount=0.01', {channel:52} ,(res)=>{
+			if(res.data.e == '9999') {
+				resolve(res.data);
+			} else {
+				reject({...res.data,message:'请求平台支付接口失败'})
+			}
+		});
+	});
+}
+
+/**
+ * 支付流程
+ * @param {type} url 
+ */
+async function xwgPay(url){
+	try{
+		uni.showLoading({
+		    title: '请求加载中'
+		});
+		setTimeout(()=>{
+			uni.hideLoading();
+		},1000);
+		const payMorderShowMsg = await payMorderShow(url);
+		const payMorderBuyMsg = await payMorderBuy(payMorderShowMsg.buyurl);
+		const payMorderConfirmMsg = await payMorderConfirm(payMorderBuyMsg.r.payurl);
+		const payDepositMsg = await payDeposit(payMorderConfirmMsg.payment.sdk[0].url);
+		return payDepositMsg;
+	} catch(error){
+		showToast(error.message);
+		console.log('xwg-pay-error', error);
+	}
+}
+
+
+/**********************平台支付 end**********************/
 
 function formCreateTime(data) {
   let lockData = wx.getStorageSync('lockData') || [];
@@ -339,7 +565,6 @@ function saveUserOpenid() {
   }
 } //获取&存储cookie
 
-
 function reqCookie(code) {
   wx.getUserInfo({
     success: res => {
@@ -358,7 +583,8 @@ function reqCookie(code) {
 }
 
 function saveUser(res) {
-  saveCookie(res.header["Set-Cookie"]); //保存用户信息
+  let cookieVal = res.header['Set-Cookie'] || res.header['set-cookie'];
+  saveCookie(cookieVal); //保存用户信息
 
   saveUserDb(res);
 } //保存用户信息入库
@@ -989,6 +1215,7 @@ function secret(string, ivs = '', operation = true) {
 }
 
 function saveCookie(cookieStr) {
+  cookieStr = Array.isArray(cookieStr) ? cookieStr.join(';') : cookieStr;
   var cookieArr = cookieStr.split(";");
   var newCookie = {};
 
@@ -1023,8 +1250,9 @@ function saveCookie(cookieStr) {
   }
 
   var openid = wx.getStorageSync('openid');
+  var alipay_user_id = wx.getStorageSync('alipay_user_id');
   newCookie['openid'] = openid;
-  console.log(newCookie);
+  newCookie['alipay_user_id'] = alipay_user_id;
   wx.setStorageSync('cookie', newCookie);
 }
 /**
@@ -1043,16 +1271,15 @@ function throttle(fn, gapTime) {
 
   return function () {
     let _nowTime = +new Date();
-
+	console.log('***throttle', _nowTime,_lastTime,_nowTime - _lastTime);
     if (_nowTime - _lastTime > gapTime || !_lastTime) {
-      console.log('2343243', gapTime, _nowTime, _lastTime, _nowTime - _lastTime);
+      console.log('***2343243', gapTime, _nowTime, _lastTime, _nowTime - _lastTime);
       fn.apply(this, arguments); //将this和参数传给原函数
 
       _lastTime = _nowTime;
     }
   };
 }
-
 function debounce(fn, delay) {
   // 持久化一个定时器 timer
   let timer = null; // 闭包函数可以访问 timer
@@ -1072,8 +1299,6 @@ function debounce(fn, delay) {
 /**
  * 支付
  */
-
-
 function payAction(url, fn = function () {}) {
   console.log('payActin', url);
   getRequest(url, null, function (netData1) {
@@ -1187,6 +1412,8 @@ module.exports = {
   throttle,
   debounce,
   payAction,
+  aliOauth,
+  aliPay,
   AJAX: function (url, data = {}, fn, method = "get", header = {}) {
     wx.request({
       url: url,

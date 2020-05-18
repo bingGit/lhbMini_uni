@@ -236,7 +236,7 @@ var app = getApp().globalData;var auth = function auth() {Promise.all(/*! requir
           mobile: that.phoneNumber,
           k: md5.hexMD5(keyStr) };
 
-        util.getRequest("https://passport.xueweigui.com/mobile/sendOnlyMobile", data, function (res) {
+        util.getRequest("https://passport.xueweigui.com/mobile/sendOnlyMobile?bb=bb&db_cache=2", data, function (res) {
           console.log(res.data);
 
           if (res.data.e == '9999') {

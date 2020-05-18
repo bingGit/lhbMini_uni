@@ -1,6 +1,6 @@
 <template>
 <view>
-<nav-bar :navbar-data="nvabarData" :has-custom="hasCustom" @testBackEvent="testBackEvent" @testHomeEvent="testHomeEvent"></nav-bar>
+<nav-bar v-if="!navBarHidden" :navbar-data="nvabarData" :has-custom="hasCustom" @testBackEvent="testBackEvent" @testHomeEvent="testHomeEvent"></nav-bar>
 <view class="result_page">
   <view class="result_top">
     <view class="top-img">
@@ -32,10 +32,23 @@
   <view class="result_bg">
     <view class="page">
       <view class="page__bd page__bd_spacing" style="text-align:center;position:relative">
-        <view class="_percent">
+		  <view class="content">
+		      
+		  	<view class="circleprogress">
+				<view class="progresstext-title">正确率</view>
+		  		<view class="progresstext">{{progresstext}}%</view>
+		  		<view class="wrapper">
+		  			<view class="leftprogress" :style="{ transform: leftprogress}"></view>
+		  		</view>
+		  		<view class="wrapper">
+		  			<view class="rightprogress" :style="{ transform: rightprogress}"></view>
+		  		</view>
+		  	</view>
+		  </view>
+        <!-- <view class="_percent">
           <view class="zhengque">正确率</view>{{ percent + '%' }}</view>
         <wux-circle :percent="percent" :sAngle="sAngle" class="wux-circle_self" :strokeWidth="strokeWidth" :size="size" :circleBg="circleBg">
-        </wux-circle>
+        </wux-circle> -->
       </view>
     </view>
     <!-- 结果数据 -->
@@ -92,7 +105,7 @@
 </view>
 <view hidden="true" class="botom_black"></view>
 
-<view @tap.stop="fenxiang_jietu" class="result-share">
+<view :hidden="true" @tap.stop="fenxiang_jietu" class="result-share">
   <image src="https://uimg.gximg.cn/v/res/201906/06-18/share@3x.png"></image>
 </view>
 
@@ -115,6 +128,9 @@ import navBar from "../../component/nav-bar/nav-bar";
 export default {
   data() {
     return {
+		leftprogress: 'rotate(-45deg)',
+		rightprogress: 'rotate(45deg)',
+		progresstext:'0',
       percent: 50,
       //圆环占比
       sAngle: -90,
@@ -153,7 +169,8 @@ export default {
       ratio: "",
       shareImage: "",
       test_id: "",
-      ad1: ""
+      ad1: "",
+	  navBarHidden:false//自定义菜单是否隐藏
     };
   },
 
@@ -163,12 +180,23 @@ export default {
     navBar
   },
   props: {},
-  onShow: function () {},
+  onShow: function () {
+	  //自定义菜单隐藏判断
+	  if(getApp().globalData.g_app == 'alipay'){
+	  	this.setData({
+	  		navBarHidden: true
+	  	})
+	  }
+  },
+  onHide:function() {
+	  console.log('result-onhide');
+	  wx.navigateBack({delta:2});
+  },
   onLoad: function (options) {
     var that = this;
 
-    var _persent = options.correct_number / options.totla_question * 100;
-
+    var _persent = options.correct_number / options.totla_question * 100 || 0;
+    this.drawCircle(Math.ceil(_persent));
     that.canvasToImg();
     that.bindData();
     var reg = {
@@ -224,6 +252,7 @@ export default {
   },
   onUnload: function () {
     console.log('onUnload');
+	 wx.navigateBack({delta:1});
   },
 
   /**
@@ -237,6 +266,19 @@ export default {
     util.backLog(e);
   },
   methods: {
+	  drawCircle:function(val){
+	  	this.progresstext = val;
+	  	var deg = val/100*360;
+	  	if(deg<=180)
+	  	{
+	  		this.rightprogress = 'rotate('+(45+deg)+'deg)'
+	  		this.leftprogress = 'rotate('+(-45)+'deg)'
+	  	}else
+	  	{
+	  		this.rightprogress = 'rotate('+(45+180)+'deg)'
+	  		this.leftprogress = 'rotate('+(-45+(deg-180))+'deg)'
+	  	}
+	  },
     /**
      * 生命周期函数--监听页面加载
      */
@@ -265,9 +307,10 @@ export default {
       query.selectAll('.result_word_list_word').boundingClientRect();
       query.selectViewport().scrollOffset();
       query.exec(function (res) {
-        res[0].forEach(function (item, index) {
-          ary.push(item.width);
-        });
+		  console.log('word-width',res);
+        // res[0].forEach(function (item, index) {
+        //   ary.push(item.width);
+        // });
         that.setData({
           word_width_ary: ary
         });
@@ -522,10 +565,10 @@ export default {
       _ad.push(custom_ad);
 
       view = view.concat(_ad);
-      wx.showLoading({
-        title: '绘制分享图片中',
-        mask: true
-      });
+      // wx.showLoading({
+      //   title: '绘制分享图片中',
+      //   mask: true
+      // });
       this.setData({
         painting: {
           width: that.result_page_width,
@@ -648,4 +691,71 @@ export default {
 </script>
 <style>
 @import "./result.css";
+.content {
+		width: 100%;
+		height: 100%;
+		display: flex;
+		justify-content: center;
+		flex-flow: wrap;
+		align-items: center;
+		border-radius: 50%;
+		text-align: center;
+		height: 400rpx;
+		padding-top: 50rpx;
+	}
+	.circleprogress{
+		width: 100%;
+		height: 200rpx;
+		display: flex;
+		justify-content: center;
+		
+	}
+	.circleprogress .progresstext-title{
+		position: absolute;
+		top: 206rpx;
+		font-size: 30rpx;
+		width: 200rpx;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		z-index: 10;
+		color: #fff;
+	}
+	.circleprogress .progresstext{
+		position: absolute;
+		font-size: 40rpx;
+		top: 172rpx;
+		width: 200rpx;
+		height: 200rpx; 
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		z-index: 10;
+		color: #fff;
+	}
+	.circleprogress .wrapper{
+		width: 100rpx;
+		height: 200rpx;
+		overflow: hidden;
+	}
+	.circleprogress .leftprogress,.rightprogress{
+		width: 160rpx;
+		height: 160rpx;
+		border:20rpx solid #AABBFF;
+		
+		border-bottom:20rpx solid #fff;
+		border-radius: 50%;
+		
+	}
+	.circleprogress .leftprogress{
+		border-right:20rpx solid #fff;
+	}
+	.circleprogress .rightprogress{
+		border-left:20rpx solid #fff;
+		margin-left: -100rpx;
+	}
+	.section{
+		width: 80%;
+		margin-top: 50rpx;
+	}
 </style>

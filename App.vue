@@ -35,7 +35,6 @@ export default {
       success: res => {
         console.log('system', res);
         var _bar_height = 64;
-
         if (res.model.indexOf('samsung') !== -1) {
           _bar_height = 72;
         } else if (res.system.indexOf('Android') !== -1) {
@@ -45,7 +44,7 @@ export default {
         } else if (res.model.indexOf('iPhone') !== -1) {
           _bar_height = 64;
         }
-
+		this.globalData.g_app = res.app;
         this.globalData.g_bar_height = _bar_height;
         this.globalData.g_status_height = res.statusBarHeight;
         this.globalData.g_win_height = res.windowHeight;
@@ -60,20 +59,20 @@ export default {
       }
     }); // 获得胶囊按钮位置信息
 
-    this.globalData.headerBtnPosi = wx.getMenuButtonBoundingClientRect();
+    // this.globalData.headerBtnPosi = wx.getMenuButtonBoundingClientRect();
     var version = wx.getSystemInfoSync().SDKVersion;
     console.log('version', version); //兼容新版本库
     // this.globalData.g_old_version = true;
 
-    if (util.compareVersion(version, '2.6.2') < 0) {
-      this.globalData.g_old_version = true;
-      wx.showModal({
-        title: '提示',
-        content: '当前微信版本过低，可能会影响使用体验，请及时升级到最新版本。',
-        showCancel: false,
-        confirmText: '知道了'
-      });
-    }
+    // if (util.compareVersion(version, '2.6.2') < 0) {
+    //   this.globalData.g_old_version = true;
+    //   wx.showModal({
+    //     title: '提示',
+    //     content: '当前微信版本过低，可能会影响使用体验，请及时升级到最新版本。',
+    //     showCancel: false,
+    //     confirmText: '知道了'
+    //   });
+    // }
   },
   globalData: {
     /**
@@ -161,7 +160,9 @@ export default {
     // 胶囊按钮位置信息
     g_old_version: false,
     //是否是旧版本
-    formIdList: [] //收集表单数据
+    formIdList: [] ,//收集表单数据
+	//当前运行环境 alipay 支付宝
+	g_app:'weixin'
 
   },
   onHide: function (e) {

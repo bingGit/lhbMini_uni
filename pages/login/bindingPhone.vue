@@ -1,6 +1,5 @@
 <template>
 <view>
-<nav-bar :navbar-data="nvabarData"></nav-bar>
 <view class="container" style="background-color:white">
   <view class="inputView" style>
     <view class="title">手机号</view>

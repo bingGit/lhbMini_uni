@@ -54,9 +54,10 @@ export default {
   cache: {},
 
   mounted() {
+	console.log('canvas-mounted',wx.createCanvasContext('canvasdrawer', this),wx.createCanvasContext('canvasdrawer'));
     wx.removeStorageSync('canvasdrawer_pic_cache');
     this.cache = wx.getStorageSync('canvasdrawer_pic_cache') || {};
-    this.ctx = wx.createCanvasContext('canvasdrawer', this);
+    this.ctx = wx.createCanvasContext('canvasdrawer',this);
   },
 
   methods: {

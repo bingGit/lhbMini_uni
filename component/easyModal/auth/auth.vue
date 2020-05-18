@@ -202,8 +202,7 @@ export default {
                     that.$emit("oauthFailEvent");
                   } else if (util.getUserMsg() && util.getUserMsg()['ID'] != res.data.r.uid) {
                     wx.removeStorageSync('user_msg'); //更换账号则重置cookie
-
-                    console.log('cookie', res.header["Set-Cookie"]);
+                     console.error('cookie-save',res.header["Set-Cookie"]);
                     util.saveCookie(res.header["Set-Cookie"]);
                     getApp().globalData.userInfo = util.getUserMsg();
                     console.log('wxlogin remove user_msg');

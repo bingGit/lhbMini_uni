@@ -6,7 +6,7 @@ page {
   justify-content: center;
   align-content: center;
   flex-direction: column;
-  margin-top: 30rpx;
+  padding-top: 30rpx;
 }
 .topTitle {
   width: 670rpx;
@@ -41,7 +41,7 @@ page {
   font-size: 28rpx;
   line-height: 32rpx;
   width: 350rpx;
-  top: 70rpx;
+  top: 85rpx;
   left: 200rpx;
   color: #333;
   position: absolute;
@@ -61,7 +61,7 @@ page {
   font-size: 24rpx;
   line-height: 26rpx;
   width: 350rpx;
-  top: 122rpx;
+  top: 130rpx;
   left: 200rpx;
   color: #999;
   position: absolute;
@@ -99,7 +99,7 @@ page {
 
 .btn {
   right: 40rpx;
-  top: 90rpx;
+  top: 70rpx;
   width: 83rpx;
   height: 40rpx;
   position: absolute;
@@ -130,5 +130,5 @@ page {
   align-items: center;
 }
 .listflex view:nth-child(1){
-  margin-left: 10rpx;
+  margin-left: 40rpx;
 }

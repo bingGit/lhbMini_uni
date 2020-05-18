@@ -1,7 +1,7 @@
 <template>
 <view>
 <!--pages/test/test.wxml-->
-<nav-bar :navbar-data="nvabarData" :has-custom="hasCustom" @testBackEvent="testBackEvent" @testHomeEvent="testHomeEvent"></nav-bar>
+<nav-bar v-if="!navBarHidden" :navbar-data="nvabarData" :has-custom="hasCustom" @testBackEvent="testBackEvent" @testHomeEvent="testHomeEvent"></nav-bar>
 <view :hidden="pageHidden" class="test_page">
 
   <view class="test_question_type">{{test_question_type}}/{{category}}</view>
@@ -12,7 +12,7 @@
 
   <!-- 音频按钮 -->
   <view @tap.stop="repeatPlay" class="audio_img" :hidden="hidden_audio">
-    <image class="img" :src="is_end ? '../images/sound_'+play_id+'.png' : 'https://uimg.gximg.cn/v/res/201906/06-19/sound_2.png'"></image>
+    <image class="img" :src="is_end ? 'https://uimg.gximg.cn/v/res/201906/06-19/sound_1.png' : 'https://uimg.gximg.cn/v/res/201906/06-19/sound_2.png'"></image>
   </view>
 
   <!-- 单选题 -->
@@ -110,7 +110,8 @@ export default {
       right_idx: "",
       duration: "",
       audio_src: "",
-      test_id: ""
+      test_id: "",
+	  navBarHidden:false//自定义菜单是否隐藏
     };
   },
 
@@ -131,9 +132,6 @@ export default {
     var that = this;
     var index = 0;
     that.use_time();
-    wx.showLoading({
-      title: '加载中'
-    });
     console.log('tid---', tid);
     console.log('pid---', pid);
     console.log('id---', id);
@@ -176,7 +174,8 @@ export default {
     console.log('testUrl---', urls);
     util.getRequest(urls,{},function(res) {
         if (res.statusCode == 200) {
-          wx.hideLoading();
+			console.log('test_data', res);
+          // wx.hideLoading();
           that.queryData(res.data.data, index); //获取上一级小程序传过来的数据，判断是哪一套题
         }
       }
@@ -195,9 +194,13 @@ export default {
   /**
    * 生命周期函数--监听页面显示
    */
-  onShow: function () {// wx.setInnerAudioOption({
-    //   obeyMuteSwitch: false
-    // });
+  onShow: function () {
+	  //自定义菜单隐藏判断
+	  if(getApp().globalData.g_app == 'alipay'){
+	  	this.setData({
+	  		navBarHidden: true
+	  	})
+	  }
   },
   onError: function (e) {
     util.backLog(e);
@@ -337,15 +340,17 @@ export default {
       //console.log(this.data.result_data_fail_css)
       getApp().globalData.result_data_fail_css = this.$data.result_data_fail_css; //赋值给全局变量
 
+	  // wx.navigateTo({
+   //      url: '/pages/wtest/result_list'
+   //    });
       wx.navigateTo({
         url: '/pages/wtest/result?correct_number=' + this.$data.correct_number + "&use_time_total=" + this.$data.use_time_total + "&totla_question=" + this.$data.totla_question + "&test_id=" + this.$data.test_id //把用的时间，做对多少题，总共的题目
-
       });
     },
     //获取数据
     queryData: function (data, index) {
       var _data = data; //此处的index还不确定
-      // console.log('data',_data);return;
+      console.log('_data.content',_data.content);;
 
       var result = _data.result; //结果页单词展示
       var _data_title = _data.desc;
@@ -360,6 +365,11 @@ export default {
         pageHidden: false,
         timerHidden: duration <= 1 ? true : false
       });
+	  setTimeout(()=>{
+		  that.setData({
+		    _data_list: _data.content
+		  });
+	  },3000);
       getApp().globalData.result_data = result; //赋值给全局变量
 
       that.bindData(); //修改
@@ -380,7 +390,7 @@ export default {
       var url = data[current_index - 1].url;
       var question = data[current_index - 1].question;
       that.correct_num(this.$data.data_right);
-
+console.log('bniddata',data,that.$data.duration,url,manager);
       if (type == 1) {
         console.log('hidden_audio');
         this.setData({

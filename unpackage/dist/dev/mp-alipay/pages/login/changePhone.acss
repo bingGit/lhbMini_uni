@@ -76,7 +76,7 @@
 }
 .login-inputLine {
   margin: 0rpx 48rpx 0rpx 48rpx;
-  height: 1px;
+  height: 1rpx;
   background-color: rgba(0,0,0,0.1);
 }
 .getCode {

@@ -1,6 +1,6 @@
 <template>
 <view>
-<nav-bar :navbar-data="nvabarData"></nav-bar>
+<nav-bar v-if="!navBarHidden" :navbar-data="nvabarData"></nav-bar>
 <view class="rank-container">
   <view :hidden="rankData.length ==0" class="rank-top">
     <view class="rank-top-detail">
@@ -116,7 +116,8 @@ export default {
       nvabarData: {
         showCapsule: 1,
         title: '排行榜'
-      }
+      },
+	  navBarHidden:false//自定义菜单是否隐藏
     };
   },
 
@@ -191,7 +192,14 @@ export default {
   /**
    * 生命周期函数--监听页面显示
    */
-  onShow: function () {},
+  onShow: function () {
+	  //自定义菜单隐藏判断
+	  if(getApp().globalData.g_app == 'alipay'){
+	  	this.setData({
+	  		navBarHidden: true
+	  	})
+	  }
+  },
 
   /**
    * 生命周期函数--监听页面隐藏

@@ -1,6 +1,6 @@
 <template>
 <view>
-<nav-bar :navbar-data="nvabarData"></nav-bar>
+<nav-bar v-if="!navBarHidden" :navbar-data="nvabarData"></nav-bar>
 <view class="container">
   <view class="result_word_list" v-for="(item, index) in word_list" :key="index">
     <text :class="'result_word_list_index ' + (item.num?'fail_select':'')">{{index+1}}.</text>
@@ -25,7 +25,8 @@ export default {
         showCapsule: 1,
         title: '答案'
       },
-      result_data_fail_css: ""
+      result_data_fail_css: "",
+	  navBarHidden:false//自定义菜单是否隐藏
     };
   },
 
@@ -39,6 +40,14 @@ export default {
    */
   onLoad: function (options) {
     this.bindData();
+  },
+  onShow:function() {
+  	//自定义菜单隐藏判断
+  	if(getApp().globalData.g_app == 'alipay'){
+  		this.setData({
+  			navBarHidden: true
+  		})
+  	}
   },
   methods: {
     // 绑定单词释义列表
