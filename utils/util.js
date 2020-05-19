@@ -493,7 +493,7 @@ function payMorderConfirm(url){
 function payDeposit(url){
 	return new Promise((resolve, reject) =>{
 		getRequest(url + '&amount=0.01', {channel:52} ,(res)=>{
-			if(res.data.e == '9999') {
+			if(res.data) {
 				resolve(res.data);
 			} else {
 				reject({...res.data,message:'请求平台支付接口失败'})
