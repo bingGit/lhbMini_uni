@@ -222,8 +222,6 @@ export default {
                 console.log('oauth-fail', error);
               }
             }); // that.oauthLogin(res.code);
-          } else {
-            console.log('登录失败！' + res.errMsg);
           }
         },
         fail: function (e) {

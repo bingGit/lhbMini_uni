@@ -268,8 +268,6 @@ var unitUrl = "https://v.xueweigui.com/ApiWordCourse/unitList?book_id=";var auth
       this.videoContext.stop();
     }
 
-    ; //浮动播放
-
     var playRecord = util.getListenRecord();
 
     if (playRecord || getApp().globalData.g_audio_playing != null) {
@@ -288,8 +286,6 @@ var unitUrl = "https://v.xueweigui.com/ApiWordCourse/unitList?book_id=";var auth
 
       }
     }
-
-    this.screenResize();
     //自定义菜单隐藏判断
     if (getApp().globalData.g_app == 'alipay') {
       this.setData({

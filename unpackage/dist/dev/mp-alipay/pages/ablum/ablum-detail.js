@@ -322,7 +322,7 @@ var customModal = function customModal() {Promise.all(/*! require.ensure | compo
     this.setData({
       share_idx: share_idx });
 
-    console.log('ablum-detail-onload', options, this.$data.share_idx);
+    console.log('ablum-detail-onload', options);
     var id = options.id;
     var url = decodeURIComponent(options.url);
 
@@ -383,12 +383,9 @@ var customModal = function customModal() {Promise.all(/*! require.ensure | compo
     }); //判断是播放视频or 音频
 
     if (!getApp().globalData.g_audio_obj) {
-      getApp().globalData.g_audio_obj = wx.getBackgroundAudioManager();
-
-      console.log('****create getBackgroundAudioManager', getApp().globalData.g_audio_obj);
+      getApp().globalData.g_audio_obj = wx.getBackgroundAudioManager()();
+      console.log('****create getBackgroundAudioManager');
     } //初始化数据
-
-
     console.log('onLoad1');
   },
 
@@ -396,6 +393,7 @@ var customModal = function customModal() {Promise.all(/*! require.ensure | compo
       * 生命周期函数--监听页面初次渲染完成
       */
   onReady: function onReady() {
+    console.log('onready1');
     this.customModal = this.$refs.customModal;
     this.setData({
       isFisrtShow: true });
@@ -420,32 +418,6 @@ var customModal = function customModal() {Promise.all(/*! require.ensure | compo
               getApp().globalData.g_audio_plen = res.data.length;
               getApp().globalData.g_share_img = res.mini_share.url;
               getApp().globalData.g_req_data = res.data;
-
-              //    util.getRequest(this.$data.reqUrl, {}, function (res) {
-              //      console.log('onshow req', res);
-              //      if (res.data.e != '9999') {
-              //        wx.showToast({
-              //          title: '网络繁忙,稍后重试',
-              //          icon: 'none'
-              //        });
-              //      } else {
-              //        res.data.data.map(reg => reg.audio = JSON.parse(util.secret(reg.media, reg.media_iv)));
-              //        that.setData({
-              //          albums: res.data.data,
-              //          authMsg: res.data.auth
-              //        });
-              // 	setTimeout(()=>{
-              // 		that.setDuratoin(that.ablums);
-              // 	},3000);
-              //        getApp().globalData.g_auth_msg = res.data.auth;
-              //        getApp().globalData.g_audio_auth = res.data.auth.status == 0 ? false : true;
-              //        getApp().globalData.g_try_time = res.data.auth.try_time;
-              //        getApp().globalData.g_audio_plen = res.data.data.length;
-              //        getApp().globalData.g_share_img = res.data.mini_share.url;
-              //        getApp().globalData.g_req_data = res.data.data;
-              //        console.log(res);
-              //      }
-              //    }); //从其它页面操作音频控制同步本页
 
               isPlaying = false;
               tryListen = false;
@@ -498,8 +470,7 @@ var customModal = function customModal() {Promise.all(/*! require.ensure | compo
                   currentIdx: currentIdx });
 
               }
-
-              _this.audioManagerLister(); // app.globalData.g_req_data = this.data.reqData;
+              _this.audioManagerLister();
               _this.isCurrentEvnet();
               _this.upTryTime(currentIdx);
               wx.hideLoading();case 27:case "end":return _context.stop();}}}, _callee);}))();
@@ -584,13 +555,10 @@ var customModal = function customModal() {Promise.all(/*! require.ensure | compo
     upTryTime: function upTryTime(currentIdx) {
       var that = this;
       setTimeout(function () {
-        console.log('uptrytime', currentIdx, getApp().globalData.g_req_data, getApp().globalData.g_req_data[currentIdx].
-        try_time);;
         getApp().globalData.g_try_time = getApp().globalData.g_req_data[currentIdx].try_time;
       }, 1000);
     },
     handleChange: function handleChange(e) {
-      console.log('upSwiperIndex', e, e.detail.current, e.detail.current == null);
       //let currentIdx = e.detail.current == null ? 1 : e.detail.current''
       this.setData({
         upSwiperIndex: parseInt(e.detail.current + 1),
@@ -608,13 +576,9 @@ var customModal = function customModal() {Promise.all(/*! require.ensure | compo
     //初始播放
     audioPlay: function audioPlay(event) {
       var pid = event.currentTarget.dataset.pid; //已播放过且不是当前
-
-      console.log('audio play 1--', getApp().globalData.g_audio_ablum_id, getApp().globalData.g_audio_ablum_temid);
-
+      console.log('audio play 1');
       if (getApp().globalData.g_audio_ablum_id == getApp().globalData.g_audio_ablum_temid && getApp().globalData.g_audio_playing !=
       null && pid == getApp().globalData.g_audio_pid && !getApp().globalData.g_audio_ended) {
-        console.log(getApp().globalData.g_audio_pid, getApp().globalData.g_audio_ended);
-
         if (getApp().globalData.g_audio_playing) {
           getApp().globalData.g_audio_obj.pause();
         }
@@ -623,16 +587,14 @@ var customModal = function customModal() {Promise.all(/*! require.ensure | compo
           console.log('click play');
           getApp().globalData.g_audio_obj.play();
         }
-
         return;
       }
-
-      console.log('init play pid--', pid);
+      console.log('init play pid--');
       getApp().globalData.g_audio_obj.stop();
       getApp().globalData.g_audio_pid = pid;
       getApp().globalData.g_audio_idx = 0;
-      getApp().globalData.g_audio_obj.src = this.$data.albums[pid]['audio'][0]['url'];
-      getApp().globalData.g_audio_obj.title = this.$data.albums[pid]['audio'][0]['title'];
+      getApp().globalData.g_audio_obj.src = this.albums[pid]['audio'][0]['url'];
+      getApp().globalData.g_audio_obj.title = this.albums[pid]['audio'][0]['title'];
       getApp().globalData.g_audio_obj.play();
       this.setData({
         tryListen: false,
@@ -780,111 +742,6 @@ var customModal = function customModal() {Promise.all(/*! require.ensure | compo
         playerHidden: true });
 
     },
-    /**
-        * 获取用户授权
-        */
-    aliGetAuthCode: function aliGetAuthCode() {var scopeCode = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'auth_user';
-      return new Promise(function (resolve, reject) {
-        my.getAuthCode({
-          scopes: scopeCode,
-          success: function success(auth) {
-            resolve(auth);
-          },
-          fail: function fail(err) {
-            reject(_objectSpread({}, err, {
-              message: '获取用户授权失败' }));
-
-          } });
-
-      });
-    },
-    /**
-        * 获取用户信息
-        * @param {Object} authCode
-        */
-    getUserByAuthCode: function getUserByAuthCode(authCode) {
-      var url = '';
-      return new Promise(function (resolve, reject) {
-        util.getRequest(url, {
-          authCode: authCode },
-        function (res) {
-          if (res.data.e = '9999') {
-            resolve(res.data);
-          } else {
-            reject(_objectSpread({}, res.data, {
-              message: '获取用户信息失败' }));
-
-          }
-        });
-      });
-    },
-    /**
-        * 创建支付交易订单
-        * @param {Object} authCode
-        * @param {Object} uid
-        */
-    getTradeNo: function getTradeNo(authCode, uid) {
-      var url = '';
-      var reqData = {
-        total_amount: '0.01',
-        out_trade_no: "".concat(new Date().getTime(), "_demo_pay"),
-        scene: 'bar_code',
-        auth_code: authCode,
-        subject: '小程序支付演示DEMO',
-        buyer_id: uid };
-
-      return new Promise(function (resolve, reject) {
-        util.getRequest(url, reqData, function (res) {
-          if (res.data.e = '9999') {
-            resolve(res.data);
-          } else {
-            reject(_objectSpread({}, res.data, {
-              message: '获取用户信息失败' }));
-
-          }
-        });
-      });
-    },
-    /**
-        * 发起支付
-        * @param {Object} tradeNo
-        */
-    cashPaymentTrade: function cashPaymentTrade(tradeNo) {
-      return new Promise(function (resolve, reject) {
-        my.tradePay({
-          tradeNO: tradeNo,
-          success: function success(result) {
-            if (result.resultCode != 9000) {
-              resolve(_objectSpread({
-                status: false,
-                message: result.memo },
-              result));
-
-            } else {
-              resolve(_objectSpread({
-                status: true,
-                message: '支付成功' },
-              result));
-
-            }
-          },
-          fail: function fail(err) {
-            reject(_objectSpread({
-              status: false,
-              message: '支付异常' },
-            err));
-
-          } });
-
-      });
-    },
-    showToast: function showToast(message) {var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'none';
-      my.showToast({
-        type: type,
-        content: message,
-        duration: 3000 });
-
-    },
     goCustom: function goCustom() {var _this2 = this;return _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee2() {var that, system;return _regenerator.default.wrap(function _callee2$(_context2) {while (1) {switch (_context2.prev = _context2.next) {case 0:
                 console.log('gocustom--');
                 that = _this2;
@@ -921,10 +778,6 @@ var customModal = function customModal() {Promise.all(/*! require.ensure | compo
         * @param {Object} data
         */
     setDuratoin: function setDuratoin(data) {
-      console.log('***setDuration', data,
-      getApp().globalData.g_audio_pid,
-      getApp().globalData.g_audio_idx);
-
       var _duration = data[getApp().globalData.g_audio_pid]['audio'][getApp().globalData.g_audio_idx]['duration'];
       var max = _duration / 1000;
       var duratoin = util.formLoadMTime(_duration);
@@ -937,24 +790,18 @@ var customModal = function customModal() {Promise.all(/*! require.ensure | compo
     },
     //监听操作
     audioManagerLister: function audioManagerLister() {
+      //设置当前页面已在播放监听状态
+      console.log('g_bglister_st', getApp().globalData.g_bglister_st);
       // getApp().globalData.g_audio_obj = my.getBackgroundAudioManager();
-      console.log('****ablum-detail-managerlister', getApp().globalData.g_audio_obj, getApp().globalData.g_audio_duration);
       var that = this;
-
       if (getApp().globalData.g_audio_duration != null) {
         that.setData({
           timeTotal: '/' + getApp().globalData.g_audio_duration });
 
-      } else {
-        console.log('****g_audio_duration-if-1');
-        console.log('****g_audio_duration-if', getApp().globalData.g_audio_duration);
       }
 
       getApp().globalData.g_audio_obj.onError(function (res) {
-        console.log('backgroundAudioManager 背景音频播放错误事件 onError ');
-        my.alert({
-          content: 'backgroundAudioManager 背景音频播放错误事件 onError' + JSON.stringify(res) });
-
+        console.log('backgroundAudioManager 背景音频播放错误事件 onError', res);
       });
 
       getApp().globalData.g_audio_obj.onCanplay(function () {
@@ -972,6 +819,9 @@ var customModal = function customModal() {Promise.all(/*! require.ensure | compo
       }); //监听音频加载中事件。当音频因为数据不足，需要停下来加载时会触发
 
       getApp().globalData.g_audio_obj.onWaiting(function () {
+        if (getApp().globalData.g_bglister_st.ablum_detail) {
+          return true;
+        }
         console.log('onWaiting');
       }); //监听背景音频播放错误事件
 
@@ -1027,6 +877,9 @@ var customModal = function customModal() {Promise.all(/*! require.ensure | compo
         console.log('onEnded');
       });
       getApp().globalData.g_audio_obj.onStop(function () {
+        if (getApp().globalData.g_bglister_st.ablum_detail) {
+          return true;
+        }
         getApp().globalData.g_audio_playing = null;
         getApp().globalData.g_audio_timeStep = '00:00';
         that.setData({
@@ -1044,7 +897,6 @@ var customModal = function customModal() {Promise.all(/*! require.ensure | compo
           timeStep: num,
           playerHidden: false });
         //todo 开通权限后需要重新请求数据 设为非试听
-        //console.log('ablum-datail-',getApp().globalData.g_audio_auth,getApp().globalData.g_audio_obj.currentTime >= getApp().globalData.g_try_time);
         if (!getApp().globalData.g_audio_auth && getApp().globalData.g_audio_obj.currentTime >= getApp().globalData.g_try_time) {
           that.setData({
             tryListen: true,
@@ -1060,6 +912,7 @@ var customModal = function customModal() {Promise.all(/*! require.ensure | compo
       this.setData({
         isListening: true });
 
+      getApp().globalData.g_bglister_st.ablum_detail = true;
     },
     navigatorFail: function navigatorFail(e) {
       console.log('navigator', e);

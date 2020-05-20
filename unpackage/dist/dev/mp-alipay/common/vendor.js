@@ -2508,7 +2508,7 @@ function getRequest(netUrl, data) {var _success2 = arguments.length > 2 && argum
     url: netUrl.replace("http:", "https:").replace("v.guixue.com", "v.xueweigui.com").replace("fast.guixue.com", "v.xueweigui.com"),
     data: data,
     header: {
-      'x-user-agent': '78:1.0.0' },
+      'x-user-agent': '78:1.0.1' },
 
     success: function success(res) {
       _success2(res);
@@ -2627,7 +2627,7 @@ function showToast(message) {var type = arguments.length > 1 && arguments[1] !==
   my.showToast({
     type: type,
     content: message,
-    duration: 3000 });
+    duration: 2500 });
 
 }
 /**
@@ -2709,7 +2709,7 @@ aliPay(_x) {return _aliPay.apply(this, arguments);}
 
 /**
                                                      * ali 获取用户信息授权ß
-                                                     */function _aliPay() {_aliPay = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee(url) {var aliGetAuthCodeMsg, user, tradeMsg, payStatus;return _regeneratorRuntime.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:console.log('alipay', url);_context.prev = 1;_context.next = 4;return aliGetAuthCode();case 4:aliGetAuthCodeMsg = _context.sent;_context.next = 7;return getUserByAuthCode(aliGetAuthCodeMsg.authCode);case 7:user = _context.sent;_context.next = 10;return xwgPay(url);case 10:tradeMsg = _context.sent;_context.next = 13;return cashPaymentTrade(tradeMsg.trade_no);case 13:payStatus = _context.sent;payStatus.status ? showToast('支付成功') : showToast(payStatus.message);_context.next = 20;break;case 17:_context.prev = 17;_context.t0 = _context["catch"](1); //showToast(error.message);
+                                                     */function _aliPay() {_aliPay = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee(url) {var aliGetAuthCodeMsg, user, tradeMsg, payStatus;return _regeneratorRuntime.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:console.log('alipay', url);_context.prev = 1;_context.next = 4;return aliGetAuthCode();case 4:aliGetAuthCodeMsg = _context.sent;_context.next = 7;return getUserByAuthCode(aliGetAuthCodeMsg.authCode);case 7:user = _context.sent;_context.next = 10;return xwgPay(url);case 10:tradeMsg = _context.sent;_context.next = 13;return cashPaymentTrade(tradeMsg.trade_no);case 13:payStatus = _context.sent;payStatus.status ? showToast('支付成功') : showToast('支付失败');_context.next = 20;break;case 17:_context.prev = 17;_context.t0 = _context["catch"](1); //showToast(error.message);
             console.log('alipay-error', _context.t0);case 20:case "end":return _context.stop();}}}, _callee, null, [[1, 17]]);}));return _aliPay.apply(this, arguments);}function aliOauth() {return _aliOauth.apply(this, arguments);}
 
 
@@ -2778,7 +2778,7 @@ function payMorderConfirm(url) {
    */
 function payDeposit(url) {
   return new Promise(function (resolve, reject) {
-    getRequest(url + '&amount=0.01', { channel: 52 }, function (res) {
+    getRequest(url, { channel: 52 }, function (res) {
       if (res.data) {
         resolve(res.data);
       } else {
@@ -13271,7 +13271,7 @@ module.exports = {"_from":"@dcloudio/uni-stat@next","_id":"@dcloudio/uni-stat@2.
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default = { "pages": { "pages/ablum/ablum": {}, "pages/login/changePhone": {}, "pages/coupon/coupon": {}, "pages/order/order": {}, "pages/navbar/navbar": {}, "pages/wtest/result": { "defaultTitle": "测试结果" }, "pages/pay/pay": {}, "pages/deal/deal": { "defaultTitle": "支付结果" }, "pages/wtest/wtest": { "defaultTitle": "测试" }, "pages/wtest/rank": {}, "pages/login/login": { "defaultTitle": "快速登录" }, "pages/login/bindingPhone": {}, "pages/webview/award": {}, "pages/my/my": {}, "pages/wtest/result_list": { "defaultTitle": "答案" }, "pages/ablum/ablum-content": {}, "pages/ablum/ablum-detail": {} }, "globalStyle": { "defaultTitle": "刘洪波讲单词", "titleBarColor": "#3075C6", "backgroundColor": "#ccc" } };exports.default = _default;
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default = { "pages": { "pages/ablum/ablum": { "usingComponents": { "auth": "/component/easyModal/auth/auth", "nav-bar": "/component/nav-bar/nav-bar" }, "usingAutoImportComponents": {} }, "pages/login/changePhone": { "usingComponents": { "nav-bar": "/component/nav-bar/nav-bar" }, "usingAutoImportComponents": {} }, "pages/coupon/coupon": { "usingAutoImportComponents": {}, "usingComponents": { "nav-bar": "/component/nav-bar/nav-bar" } }, "pages/order/order": { "usingAutoImportComponents": {}, "usingComponents": { "nav-bar": "/component/nav-bar/nav-bar" } }, "pages/navbar/navbar": { "usingComponents": {}, "usingAutoImportComponents": {} }, "pages/wtest/result": { "defaultTitle": "测试结果", "usingComponents": { "canvasdrawer": "/component/canvasdrawer/canvasdrawer", "wux-circle": "/component/component_circle/circle/index", "nav-bar": "/component/nav-bar/nav-bar" }, "usingAutoImportComponents": {} }, "pages/pay/pay": { "usingAutoImportComponents": {}, "usingComponents": { "nav-bar": "/component/nav-bar/nav-bar" } }, "pages/deal/deal": { "defaultTitle": "支付结果", "usingAutoImportComponents": {}, "usingComponents": { "nav-bar": "/component/nav-bar/nav-bar" } }, "pages/wtest/wtest": { "defaultTitle": "测试", "usingComponents": { "nav-bar": "/component/nav-bar/nav-bar" }, "usingAutoImportComponents": {} }, "pages/wtest/rank": { "usingComponents": { "nav-bar": "/component/nav-bar/nav-bar" }, "usingAutoImportComponents": {} }, "pages/login/login": { "defaultTitle": "快速登录", "usingComponents": { "nav-bar": "/component/nav-bar/nav-bar" }, "usingAutoImportComponents": {} }, "pages/login/bindingPhone": { "usingComponents": { "nav-bar": "/component/nav-bar/nav-bar" }, "usingAutoImportComponents": {} }, "pages/webview/award": { "usingComponents": { "auth": "/component/easyModal/auth/auth" }, "usingAutoImportComponents": {} }, "pages/my/my": { "usingComponents": { "easy-modal": "/component/easyModal/easy/easyModal", "canvasdrawer": "/component/canvasdrawer/canvasdrawer", "nav-bar": "/component/nav-bar/nav-bar" }, "usingAutoImportComponents": {} }, "pages/wtest/result_list": { "defaultTitle": "答案", "usingComponents": { "nav-bar": "/component/nav-bar/nav-bar" }, "usingAutoImportComponents": {} }, "pages/ablum/ablum-content": { "usingComponents": { "custom-modal": "/component/easyModal/custom-modal/custom-modal", "modals-bottom": "/component/modals/modals", "nav-bar": "/component/nav-bar/nav-bar" }, "usingAutoImportComponents": {} }, "pages/ablum/ablum-detail": { "usingComponents": { "custom-modal": "/component/easyModal/custom-modal/custom-modal", "nav-bar": "/component/nav-bar/nav-bar" }, "usingAutoImportComponents": {} } }, "globalStyle": { "defaultTitle": "刘洪波讲单词", "titleBarColor": "#3075C6", "backgroundColor": "#ccc" } };exports.default = _default;
 
 /***/ }),
 

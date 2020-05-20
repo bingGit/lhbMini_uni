@@ -39,7 +39,6 @@ export default {
       codeNumber: '',
       enable: true,
       thirdEnable: true,
-      canIUse: wx.canIUse('button.open-type.getUserInfo'),
       wxCode: '',
       oauth_cfg: {
         oauthTipName: '为了更好的体验\n需要您的授权\n(• ̀ω•́ )✧',

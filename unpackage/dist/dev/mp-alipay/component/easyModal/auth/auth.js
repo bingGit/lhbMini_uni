@@ -338,8 +338,6 @@ var baseModal = function baseModal() {__webpack_require__.e(/*! require.ensure |
                 console.log('oauth-fail', error);
               } });
             // that.oauthLogin(res.code);
-          } else {
-            console.log('登录失败！' + res.errMsg);
           }
         },
         fail: function fail(e) {

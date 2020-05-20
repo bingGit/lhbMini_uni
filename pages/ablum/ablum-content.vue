@@ -418,7 +418,7 @@ export default {
         isPlayFloat: true
       });
       this.audioPlay();
-      this.audioListen();
+      //this.audioListen();
     } else {
       this.setData({
         isPlayFloat: false
@@ -440,6 +440,7 @@ export default {
     if (!getApp().globalData.g_audio_obj) {
       console.log('create getBackgroundAudioManager2');
       getApp().globalData.g_audio_obj = wx.getBackgroundAudioManager();
+	  this.audioListen();
     }
 
     this.setData({

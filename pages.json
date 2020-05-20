@@ -9,32 +9,10 @@
 			"style": {}
 		},
 		{
-			"path": "pages/coupon/coupon",
-			"style": {}
-		},
-		{
-			"path": "pages/order/order",
-			"style": {}
-		},
-		{
-			"path": "pages/navbar/navbar",
-			"style": {}
-		},
-		{
 			"path": "pages/wtest/result",
 			"style": {
 				"backgroundTextStyle": "light",
 				"navigationBarTitleText": "测试结果"
-			}
-		},
-		{
-			"path": "pages/pay/pay",
-			"style": {}
-		},
-		{
-			"path": "pages/deal/deal",
-			"style": {
-				"navigationBarTitleText": "支付结果"
 			}
 		},
 		{

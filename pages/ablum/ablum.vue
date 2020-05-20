@@ -136,8 +136,6 @@ export default {
       this.videoContext.stop();
     }
 
-    ; //浮动播放
-
     var playRecord = util.getListenRecord();
 
     if (playRecord || getApp().globalData.g_audio_playing != null) {
@@ -156,8 +154,6 @@ export default {
         });
       }
     }
-
-    this.screenResize();
 	//自定义菜单隐藏判断
 	if(getApp().globalData.g_app == 'alipay'){
 		this.setData({

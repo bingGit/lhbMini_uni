@@ -186,11 +186,10 @@ var _auth = _interopRequireDefault(__webpack_require__(/*! ../../component/easyM
 //
 //
 //
-var md5 = __webpack_require__(/*! ../../utils/md5.js */ 34);var util = __webpack_require__(/*! ../../utils/util.js */ 12);var app = getApp().globalData;var navBar = function navBar() {__webpack_require__.e(/*! require.ensure | component/nav-bar/nav-bar */ "component/nav-bar/nav-bar").then((function () {return resolve(__webpack_require__(/*! ../../component/nav-bar/nav-bar */ 166));}).bind(null, __webpack_require__)).catch(__webpack_require__.oe);};var _default = { data: function data() {return { code: '获取验证码', phoneNumber: '', codeNumber: '', enable: true, thirdEnable: true, canIUse: wx.canIUse('button.open-type.getUserInfo'), wxCode: '', oauth_cfg: { oauthTipName: '为了更好的体验\n需要您的授权\n(• ̀ω•́ )✧', oauthButtonName: '好的' }, nvabarData: { showCapsule: 1, // 是否显示左上角胶囊按钮 1 显示 0 不显示
+var md5 = __webpack_require__(/*! ../../utils/md5.js */ 34);var util = __webpack_require__(/*! ../../utils/util.js */ 12);var app = getApp().globalData;var navBar = function navBar() {__webpack_require__.e(/*! require.ensure | component/nav-bar/nav-bar */ "component/nav-bar/nav-bar").then((function () {return resolve(__webpack_require__(/*! ../../component/nav-bar/nav-bar */ 166));}).bind(null, __webpack_require__)).catch(__webpack_require__.oe);};var _default = { data: function data() {return { code: '获取验证码', phoneNumber: '', codeNumber: '', enable: true, thirdEnable: true, wxCode: '', oauth_cfg: { oauthTipName: '为了更好的体验\n需要您的授权\n(• ̀ω•́ )✧', oauthButtonName: '好的' }, nvabarData: { showCapsule: 1, // 是否显示左上角胶囊按钮 1 显示 0 不显示
         title: '登录' }, navBarHidden: false //自定义菜单是否隐藏
     };}, components: { // auth,
-    navBar: navBar },
-  props: {},
+    navBar: navBar }, props: {},
   onLoad: function onLoad() {
     var that = this;
     wx.login({
@@ -782,8 +781,6 @@ var baseModal = function baseModal() {__webpack_require__.e(/*! require.ensure |
                 console.log('oauth-fail', error);
               } });
             // that.oauthLogin(res.code);
-          } else {
-            console.log('登录失败！' + res.errMsg);
           }
         },
         fail: function fail(e) {

@@ -222,7 +222,7 @@ function getRequest(netUrl, data, success = function(){}) {
     url: netUrl.replace("http:", "https:").replace("v.guixue.com", "v.xueweigui.com").replace("fast.guixue.com", "v.xueweigui.com"),
     data: data,
     header: {
-      'x-user-agent': '78:1.0.0'
+      'x-user-agent': '78:1.0.1'
     },
     success: function (res) {
       success(res);
@@ -341,7 +341,7 @@ function showToast(message, type = 'none') {
 	my.showToast({
 	  type,
 	  content: message,
-	  duration: 3000
+	  duration: 2500
 	});
 }
 /**
@@ -414,7 +414,7 @@ async function aliPay(url){
 	  // return;	
 	  const tradeMsg = await xwgPay(url);
 	  const payStatus = await cashPaymentTrade(tradeMsg.trade_no);
-	  payStatus.status ? showToast('支付成功') : showToast(payStatus.message);
+	  payStatus.status ? showToast('支付成功') : showToast('支付失败');
 	} catch (error){
 	  //showToast(error.message);
 	  console.log('alipay-error', error);
@@ -492,7 +492,7 @@ function payMorderConfirm(url){
  */
 function payDeposit(url){
 	return new Promise((resolve, reject) =>{
-		getRequest(url + '&amount=0.01', {channel:52} ,(res)=>{
+		getRequest(url, {channel:52} ,(res)=>{
 			if(res.data) {
 				resolve(res.data);
 			} else {

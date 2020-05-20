@@ -138,8 +138,6 @@ var _default =
       this.globalData.g_from_app = false;
     }
 
-    console.log('getLaunchOptionsSync', e);
-
     if (e.scene == 1006) {
       this.globalData.listen_type = 3;
     } else if (e.scene == 1007) {
@@ -182,18 +180,8 @@ var _default =
     // this.globalData.headerBtnPosi = wx.getMenuButtonBoundingClientRect();
     var version = wx.getSystemInfoSync().SDKVersion;
     console.log('version', version); //兼容新版本库
-    // this.globalData.g_old_version = true;
-
-    // if (util.compareVersion(version, '2.6.2') < 0) {
-    //   this.globalData.g_old_version = true;
-    //   wx.showModal({
-    //     title: '提示',
-    //     content: '当前微信版本过低，可能会影响使用体验，请及时升级到最新版本。',
-    //     showCancel: false,
-    //     confirmText: '知道了'
-    //   });
-    // }
   },
+
   globalData: {
     /**
                  * 收集表单标识
@@ -282,8 +270,9 @@ var _default =
     //是否是旧版本
     formIdList: [], //收集表单数据
     //当前运行环境 alipay 支付宝
-    g_app: 'weixin' },
-
+    g_app: 'weixin',
+    g_bglister_st: { 'ablum_detail': false, 'ablum_content': false } //背景音播放是否已在监听状态,目前有2个页面需要监听，分别是ablum-detail|ablum-content
+  },
 
   onHide: function onHide(e) {
     console.log('app.js onhide', this.globalData.g_audio_pid);
