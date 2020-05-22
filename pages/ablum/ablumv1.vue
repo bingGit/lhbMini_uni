@@ -36,7 +36,7 @@
 							<image class="ablum-list-cover-img" :src="album['square']"></image>
 						</view>
 
-						<view v-else-if="album['product_type'] == 7038" :class="idx % 2 == 0 ?  'ablum-list-cover-view' : 'ablum-list-cover-view2'">
+						<view v-else-if="album['product_type'] == 7038" :class="idx % 2 == 0 ?  'ablum-list-cover-view2' : 'ablum-list-cover-view1'">
 							<view class="ablum-list-waiting">
 								<text class="ablum-list-waiting-title">{{album['title']}}</text>
 								<text class="ablum-list-waiting-cont">{{album['content']}}</text>
@@ -290,10 +290,10 @@
 					return;
 				}
 				if (url.length == 0) {
-					wx.showToast({
-						title: '尽情期待',
-						icon: "none",
-						duration: 500
+					my.showToast({
+						content: '尽情期待',
+						type: "none",
+						duration:1000
 					});
 					return;
 				}

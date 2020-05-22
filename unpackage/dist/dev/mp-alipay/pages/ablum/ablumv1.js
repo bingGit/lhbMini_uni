@@ -438,10 +438,10 @@ var unitUrl = "https://v.xueweigui.com/ApiWordCourse/unitList?book_id=";var auth
         return;
       }
       if (url.length == 0) {
-        wx.showToast({
-          title: '尽情期待',
-          icon: "none",
-          duration: 500 });
+        my.showToast({
+          content: '尽情期待',
+          type: "none",
+          duration: 1000 });
 
         return;
       }
