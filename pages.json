@@ -1,6 +1,10 @@
 {
 	"pages": [
 		{
+			"path": "pages/ablum/ablumv1",
+			"style": {}
+		},
+		{
 			"path": "pages/ablum/ablum",
 			"style": {}
 		},
@@ -70,7 +74,7 @@
 		"borderStyle": "black",
 		"list": [
 			{
-				"pagePath": "pages/ablum/ablum",
+				"pagePath": "pages/ablum/ablumv1",
 				"text": "讲单词",
 				"iconPath": "/static/pages/images/main.png",
 				"selectedIconPath": "/static/pages/images/main_select.png"

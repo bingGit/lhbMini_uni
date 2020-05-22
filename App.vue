@@ -7,6 +7,7 @@ const userInfoKey = 'userInfo'; //copy 需修改
 
 export default {
   onLaunch: function (e) {
+	 this.globalData.expireOpt();
     if (util.isLogin()) {
       this.globalData.g_is_login = true;
     } //app跳小程序 || App 分享消息卡片
@@ -59,9 +60,8 @@ export default {
 
     // this.globalData.headerBtnPosi = wx.getMenuButtonBoundingClientRect();
     var version = wx.getSystemInfoSync().SDKVersion;
-    console.log('version', version); //兼容新版本库
+    console.log('onLaunch', e); //兼容新版本库
   },
-  
   globalData: {
     /**
      * 收集表单标识
@@ -72,6 +72,18 @@ export default {
         this.formIdList.push(formId);
       }
     },
+	/**
+	 * 过期判断操作
+	 */
+	expireOpt: function () {
+	  let expireTime = util.getExpireTime();
+	  console.log('expire-time',expireTime,util.isExpire())
+	  if (expireTime && util.isExpire()) {
+	    wx.clearStorageSync();
+	  } else if(!expireTime && util.isLogin()) {
+	    util.setExpireTime();
+	  }
+	},
     g_audio_ablum_id: 0,
     //集合id
     g_audio_ablum_temid: 0,

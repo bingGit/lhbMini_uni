@@ -197,6 +197,9 @@
 			if (url == 'undefined') {
 				url = unitUrl + id;
 			}
+			if (options.channel) {
+				url = url + '&channel=' + options.channel;
+			}
 
 			let title = '';
 			var path = '';
@@ -264,7 +267,7 @@
 			console.log('onready1');
 			this.customModal = this.$refs.customModal;
 			this.setData({
-				isFisrtShow:true
+				isFisrtShow: true
 			});
 		},
 
@@ -349,7 +352,7 @@
 		 */
 		onHide: function() {
 			this.setData({
-				isFisrtShow :false
+				isFisrtShow: false
 			});
 		},
 
@@ -615,19 +618,7 @@
 				var that = this;
 				var system = wx.getSystemInfoSync().system;
 				console.log('g_app', getApp().globalData.g_app);
-				if (getApp().globalData.g_app == 'alipay') {
-					util.aliPay(this.authMsg.order_url);
-					return;
-				}
-
-				if (system.indexOf('iOS') === -1) {
-					util.payAction(this.$data.authMsg.order_url); // let url = this.$data.data.authMsg.order_url || '';
-					// wx.navigateTo({
-					//   url: '../order/order?url=' + url,
-					// })
-				} else {
-					this.customModal.show();
-				}
+				util.aliPay(this.authMsg.order_url);
 			},
 			//保存收听记录
 			saveListenRecord: function() {
@@ -659,7 +650,7 @@
 			//监听操作
 			audioManagerLister: function() {
 				//设置当前页面已在播放监听状态
-				console.log('g_bglister_st',getApp().globalData.g_bglister_st);
+				console.log('g_bglister_st', getApp().globalData.g_bglister_st);
 				// getApp().globalData.g_audio_obj = my.getBackgroundAudioManager();
 				var that = this;
 				if (getApp().globalData.g_audio_duration != null) {
@@ -669,7 +660,7 @@
 				}
 
 				getApp().globalData.g_audio_obj.onError((res) => {
-					console.log('backgroundAudioManager 背景音频播放错误事件 onError',res)
+					console.log('backgroundAudioManager 背景音频播放错误事件 onError', res)
 				});
 
 				getApp().globalData.g_audio_obj.onCanplay(function() {
@@ -687,7 +678,7 @@
 				}); //监听音频加载中事件。当音频因为数据不足，需要停下来加载时会触发
 
 				getApp().globalData.g_audio_obj.onWaiting(function() {
-					if(getApp().globalData.g_bglister_st.ablum_detail){
+					if (getApp().globalData.g_bglister_st.ablum_detail) {
 						return true;
 					}
 					console.log('onWaiting');
@@ -745,7 +736,7 @@
 					console.log('onEnded');
 				});
 				getApp().globalData.g_audio_obj.onStop(function() {
-					if(getApp().globalData.g_bglister_st.ablum_detail){
+					if (getApp().globalData.g_bglister_st.ablum_detail) {
 						return true;
 					}
 					getApp().globalData.g_audio_playing = null;

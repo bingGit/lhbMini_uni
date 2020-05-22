@@ -1,5 +1,6 @@
 {
   "pages": [
+    "pages/ablum/ablumv1",
     "pages/ablum/ablum",
     "pages/login/changePhone",
     "pages/wtest/result",
@@ -25,7 +26,7 @@
     "backgroundColor": "#606acb",
     "items": [
       {
-        "pagePath": "pages/ablum/ablum",
+        "pagePath": "pages/ablum/ablumv1",
         "name": "讲单词",
         "icon": "/static/pages/images/main.png",
         "activeIcon": "/static/pages/images/main_select.png"

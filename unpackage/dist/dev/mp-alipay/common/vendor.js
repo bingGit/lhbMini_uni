@@ -2277,6 +2277,171 @@ uni$1;exports.default = _default;
 
 /***/ }),
 
+/***/ 106:
+/*!*************************************************************!*\
+  !*** /Users/bing/lhbWordMiniProgram_uni/utils/enterHelp.js ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(wx) {var util = __webpack_require__(/*! ./util.js */ 12);
+
+function enterWithDic(dic) {
+  console.log(dic.product_type);
+
+  if (dic.appid) {
+    wx.navigateToMiniProgram({
+      appId: dic.appid,
+      envVersion: 'release',
+
+      success: function success(res) {// 打开成功
+      } });
+
+
+  } else {
+    var url = encodeURIComponent(dic.url);
+    console.log('dic', dic);
+
+    switch (dic.product_type) {
+      case '2':
+        //入门真经
+        wx.navigateTo({
+          url: '../course/course?url=' + url });
+
+        break;
+
+      case '3':
+        // 课程详情界面
+        wx.navigateTo({
+          url: '../courseDetail/courseDetail?url=' + url });
+
+        break;
+
+      case '22':
+        //会员
+        wx.navigateTo({
+          url: '../myVip/myVip?url=' + url });
+
+        break;
+
+      case '30':
+        // 我的订单
+        wx.navigateTo({
+          url: '../order/myOrder' });
+
+        break;
+
+      case '32':
+        //绑定手机号
+        wx.navigateTo({
+          url: '../login/bindingPhone' });
+
+        break;
+
+      case '34':
+        //更换手机号
+        wx.navigateTo({
+          url: '../login/changePhone' });
+
+        break;
+
+      case '231':
+        //直播间
+        if (!util.isLogin()) {
+          wx.navigateTo({
+            url: '../login/login' });
+
+        } else {
+          wx.navigateTo({
+            url: '../livevc/livevc?url=' + url });
+
+        }
+
+        break;
+
+      case '239':
+        //回放
+        if (!util.isLogin()) {
+          wx.navigateTo({
+            url: '../login/login' });
+
+        } else {
+          wx.navigateTo({
+            url: '../livevc/vodvc?url=' + url });
+
+        }
+
+        break;
+
+      case '310':
+        // 确认订单界面
+        var system = wx.getSystemInfoSync().system;
+
+        if (system.indexOf('iOS') >= 0) {
+          wx.showModal({
+            title: '前往雅思学为贵APP进行购买',
+            content: '基于微信小程序平台运营规范，小程序暂不支持购买，请前往学为贵雅思APP完成购买',
+            showCancel: false,
+            confirmText: '知道了' });
+
+        } else {
+          wx.navigateTo({
+            url: '../order/order?url=' + url });
+
+        }
+
+        break;
+
+      case '9100':
+        //我的课程
+        wx.navigateTo({
+          url: '../myCourse/myCourse?url=' + url });
+
+        break;
+
+      case '9998':
+        //跳转音频(活动需要,结束可删除)
+        wx.navigateTo({
+          url: '../audio/audio' });
+
+        break;
+
+      case '9999':
+        wx.navigateTo({
+          url: '../webview/webview?url=' + url });
+
+        break;
+
+      default:
+        var urls = decodeURIComponent(url);
+
+        if (urls.indexOf('isrank') !== -1) {
+          console.log('is test count', urls, getQueryString(urls, 'id'));
+          util.updateHot(wx.getStorageSync('userinfo')['uid'] || 0, getQueryString(urls, 'id'), 0, 4);
+        }
+
+        wx.navigateTo({
+          url: urls });
+
+        break;}
+
+  }
+}
+
+function getQueryString(url, name) {
+  var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+  var r = url.substr(1).match(reg); //search,查询？后面的参数，并匹配正则
+
+  if (r != null) return unescape(r[2]);
+  return null;
+}
+
+module.exports = {
+  enterWithDic: enterWithDic };
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-alipay/dist/index.js */ 1)["default"]))
+
+/***/ }),
+
 /***/ 12:
 /*!********************************************************!*\
   !*** /Users/bing/lhbWordMiniProgram_uni/utils/util.js ***!
@@ -2508,7 +2673,7 @@ function getRequest(netUrl, data) {var _success2 = arguments.length > 2 && argum
     url: netUrl.replace("http:", "https:").replace("v.guixue.com", "v.xueweigui.com").replace("fast.guixue.com", "v.xueweigui.com"),
     data: data,
     header: {
-      'x-user-agent': '78:1.0.1' },
+      'x-user-agent': '78:1.0.2' },
 
     success: function success(res) {
       _success2(res);
@@ -2812,7 +2977,17 @@ xwgPay(_x2) {return _xwgPay.apply(this, arguments);}
 
 
 
-/**********************平台支付 end**********************/function _xwgPay() {_xwgPay = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee3(url) {var payMorderShowMsg, payMorderBuyMsg, payMorderConfirmMsg, payDepositMsg;return _regeneratorRuntime.wrap(function _callee3$(_context3) {while (1) {switch (_context3.prev = _context3.next) {case 0:_context3.prev = 0;uni.showLoading({ title: '请求加载中' });setTimeout(function () {uni.hideLoading();}, 1000);_context3.next = 5;return payMorderShow(url);case 5:payMorderShowMsg = _context3.sent;_context3.next = 8;return payMorderBuy(payMorderShowMsg.buyurl);case 8:payMorderBuyMsg = _context3.sent;_context3.next = 11;return payMorderConfirm(payMorderBuyMsg.r.payurl);case 11:payMorderConfirmMsg = _context3.sent;_context3.next = 14;return payDeposit(payMorderConfirmMsg.payment.sdk[0].url);case 14:payDepositMsg = _context3.sent;return _context3.abrupt("return", payDepositMsg);case 18:_context3.prev = 18;_context3.t0 = _context3["catch"](0);showToast(_context3.t0.message);console.log('xwg-pay-error', _context3.t0);case 22:case "end":return _context3.stop();}}}, _callee3, null, [[0, 18]]);}));return _xwgPay.apply(this, arguments);}
+/**********************平台支付 end**********************/
+/**
+                                                        * 上报数据
+                                                        * @param {Object} data object 
+                                                        * @param {string} event 
+                                                        *  navigate_program 来源上报
+                                                        */function _xwgPay() {_xwgPay = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee3(url) {var payMorderShowMsg, payMorderBuyMsg, payMorderConfirmMsg, payDepositMsg;return _regeneratorRuntime.wrap(function _callee3$(_context3) {while (1) {switch (_context3.prev = _context3.next) {case 0:_context3.prev = 0;uni.showLoading({ title: '请求加载中' });setTimeout(function () {uni.hideLoading();}, 1000);_context3.next = 5;return payMorderShow(url);case 5:payMorderShowMsg = _context3.sent;_context3.next = 8;return payMorderBuy(payMorderShowMsg.buyurl);case 8:payMorderBuyMsg = _context3.sent;_context3.next = 11;return payMorderConfirm(payMorderBuyMsg.r.payurl);case 11:payMorderConfirmMsg = _context3.sent;_context3.next = 14;return payDeposit(payMorderConfirmMsg.payment.sdk[0].url);case 14:payDepositMsg = _context3.sent;return _context3.abrupt("return", payDepositMsg);case 18:_context3.prev = 18;_context3.t0 = _context3["catch"](0);showToast(_context3.t0.message);console.log('xwg-pay-error', _context3.t0);case 22:case "end":return _context3.stop();}}}, _callee3, null, [[0, 18]]);}));return _xwgPay.apply(this, arguments);}
+function reportAnalytics() {var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};var event = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'navigate_program';
+  console.log(event, data);
+  my.reportAnalytics(event, data);
+}
 
 function formCreateTime(data) {
   var lockData = wx.getStorageSync('lockData') || [];
@@ -3583,78 +3758,36 @@ function debounce(fn, delay) {
   };
 }
 /**
-   * 支付
+   * 设置缓存时间
+   * @param key 过期key ，默认为全局过期key
+   * @param duration 单位s 默认 7days
    */
-function payAction(url) {var fn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
-  console.log('payActin', url);
-  getRequest(url, null, function (netData1) {
-    console.log('netData1', netData1);
 
-    if ("9999" == netData1.data.e) {
-      // 网络请求成功
-      getRequest(netData1.data.buyurl + '&channel=' + 48, null, function (netData2) {
-        console.log('netData2', netData2);
 
-        if ("9999" == netData2.data.e) {
-          // 网络请求成功
-          getRequest(netData2.data.r.payurl + '&channel=' + 48, null, function (netData3) {
-            console.log('netData3', netData3);
-
-            if (netData3.data && netData3.data.payment && netData3.data.payment.sdk && netData3.data.payment.sdk.length > 0) {
-              getRequest(netData3.data.payment.sdk[0].url, null, function (netData4) {
-                console.log('netData4', netData4);
-
-                if (200 == netData4.statusCode) {
-                  wx.requestPayment({
-                    timeStamp: netData4.data.timeStamp,
-                    nonceStr: netData4.data.nonceStr,
-                    package: netData4.data.package,
-                    signType: netData4.data.signType,
-                    paySign: netData4.data.paySign,
-                    success: function success(res) {
-                      // 支付成功
-                      wx.navigateTo({
-                        url: '/pages/deal/deal?orderId=' + netData3.data.payment.order_id });
-
-                      fn();
-                    },
-                    fail: function fail(res) {
-                      // 支付失败
-                      setTimeout(function () {
-                        wx.showToast({
-                          title: '支付失败',
-                          icon: 'none',
-                          duration: 2000 });
-
-                      }, 500);
-                    } });
-
-                }
-              });
-            } else if (netData3.data.payment.confirm_url) {
-              getRequest(this.data.payDetail.payment.confirm_url, null, function (netData5) {
-                console.log('netData', netData5);
-                wx.navigateTo({
-                  url: '/pages/deal/deal?orderId=' + netData3.data.payment.order_id });
-
-                fn();
-              });
-            }
-          });
-        } else {
-          setTimeout(function () {
-            wx.showToast({
-              title: '支付失败',
-              icon: 'none',
-              duration: 2000 });
-
-          }, 500);
-        }
-      });
-    }
-  });
+function setExpireTime() {var key = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'global_expiration_time';var duration = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 604800;
+  var micrSeccond = duration * 1000;
+  var timestamp = Date.parse(new Date());
+  var expiration = timestamp + micrSeccond;
+  wx.setStorageSync(key, expiration);
 }
+/**
+   * 获取缓存时间
+   * @param key 过期key ，默认为全局过期key
+   */
+function getExpireTime() {var key = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'global_expiration_time';
+  var expiration = wx.getStorageSync(key) || null;
+  return expiration;
+}
+/**
+   * 判断是否过期 过期则清空本地缓存
+   * @param key 过期key
+   */
+function isExpire() {var key = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'global_expiration_time';
+  var timestamp = Date.parse(new Date()); //现在时间
 
+  var expireTime = getExpireTime(key);
+  return expireTime <= timestamp;
+}
 module.exports = {
   formatTime: formatTime,
   getMonthDate: getMonthDate,
@@ -3697,9 +3830,12 @@ module.exports = {
   secret: secret,
   throttle: throttle,
   debounce: debounce,
-  payAction: payAction,
   aliOauth: aliOauth,
   aliPay: aliPay,
+  isExpire: isExpire,
+  setExpireTime: setExpireTime,
+  getExpireTime: getExpireTime,
+  reportAnalytics: reportAnalytics,
   AJAX: function AJAX(url) {var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};var fn = arguments.length > 2 ? arguments[2] : undefined;var method = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "get";var header = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
     wx.request({
       url: url,
@@ -3732,6 +3868,42 @@ module.exports = {
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(/*! regenerator-runtime */ 14);
+
+/***/ }),
+
+/***/ 131:
+/*!****************************************************************!*\
+  !*** /Users/bing/lhbWordMiniProgram_uni/utils/displayUtils.js ***!
+  \****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(wx) {/**
+ * 显示消息提示框
+ */
+function showsToast(showTitle, showIcon, showDuration) {
+  var showsIcon = "none";
+
+  if ("success" == showIcon || "loading" == showIcon) {
+    showsIcon = showIcon;
+  }
+
+  var showsDuration = 2000;
+
+  if (showDuration != null) {
+    showsDuration = showDuration;
+  }
+
+  wx.showToast({
+    title: showTitle,
+    icon: showsIcon,
+    duration: showsDuration });
+
+}
+
+module.exports = {
+  showsToast: showsToast };
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-alipay/dist/index.js */ 1)["default"]))
 
 /***/ }),
 
@@ -5474,6 +5646,246 @@ CryptoJS.lib.Cipher || function (undefined) {
 })(Math);
 
 module.exports = CryptoJS;
+
+/***/ }),
+
+/***/ 174:
+/*!****************************************************************!*\
+  !*** /Users/bing/lhbWordMiniProgram_uni/utils/canvas-share.js ***!
+  \****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(wx) {function _createForOfIteratorHelper(o) {if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {if (Array.isArray(o) || (o = _unsupportedIterableToArray(o))) {var i = 0;var F = function F() {};return { s: F, n: function n() {if (i >= o.length) return { done: true };return { done: false, value: o[i++] };}, e: function e(_e) {throw _e;}, f: F };}throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");}var it,normalCompletion = true,didErr = false,err;return { s: function s() {it = o[Symbol.iterator]();}, n: function n() {var step = it.next();normalCompletion = step.done;return step;}, e: function e(_e2) {didErr = true;err = _e2;}, f: function f() {try {if (!normalCompletion && it.return != null) it.return();} finally {if (didErr) throw err;}} };}function _unsupportedIterableToArray(o, minLen) {if (!o) return;if (typeof o === "string") return _arrayLikeToArray(o, minLen);var n = Object.prototype.toString.call(o).slice(8, -1);if (n === "Object" && o.constructor) n = o.constructor.name;if (n === "Map" || n === "Set") return Array.from(n);if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);}function _arrayLikeToArray(arr, len) {if (len == null || len > arr.length) len = arr.length;for (var i = 0, arr2 = new Array(len); i < len; i++) {arr2[i] = arr[i];}return arr2;}var lineHeight = 20;
+var windowWidth;
+var windowHeight;
+var offset;
+var contentHeight;
+/***** */
+
+/*****邀请分享图 */
+
+function getInviteImg(qr) {
+  var avatarurl_width = 60; //绘制的头像宽度
+
+  var avatarurl_heigth = 60; //绘制的头像高度
+
+  var that = this;
+  wx.getSystemInfo({
+    success: function success(res) {
+      windowWidth = res.windowWidth;
+      windowHeight = res.windowHeight;
+      offset = res.windowWidth * 0.25 / 2;
+    } });
+
+  var ctx = wx.createCanvasContext('myCanvas');
+  var contentHeight = windowHeight;
+  ctx.rect(0, 0, windowWidth, contentHeight);
+  ctx.setFillStyle("pink");
+  ctx.fill();
+  ctx.drawImage("/static/image/icon/zhuli.jpg", 0, 0, windowWidth, windowHeight * 0.56); //底部
+  //ctx.rect(20, windowHeight-200, windowWidth * 0.7, windowHeight - 440);
+  // ctx.setFillStyle('pink')
+  // ctx.setFillStyle("pink");  
+  // ctx.rect(0, windowHeight*0.55 , windowHeight, 100)
+  // ctx.fill()
+
+  ctx.setFillStyle('black');
+  ctx.setFontSize(12);
+  ctx.fillText('我正在听刘洪波讲单词故事', 30, windowHeight - 230);
+  ctx.fillText('帮我点个赞吧', 30, windowHeight - 210);
+  ctx.setFontSize(8);
+  ctx.setFillStyle('#333');
+  ctx.fillText('长按识别二维码为单唱点赞', 30, windowHeight - 190);
+  ctx.drawImage("/static/image/think.png", windowWidth * 0.7, windowHeight * 0.56, 80, 80);
+  ctx.save(); // // Draw coordinates
+
+  var avatarurl_x = 40; //绘制的头像在画布上的位置
+
+  var avatarurl_y = windowHeight * 0.5; //绘制的头像在画布上的位置
+  //ctx.arc(avatarurl_width / 2 + avatarurl_x, avatarurl_heigth / 2 + avatarurl_y, avatarurl_width / 2, 0, Math.PI * 2)
+  //ctx.setFillStyle('#fff')
+  //ctx.fill();
+  //ctx.clip()
+
+  ctx.drawImage('https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJTRwcfGSQYQ57ZeWI6LxhwpxyJBibvI1WZKkuKZqTqvtBDRLPFYmYNNs1EQFtM2Wz5lHjbz1eiaUhA/132', avatarurl_x, avatarurl_y, avatarurl_width, avatarurl_heigth);
+  ctx.restore();
+  ctx.draw();
+  return contentHeight;
+} //设置文字大小，并填充颜色。
+
+
+function drawFont(ctx, content, height, size, offset, color) {
+  ctx.setFontSize(size);
+  ctx.setFillStyle(color);
+  ctx.fillText(content, offset, height);
+}
+/***单词分享图 */
+
+
+function getData(that) {var title = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';var desc = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';var content = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';var listenNum = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;var url = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : '';
+  wx.getSystemInfo({
+    success: function success(res) {
+      windowWidth = res.windowWidth;
+      windowHeight = res.windowHeight;
+      offset = res.windowWidth * 0.25 / 2;
+    } });
+
+  var i = 0;
+  var lineNum = 1;
+  var thinkStr = '';
+  var filterList = [];
+  var thinkList = [];
+  var pattern = new RegExp('<p.*?>(.*?)<\/p>', 'gi');
+  var pattenContent = content.match(pattern); // for (let i in pattenContent){
+  //   thinkList.push(pattenContent[i].replace(/<[^>]+>/g, ""));
+  //   lineNum += 1;
+  // }
+
+  for (var _i in pattenContent) {
+    filterList.push(pattenContent[_i].replace(/<[^>]+>/g, ""));
+  }
+
+  var fialContent = filterList.join('') + '\n';var _iterator = _createForOfIteratorHelper(
+
+  fialContent),_step;try {for (_iterator.s(); !(_step = _iterator.n()).done;) {var item = _step.value;
+      if (item === '\n') {
+        thinkList.push(thinkStr);
+        thinkList.push('a');
+        i = 0;
+        thinkStr = '';
+        lineNum += 1;
+      } else if (i === 20) {
+        thinkList.push(thinkStr);
+        i = 1;
+        thinkStr = item;
+        lineNum += 1;
+      } else {
+        thinkStr += item;
+        i += 1;
+      }
+    } // thinkList.push(thinkStr);
+  } catch (err) {_iterator.e(err);} finally {_iterator.f();}
+
+  createNewImg(lineNum, title, desc, thinkList, listenNum, url);
+  return windowHeight - 50;
+} //画矩形，也是整块画布的大小，宽度是屏幕宽度，高度根据内容多少来动态设置。
+
+
+function drawSquare(ctx, height) {
+  ctx.rect(0, 0, windowWidth, height);
+  ctx.setFillStyle("#00BAA2");
+  ctx.fill();
+} //画线。
+
+
+function drawLine(ctx, height) {
+  ctx.beginPath();
+  ctx.moveTo(offset, height);
+  ctx.lineTo(windowWidth - offset, height);
+  ctx.stroke('#eee');
+  ctx.closePath();
+}
+
+function drawWhiteSquare(ctx, height) {
+  ctx.rect(20, windowWidth * 0.18, windowWidth * 0.89, height);
+  ctx.setFillStyle("#fff");
+  ctx.fill();
+}
+
+function drawListenFont(ctx, content, height, size) {
+  ctx.setFontSize(size);
+  ctx.setFillStyle("#999999");
+  ctx.fillText(content, windowWidth * 0.72, height);
+}
+
+function getImageInfo(url) {
+  var cache;
+  return new Promise(function (resolve, reject) {
+    if (cache) {
+      resolve(cache);
+    } else {
+      var objExp = new RegExp(/^http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?/);
+
+      if (objExp.test(url)) {
+        wx.getImageInfo({
+          src: url,
+          complete: function complete(res) {
+            if (res.errMsg === 'getImageInfo:ok') {
+              cache = res.path;
+              resolve(res.path);
+            } else {}
+          } });
+
+      } else {
+        cache = url;
+        resolve(url);
+      }
+    }
+  });
+  return cache;
+} //根据文字多少动态计算高度，然后依次画出矩形，文字，横线和小程序码。
+
+
+function createNewImg(lineNum, title, desc, thinkList, listenNum, url) {
+  var that = this;
+  var ctx = wx.createCanvasContext('myCanvas'); // contentHeight = lineNum * lineHeight + 500;
+
+  contentHeight = windowHeight;
+  drawSquare(ctx, windowHeight); //logo
+
+  ctx.drawImage("/static/image/icon/img_sharecard_white_logo.png", 20, windowHeight * 0.02, windowWidth * 0.25, windowHeight * 0.06);
+  drawLine(ctx, lineNum * lineHeight + 120); //text
+
+  drawFont(ctx, '英语真经派 学为贵出品', windowHeight * 0.062, 12, windowWidth * 0.6, '#fff'); //白底
+
+  drawWhiteSquare(ctx, windowHeight * 0.66); //banner图
+
+  var imgUrl = 'https' + url.substring(4);
+  console.log(imgUrl);
+  wx.downloadFile({
+    url: "https://uimg.gximg.cn/v/words/liuhongbo/images/201807/3.png",
+    success: function success(res) {
+      wx.setStorageSync('tmpPath', res.tempFilePath);
+      tmpPath = res.tempFilePath;
+      console.log(res); //ctx.drawImage(res.tempFilePath, 20, windowHeight * 0.11, windowWidth * 0.89, contentHeight * 0.3);
+    } });
+
+  var tmpPath = wx.getStorageInfoSync('tmpPath');
+  console.log(tmpPath);
+  ctx.drawImage(tmpPath, 20, windowHeight * 0.11, windowWidth * 0.89, contentHeight * 0.3);
+  var text_word_height = 300; // drawListenFont(ctx, listenNum + '人收听', text_word_height, 12);
+
+  if (title.length > 0) {
+    drawFont(ctx, title, text_word_height, 19, offset, '#666666');
+    var descHeight = text_word_height + 25;
+  } else {
+    var descHeight = text_word_height;
+  }
+
+  drawFont(ctx, desc, descHeight, 19, offset, '#666666');
+  var height = text_word_height + 50;
+  ctx.setFontSize(15);var _iterator2 = _createForOfIteratorHelper(
+
+  thinkList),_step2;try {for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {var item = _step2.value;
+      if (item !== 'a') {
+        drawFont(ctx, item, height, 13, offset, '#666666');
+        height += lineHeight;
+      }
+    }} catch (err) {_iterator2.e(err);} finally {_iterator2.f();}
+
+  var author_height = contentHeight - 90;
+  drawFont(ctx, '刘洪波讲单词', author_height, 19, offset - 20, '#fff');
+  drawFont(ctx, '每个单词背后都有属于它的故事', author_height + 20, 12, offset - 20, '#fff'); //小程序码
+
+  ctx.drawImage("/static/image/icon/mini_qr.png", windowWidth * 0.77, author_height - 32, 66, 66);
+  ctx.draw();
+}
+
+module.exports = {
+  getData: getData,
+  getInviteImg: getInviteImg };
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-alipay/dist/index.js */ 1)["default"]))
 
 /***/ }),
 
@@ -11636,246 +12048,6 @@ internalMixin(Vue);
 
 /***/ }),
 
-/***/ 206:
-/*!****************************************************************!*\
-  !*** /Users/bing/lhbWordMiniProgram_uni/utils/canvas-share.js ***!
-  \****************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-/* WEBPACK VAR INJECTION */(function(wx) {function _createForOfIteratorHelper(o) {if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {if (Array.isArray(o) || (o = _unsupportedIterableToArray(o))) {var i = 0;var F = function F() {};return { s: F, n: function n() {if (i >= o.length) return { done: true };return { done: false, value: o[i++] };}, e: function e(_e) {throw _e;}, f: F };}throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");}var it,normalCompletion = true,didErr = false,err;return { s: function s() {it = o[Symbol.iterator]();}, n: function n() {var step = it.next();normalCompletion = step.done;return step;}, e: function e(_e2) {didErr = true;err = _e2;}, f: function f() {try {if (!normalCompletion && it.return != null) it.return();} finally {if (didErr) throw err;}} };}function _unsupportedIterableToArray(o, minLen) {if (!o) return;if (typeof o === "string") return _arrayLikeToArray(o, minLen);var n = Object.prototype.toString.call(o).slice(8, -1);if (n === "Object" && o.constructor) n = o.constructor.name;if (n === "Map" || n === "Set") return Array.from(n);if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);}function _arrayLikeToArray(arr, len) {if (len == null || len > arr.length) len = arr.length;for (var i = 0, arr2 = new Array(len); i < len; i++) {arr2[i] = arr[i];}return arr2;}var lineHeight = 20;
-var windowWidth;
-var windowHeight;
-var offset;
-var contentHeight;
-/***** */
-
-/*****邀请分享图 */
-
-function getInviteImg(qr) {
-  var avatarurl_width = 60; //绘制的头像宽度
-
-  var avatarurl_heigth = 60; //绘制的头像高度
-
-  var that = this;
-  wx.getSystemInfo({
-    success: function success(res) {
-      windowWidth = res.windowWidth;
-      windowHeight = res.windowHeight;
-      offset = res.windowWidth * 0.25 / 2;
-    } });
-
-  var ctx = wx.createCanvasContext('myCanvas');
-  var contentHeight = windowHeight;
-  ctx.rect(0, 0, windowWidth, contentHeight);
-  ctx.setFillStyle("pink");
-  ctx.fill();
-  ctx.drawImage("/static/image/icon/zhuli.jpg", 0, 0, windowWidth, windowHeight * 0.56); //底部
-  //ctx.rect(20, windowHeight-200, windowWidth * 0.7, windowHeight - 440);
-  // ctx.setFillStyle('pink')
-  // ctx.setFillStyle("pink");  
-  // ctx.rect(0, windowHeight*0.55 , windowHeight, 100)
-  // ctx.fill()
-
-  ctx.setFillStyle('black');
-  ctx.setFontSize(12);
-  ctx.fillText('我正在听刘洪波讲单词故事', 30, windowHeight - 230);
-  ctx.fillText('帮我点个赞吧', 30, windowHeight - 210);
-  ctx.setFontSize(8);
-  ctx.setFillStyle('#333');
-  ctx.fillText('长按识别二维码为单唱点赞', 30, windowHeight - 190);
-  ctx.drawImage("/static/image/think.png", windowWidth * 0.7, windowHeight * 0.56, 80, 80);
-  ctx.save(); // // Draw coordinates
-
-  var avatarurl_x = 40; //绘制的头像在画布上的位置
-
-  var avatarurl_y = windowHeight * 0.5; //绘制的头像在画布上的位置
-  //ctx.arc(avatarurl_width / 2 + avatarurl_x, avatarurl_heigth / 2 + avatarurl_y, avatarurl_width / 2, 0, Math.PI * 2)
-  //ctx.setFillStyle('#fff')
-  //ctx.fill();
-  //ctx.clip()
-
-  ctx.drawImage('https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJTRwcfGSQYQ57ZeWI6LxhwpxyJBibvI1WZKkuKZqTqvtBDRLPFYmYNNs1EQFtM2Wz5lHjbz1eiaUhA/132', avatarurl_x, avatarurl_y, avatarurl_width, avatarurl_heigth);
-  ctx.restore();
-  ctx.draw();
-  return contentHeight;
-} //设置文字大小，并填充颜色。
-
-
-function drawFont(ctx, content, height, size, offset, color) {
-  ctx.setFontSize(size);
-  ctx.setFillStyle(color);
-  ctx.fillText(content, offset, height);
-}
-/***单词分享图 */
-
-
-function getData(that) {var title = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';var desc = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';var content = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';var listenNum = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;var url = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : '';
-  wx.getSystemInfo({
-    success: function success(res) {
-      windowWidth = res.windowWidth;
-      windowHeight = res.windowHeight;
-      offset = res.windowWidth * 0.25 / 2;
-    } });
-
-  var i = 0;
-  var lineNum = 1;
-  var thinkStr = '';
-  var filterList = [];
-  var thinkList = [];
-  var pattern = new RegExp('<p.*?>(.*?)<\/p>', 'gi');
-  var pattenContent = content.match(pattern); // for (let i in pattenContent){
-  //   thinkList.push(pattenContent[i].replace(/<[^>]+>/g, ""));
-  //   lineNum += 1;
-  // }
-
-  for (var _i in pattenContent) {
-    filterList.push(pattenContent[_i].replace(/<[^>]+>/g, ""));
-  }
-
-  var fialContent = filterList.join('') + '\n';var _iterator = _createForOfIteratorHelper(
-
-  fialContent),_step;try {for (_iterator.s(); !(_step = _iterator.n()).done;) {var item = _step.value;
-      if (item === '\n') {
-        thinkList.push(thinkStr);
-        thinkList.push('a');
-        i = 0;
-        thinkStr = '';
-        lineNum += 1;
-      } else if (i === 20) {
-        thinkList.push(thinkStr);
-        i = 1;
-        thinkStr = item;
-        lineNum += 1;
-      } else {
-        thinkStr += item;
-        i += 1;
-      }
-    } // thinkList.push(thinkStr);
-  } catch (err) {_iterator.e(err);} finally {_iterator.f();}
-
-  createNewImg(lineNum, title, desc, thinkList, listenNum, url);
-  return windowHeight - 50;
-} //画矩形，也是整块画布的大小，宽度是屏幕宽度，高度根据内容多少来动态设置。
-
-
-function drawSquare(ctx, height) {
-  ctx.rect(0, 0, windowWidth, height);
-  ctx.setFillStyle("#00BAA2");
-  ctx.fill();
-} //画线。
-
-
-function drawLine(ctx, height) {
-  ctx.beginPath();
-  ctx.moveTo(offset, height);
-  ctx.lineTo(windowWidth - offset, height);
-  ctx.stroke('#eee');
-  ctx.closePath();
-}
-
-function drawWhiteSquare(ctx, height) {
-  ctx.rect(20, windowWidth * 0.18, windowWidth * 0.89, height);
-  ctx.setFillStyle("#fff");
-  ctx.fill();
-}
-
-function drawListenFont(ctx, content, height, size) {
-  ctx.setFontSize(size);
-  ctx.setFillStyle("#999999");
-  ctx.fillText(content, windowWidth * 0.72, height);
-}
-
-function getImageInfo(url) {
-  var cache;
-  return new Promise(function (resolve, reject) {
-    if (cache) {
-      resolve(cache);
-    } else {
-      var objExp = new RegExp(/^http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?/);
-
-      if (objExp.test(url)) {
-        wx.getImageInfo({
-          src: url,
-          complete: function complete(res) {
-            if (res.errMsg === 'getImageInfo:ok') {
-              cache = res.path;
-              resolve(res.path);
-            } else {}
-          } });
-
-      } else {
-        cache = url;
-        resolve(url);
-      }
-    }
-  });
-  return cache;
-} //根据文字多少动态计算高度，然后依次画出矩形，文字，横线和小程序码。
-
-
-function createNewImg(lineNum, title, desc, thinkList, listenNum, url) {
-  var that = this;
-  var ctx = wx.createCanvasContext('myCanvas'); // contentHeight = lineNum * lineHeight + 500;
-
-  contentHeight = windowHeight;
-  drawSquare(ctx, windowHeight); //logo
-
-  ctx.drawImage("/static/image/icon/img_sharecard_white_logo.png", 20, windowHeight * 0.02, windowWidth * 0.25, windowHeight * 0.06);
-  drawLine(ctx, lineNum * lineHeight + 120); //text
-
-  drawFont(ctx, '英语真经派 学为贵出品', windowHeight * 0.062, 12, windowWidth * 0.6, '#fff'); //白底
-
-  drawWhiteSquare(ctx, windowHeight * 0.66); //banner图
-
-  var imgUrl = 'https' + url.substring(4);
-  console.log(imgUrl);
-  wx.downloadFile({
-    url: "https://uimg.gximg.cn/v/words/liuhongbo/images/201807/3.png",
-    success: function success(res) {
-      wx.setStorageSync('tmpPath', res.tempFilePath);
-      tmpPath = res.tempFilePath;
-      console.log(res); //ctx.drawImage(res.tempFilePath, 20, windowHeight * 0.11, windowWidth * 0.89, contentHeight * 0.3);
-    } });
-
-  var tmpPath = wx.getStorageInfoSync('tmpPath');
-  console.log(tmpPath);
-  ctx.drawImage(tmpPath, 20, windowHeight * 0.11, windowWidth * 0.89, contentHeight * 0.3);
-  var text_word_height = 300; // drawListenFont(ctx, listenNum + '人收听', text_word_height, 12);
-
-  if (title.length > 0) {
-    drawFont(ctx, title, text_word_height, 19, offset, '#666666');
-    var descHeight = text_word_height + 25;
-  } else {
-    var descHeight = text_word_height;
-  }
-
-  drawFont(ctx, desc, descHeight, 19, offset, '#666666');
-  var height = text_word_height + 50;
-  ctx.setFontSize(15);var _iterator2 = _createForOfIteratorHelper(
-
-  thinkList),_step2;try {for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {var item = _step2.value;
-      if (item !== 'a') {
-        drawFont(ctx, item, height, 13, offset, '#666666');
-        height += lineHeight;
-      }
-    }} catch (err) {_iterator2.e(err);} finally {_iterator2.f();}
-
-  var author_height = contentHeight - 90;
-  drawFont(ctx, '刘洪波讲单词', author_height, 19, offset - 20, '#fff');
-  drawFont(ctx, '每个单词背后都有属于它的故事', author_height + 20, 12, offset - 20, '#fff'); //小程序码
-
-  ctx.drawImage("/static/image/icon/mini_qr.png", windowWidth * 0.77, author_height - 32, 66, 66);
-  ctx.draw();
-}
-
-module.exports = {
-  getData: getData,
-  getInviteImg: getInviteImg };
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-alipay/dist/index.js */ 1)["default"]))
-
-/***/ }),
-
 /***/ 3:
 /*!***********************************!*\
   !*** (webpack)/buildin/global.js ***!
@@ -11907,7 +12079,18 @@ module.exports = g;
 
 /***/ }),
 
-/***/ 34:
+/***/ 4:
+/*!*****************************************************!*\
+  !*** /Users/bing/lhbWordMiniProgram_uni/pages.json ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+
+
+/***/ }),
+
+/***/ 42:
 /*!*******************************************************!*\
   !*** /Users/bing/lhbWordMiniProgram_uni/utils/md5.js ***!
   \*******************************************************/
@@ -12150,53 +12333,6 @@ function calcMD5(str) {
 
 module.exports = {
   hexMD5: hexMD5 };
-
-/***/ }),
-
-/***/ 4:
-/*!*****************************************************!*\
-  !*** /Users/bing/lhbWordMiniProgram_uni/pages.json ***!
-  \*****************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-
-
-/***/ }),
-
-/***/ 43:
-/*!****************************************************************!*\
-  !*** /Users/bing/lhbWordMiniProgram_uni/utils/displayUtils.js ***!
-  \****************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-/* WEBPACK VAR INJECTION */(function(wx) {/**
- * 显示消息提示框
- */
-function showsToast(showTitle, showIcon, showDuration) {
-  var showsIcon = "none";
-
-  if ("success" == showIcon || "loading" == showIcon) {
-    showsIcon = showIcon;
-  }
-
-  var showsDuration = 2000;
-
-  if (showDuration != null) {
-    showsDuration = showDuration;
-  }
-
-  wx.showToast({
-    title: showTitle,
-    icon: showsIcon,
-    duration: showsDuration });
-
-}
-
-module.exports = {
-  showsToast: showsToast };
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-alipay/dist/index.js */ 1)["default"]))
 
 /***/ }),
 
@@ -13087,171 +13223,6 @@ main();
 
 /***/ }),
 
-/***/ 52:
-/*!*************************************************************!*\
-  !*** /Users/bing/lhbWordMiniProgram_uni/utils/enterHelp.js ***!
-  \*************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-/* WEBPACK VAR INJECTION */(function(wx) {var util = __webpack_require__(/*! ./util.js */ 12);
-
-function enterWithDic(dic) {
-  console.log(dic.product_type);
-
-  if (dic.appid) {
-    wx.navigateToMiniProgram({
-      appId: dic.appid,
-      envVersion: 'release',
-
-      success: function success(res) {// 打开成功
-      } });
-
-
-  } else {
-    var url = encodeURIComponent(dic.url);
-    console.log('dic', dic);
-
-    switch (dic.product_type) {
-      case '2':
-        //入门真经
-        wx.navigateTo({
-          url: '../course/course?url=' + url });
-
-        break;
-
-      case '3':
-        // 课程详情界面
-        wx.navigateTo({
-          url: '../courseDetail/courseDetail?url=' + url });
-
-        break;
-
-      case '22':
-        //会员
-        wx.navigateTo({
-          url: '../myVip/myVip?url=' + url });
-
-        break;
-
-      case '30':
-        // 我的订单
-        wx.navigateTo({
-          url: '../order/myOrder' });
-
-        break;
-
-      case '32':
-        //绑定手机号
-        wx.navigateTo({
-          url: '../login/bindingPhone' });
-
-        break;
-
-      case '34':
-        //更换手机号
-        wx.navigateTo({
-          url: '../login/changePhone' });
-
-        break;
-
-      case '231':
-        //直播间
-        if (!util.isLogin()) {
-          wx.navigateTo({
-            url: '../login/login' });
-
-        } else {
-          wx.navigateTo({
-            url: '../livevc/livevc?url=' + url });
-
-        }
-
-        break;
-
-      case '239':
-        //回放
-        if (!util.isLogin()) {
-          wx.navigateTo({
-            url: '../login/login' });
-
-        } else {
-          wx.navigateTo({
-            url: '../livevc/vodvc?url=' + url });
-
-        }
-
-        break;
-
-      case '310':
-        // 确认订单界面
-        var system = wx.getSystemInfoSync().system;
-
-        if (system.indexOf('iOS') >= 0) {
-          wx.showModal({
-            title: '前往雅思学为贵APP进行购买',
-            content: '基于微信小程序平台运营规范，小程序暂不支持购买，请前往学为贵雅思APP完成购买',
-            showCancel: false,
-            confirmText: '知道了' });
-
-        } else {
-          wx.navigateTo({
-            url: '../order/order?url=' + url });
-
-        }
-
-        break;
-
-      case '9100':
-        //我的课程
-        wx.navigateTo({
-          url: '../myCourse/myCourse?url=' + url });
-
-        break;
-
-      case '9998':
-        //跳转音频(活动需要,结束可删除)
-        wx.navigateTo({
-          url: '../audio/audio' });
-
-        break;
-
-      case '9999':
-        wx.navigateTo({
-          url: '../webview/webview?url=' + url });
-
-        break;
-
-      default:
-        var urls = decodeURIComponent(url);
-
-        if (urls.indexOf('isrank') !== -1) {
-          console.log('is test count', urls, getQueryString(urls, 'id'));
-          util.updateHot(wx.getStorageSync('userinfo')['uid'] || 0, getQueryString(urls, 'id'), 0, 4);
-        }
-
-        wx.navigateTo({
-          url: urls });
-
-        break;}
-
-  }
-}
-
-function getQueryString(url, name) {
-  var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-  var r = url.substr(1).match(reg); //search,查询？后面的参数，并匹配正则
-
-  if (r != null) return unescape(r[2]);
-  return null;
-}
-
-module.exports = {
-  enterWithDic: enterWithDic };
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-alipay/dist/index.js */ 1)["default"]))
-
-/***/ }),
-
 /***/ 6:
 /*!******************************************************!*\
   !*** ./node_modules/@dcloudio/uni-stat/package.json ***!
@@ -13271,7 +13242,7 @@ module.exports = {"_from":"@dcloudio/uni-stat@next","_id":"@dcloudio/uni-stat@2.
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default = { "pages": { "pages/ablum/ablum": { "usingComponents": { "auth": "/component/easyModal/auth/auth", "nav-bar": "/component/nav-bar/nav-bar" }, "usingAutoImportComponents": {} }, "pages/login/changePhone": { "usingComponents": { "nav-bar": "/component/nav-bar/nav-bar" }, "usingAutoImportComponents": {} }, "pages/coupon/coupon": { "usingAutoImportComponents": {}, "usingComponents": { "nav-bar": "/component/nav-bar/nav-bar" } }, "pages/order/order": { "usingAutoImportComponents": {}, "usingComponents": { "nav-bar": "/component/nav-bar/nav-bar" } }, "pages/navbar/navbar": { "usingComponents": {}, "usingAutoImportComponents": {} }, "pages/wtest/result": { "defaultTitle": "测试结果", "usingComponents": { "canvasdrawer": "/component/canvasdrawer/canvasdrawer", "wux-circle": "/component/component_circle/circle/index", "nav-bar": "/component/nav-bar/nav-bar" }, "usingAutoImportComponents": {} }, "pages/pay/pay": { "usingAutoImportComponents": {}, "usingComponents": { "nav-bar": "/component/nav-bar/nav-bar" } }, "pages/deal/deal": { "defaultTitle": "支付结果", "usingAutoImportComponents": {}, "usingComponents": { "nav-bar": "/component/nav-bar/nav-bar" } }, "pages/wtest/wtest": { "defaultTitle": "测试", "usingComponents": { "nav-bar": "/component/nav-bar/nav-bar" }, "usingAutoImportComponents": {} }, "pages/wtest/rank": { "usingComponents": { "nav-bar": "/component/nav-bar/nav-bar" }, "usingAutoImportComponents": {} }, "pages/login/login": { "defaultTitle": "快速登录", "usingComponents": { "nav-bar": "/component/nav-bar/nav-bar" }, "usingAutoImportComponents": {} }, "pages/login/bindingPhone": { "usingComponents": { "nav-bar": "/component/nav-bar/nav-bar" }, "usingAutoImportComponents": {} }, "pages/webview/award": { "usingComponents": { "auth": "/component/easyModal/auth/auth" }, "usingAutoImportComponents": {} }, "pages/my/my": { "usingComponents": { "easy-modal": "/component/easyModal/easy/easyModal", "canvasdrawer": "/component/canvasdrawer/canvasdrawer", "nav-bar": "/component/nav-bar/nav-bar" }, "usingAutoImportComponents": {} }, "pages/wtest/result_list": { "defaultTitle": "答案", "usingComponents": { "nav-bar": "/component/nav-bar/nav-bar" }, "usingAutoImportComponents": {} }, "pages/ablum/ablum-content": { "usingComponents": { "custom-modal": "/component/easyModal/custom-modal/custom-modal", "modals-bottom": "/component/modals/modals", "nav-bar": "/component/nav-bar/nav-bar" }, "usingAutoImportComponents": {} }, "pages/ablum/ablum-detail": { "usingComponents": { "custom-modal": "/component/easyModal/custom-modal/custom-modal", "nav-bar": "/component/nav-bar/nav-bar" }, "usingAutoImportComponents": {} } }, "globalStyle": { "defaultTitle": "刘洪波讲单词", "titleBarColor": "#3075C6", "backgroundColor": "#ccc" } };exports.default = _default;
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default = { "pages": { "pages/ablum/ablumv1": {}, "pages/ablum/ablum": {}, "pages/login/changePhone": {}, "pages/wtest/result": { "defaultTitle": "测试结果" }, "pages/wtest/wtest": { "defaultTitle": "测试" }, "pages/wtest/rank": {}, "pages/login/login": { "defaultTitle": "快速登录" }, "pages/login/bindingPhone": {}, "pages/webview/award": {}, "pages/my/my": {}, "pages/wtest/result_list": { "defaultTitle": "答案" }, "pages/ablum/ablum-content": {}, "pages/ablum/ablum-detail": {} }, "globalStyle": { "defaultTitle": "刘洪波讲单词", "titleBarColor": "#3075C6", "backgroundColor": "#ccc" } };exports.default = _default;
 
 /***/ }),
 

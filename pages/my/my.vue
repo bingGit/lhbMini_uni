@@ -134,6 +134,7 @@ export default {
       wx.removeStorageSync(userKey);
 	  wx.removeStorageSync('alipay_user_id');
       wx.removeStorageSync(userinfo);
+	  wx.removeStorageSync('global_expiration_time');
       this.setData({
         isLogin: false,
         avatar: "/static/pages/images/login.png",

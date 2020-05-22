@@ -201,6 +201,7 @@ export default {
 				let cookieVal = res.header['Set-Cookie'] || res.header['set-cookie'];
 				console.log('cookie-save',cookieVal);
 				util.saveCookie(cookieVal);
+				util.setExpireTime();
                 //util.saveCookie(res.header["Set-Cookie"]);
                 wx.navigateBack();
               }, 1500);

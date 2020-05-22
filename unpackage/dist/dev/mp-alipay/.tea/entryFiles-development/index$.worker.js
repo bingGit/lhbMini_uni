@@ -37,6 +37,7 @@ require('../../component/component_circle/circle/index?hash=ec7c5687c7f2ffa836ca
 require('../../component/easyModal/easy/easyModal?hash=296245be13976f2e29515f0f7d7db13b8ef25c67');
 require('../../component/easyModal/custom-modal/custom-modal?hash=296245be13976f2e29515f0f7d7db13b8ef25c67');
 require('../../component/modals/modals?hash=ec7c5687c7f2ffa836caf3a93e877914426baff6');
+require('../../pages/ablum/ablumv1?hash=2ccaad4a315aee80a36b7b0cb44e42261f419dcf');
 require('../../pages/ablum/ablum?hash=2ccaad4a315aee80a36b7b0cb44e42261f419dcf');
 require('../../pages/login/changePhone?hash=d7fd655ac799565adbae55e45607da7b3eb423f5');
 require('../../pages/wtest/result?hash=05dc5c191160c793ccacc7401ecbcf6d74dcfa44');

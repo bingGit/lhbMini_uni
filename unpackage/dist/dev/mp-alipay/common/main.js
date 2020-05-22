@@ -127,6 +127,7 @@ var userInfoKey = 'userInfo'; //copy 需修改
 var _default =
 {
   onLaunch: function onLaunch(e) {var _this = this;
+    this.globalData.expireOpt();
     if (_util.default.isLogin()) {
       this.globalData.g_is_login = true;
     } //app跳小程序 || App 分享消息卡片
@@ -179,9 +180,8 @@ var _default =
 
     // this.globalData.headerBtnPosi = wx.getMenuButtonBoundingClientRect();
     var version = wx.getSystemInfoSync().SDKVersion;
-    console.log('version', version); //兼容新版本库
+    console.log('onLaunch', e); //兼容新版本库
   },
-
   globalData: {
     /**
                  * 收集表单标识
@@ -190,6 +190,18 @@ var _default =
       if (formId) {
         // 不空
         this.formIdList.push(formId);
+      }
+    },
+    /**
+        * 过期判断操作
+        */
+    expireOpt: function expireOpt() {
+      var expireTime = _util.default.getExpireTime();
+      console.log('expire-time', expireTime, _util.default.isExpire());
+      if (expireTime && _util.default.isExpire()) {
+        wx.clearStorageSync();
+      } else if (!expireTime && _util.default.isLogin()) {
+        _util.default.setExpireTime();
       }
     },
     g_audio_ablum_id: 0,

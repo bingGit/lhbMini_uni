@@ -222,7 +222,7 @@ function getRequest(netUrl, data, success = function(){}) {
     url: netUrl.replace("http:", "https:").replace("v.guixue.com", "v.xueweigui.com").replace("fast.guixue.com", "v.xueweigui.com"),
     data: data,
     header: {
-      'x-user-agent': '78:1.0.1'
+      'x-user-agent': '78:1.0.2'
     },
     success: function (res) {
       success(res);
@@ -527,6 +527,16 @@ async function xwgPay(url){
 
 
 /**********************平台支付 end**********************/
+/**
+ * 上报数据
+ * @param {Object} data object 
+ * @param {string} event 
+ *  navigate_program 来源上报
+ */
+function reportAnalytics( data = {}, event = 'navigate_program'){
+	console.log(event,data);
+	my.reportAnalytics(event, data);
+}
 
 function formCreateTime(data) {
   let lockData = wx.getStorageSync('lockData') || [];
@@ -1297,78 +1307,36 @@ function debounce(fn, delay) {
   };
 }
 /**
- * 支付
+ * 设置缓存时间
+ * @param key 过期key ，默认为全局过期key
+ * @param duration 单位s 默认 7days
  */
-function payAction(url, fn = function () {}) {
-  console.log('payActin', url);
-  getRequest(url, null, function (netData1) {
-    console.log('netData1', netData1);
 
-    if ("9999" == netData1.data.e) {
-      // 网络请求成功
-      getRequest(netData1.data.buyurl + '&channel=' + 48, null, function (netData2) {
-        console.log('netData2', netData2);
 
-        if ("9999" == netData2.data.e) {
-          // 网络请求成功
-          getRequest(netData2.data.r.payurl + '&channel=' + 48, null, function (netData3) {
-            console.log('netData3', netData3);
-
-            if (netData3.data && netData3.data.payment && netData3.data.payment.sdk && netData3.data.payment.sdk.length > 0) {
-              getRequest(netData3.data.payment.sdk[0].url, null, function (netData4) {
-                console.log('netData4', netData4);
-
-                if (200 == netData4.statusCode) {
-                  wx.requestPayment({
-                    timeStamp: netData4.data.timeStamp,
-                    nonceStr: netData4.data.nonceStr,
-                    package: netData4.data.package,
-                    signType: netData4.data.signType,
-                    paySign: netData4.data.paySign,
-                    success: function (res) {
-                      // 支付成功
-                      wx.navigateTo({
-                        url: '/pages/deal/deal?orderId=' + netData3.data.payment.order_id
-                      });
-                      fn();
-                    },
-                    fail: function (res) {
-                      // 支付失败
-                      setTimeout(function () {
-                        wx.showToast({
-                          title: '支付失败',
-                          icon: 'none',
-                          duration: 2000
-                        });
-                      }, 500);
-                    }
-                  });
-                }
-              });
-            } else if (netData3.data.payment.confirm_url) {
-              getRequest(this.data.payDetail.payment.confirm_url, null, function (netData5) {
-                console.log('netData', netData5);
-                wx.navigateTo({
-                  url: '/pages/deal/deal?orderId=' + netData3.data.payment.order_id
-                });
-                fn();
-              });
-            }
-          });
-        } else {
-          setTimeout(function () {
-            wx.showToast({
-              title: '支付失败',
-              icon: 'none',
-              duration: 2000
-            });
-          }, 500);
-        }
-      });
-    }
-  });
+function setExpireTime(key = 'global_expiration_time', duration = 604800) {
+  let micrSeccond = duration * 1000;
+  let timestamp = Date.parse(new Date());
+  let expiration = timestamp + micrSeccond;
+  wx.setStorageSync(key, expiration);
 }
+/**
+ * 获取缓存时间
+ * @param key 过期key ，默认为全局过期key
+ */
+function getExpireTime(key = 'global_expiration_time') {
+  let expiration = wx.getStorageSync(key) || null;
+  return expiration;
+}
+/**
+ * 判断是否过期 过期则清空本地缓存
+ * @param key 过期key
+ */
+function isExpire(key = 'global_expiration_time') {
+  let timestamp = Date.parse(new Date()); //现在时间
 
+  let expireTime = getExpireTime(key);
+  return expireTime <= timestamp;
+}
 module.exports = {
   formatTime: formatTime,
   getMonthDate: getMonthDate,
@@ -1411,9 +1379,12 @@ module.exports = {
   secret: secret,
   throttle,
   debounce,
-  payAction,
   aliOauth,
   aliPay,
+  isExpire,
+  setExpireTime,
+  getExpireTime,
+  reportAnalytics,
   AJAX: function (url, data = {}, fn, method = "get", header = {}) {
     wx.request({
       url: url,
