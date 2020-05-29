@@ -1,13 +1,9 @@
 {
   "pages": [
+    "pages/ablum/ablumv1",
     "pages/ablum/ablum",
     "pages/login/changePhone",
-    "pages/coupon/coupon",
-    "pages/order/order",
-    "pages/navbar/navbar",
     "pages/wtest/result",
-    "pages/pay/pay",
-    "pages/deal/deal",
     "pages/wtest/wtest",
     "pages/wtest/rank",
     "pages/login/login",
@@ -34,7 +30,7 @@
     "borderStyle": "black",
     "list": [
       {
-        "pagePath": "pages/ablum/ablum",
+        "pagePath": "pages/ablum/ablumv1",
         "text": "讲单词",
         "iconPath": "/static/pages/images/main.png",
         "selectedIconPath": "/static/pages/images/main_select.png"
@@ -53,5 +49,5 @@
     }
   },
   "usingComponents": {},
-  "sitemapLocation": "sitemap70.json"
+  "sitemapLocation": "sitemap20.json"
 }

@@ -2,7 +2,6 @@
   "usingComponents": {
     "easy-modal": "/component/easyModal/easy/easyModal",
     "canvasdrawer": "/component/canvasdrawer/canvasdrawer",
-    "auth": "/component/easyModal/auth/auth",
     "nav-bar": "/component/nav-bar/nav-bar"
   }
 }

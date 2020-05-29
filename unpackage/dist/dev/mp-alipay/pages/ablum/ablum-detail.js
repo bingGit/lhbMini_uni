@@ -386,7 +386,7 @@ var customModal = function customModal() {Promise.all(/*! require.ensure | compo
     }); //判断是播放视频or 音频
 
     if (!getApp().globalData.g_audio_obj) {
-      getApp().globalData.g_audio_obj = wx.getBackgroundAudioManager()();
+      getApp().globalData.g_audio_obj = wx.getBackgroundAudioManager();
       console.log('****create getBackgroundAudioManager');
     } //初始化数据
     console.log('onLoad1');
