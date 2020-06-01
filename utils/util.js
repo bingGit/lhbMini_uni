@@ -225,7 +225,7 @@ function getRequest(netUrl, data, success = function(){}) {
     url: netUrl.replace("http:", "https:").replace("v.guixue.com", "v.xueweigui.com").replace("fast.guixue.com", "v.xueweigui.com"),
     data: data,
     header: {
-      'x-user-agent': '78:1.0.2'
+      'x-user-agent': '78:1.0.3'
     },
     success: function (res) {
       success(res);
