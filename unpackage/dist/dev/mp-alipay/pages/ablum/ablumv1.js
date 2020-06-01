@@ -257,7 +257,7 @@ var unitUrl = "https://v.xueweigui.com/ApiWordCourse/unitList?book_id=";var auth
               * 生命周期函数--监听页面加载
               */
   onLoad: function onLoad(options) {
-    console.log('ablumv1-onload', options);
+    console.log('ablumv1-onload', options, getApp().globalData.g_source);
     wx.showLoading({
       title: '加载中...' });
 
@@ -276,8 +276,16 @@ var unitUrl = "https://v.xueweigui.com/ApiWordCourse/unitList?book_id=";var auth
       this.setData({
         channel: options.channel });
 
+      getApp().globalData.g_channel = options.channel;
       console.log('onload-options');
     }
+
+    // if(getApp().globalData.g_source == 'out'){
+    // 	wx.navigateTo({
+    // 	  url: '/pages/ablum/ablum-detail?id=' + getApp().globalData.g_audio_bookid
+    // 	});
+    // 	return;
+    // }
   },
 
   /**
@@ -337,6 +345,10 @@ var unitUrl = "https://v.xueweigui.com/ApiWordCourse/unitList?book_id=";var auth
       this.setData({
         navBarHidden: true });
 
+    }
+    if (!getApp().globalData.g_audio_obj) {
+      console.log('ablum-create-background-manager');
+      getApp().globalData.g_audio_obj = wx.getBackgroundAudioManager();
     }
     //为了防止切换页面后  onTimeUpdate失效
     getApp().globalData.g_audio_obj.onTimeUpdate(function (res) {
@@ -419,14 +431,6 @@ var unitUrl = "https://v.xueweigui.com/ApiWordCourse/unitList?book_id=";var auth
     goAlbum: function goAlbum(event) {
       //已授权且登录
       console.log('app.globalData.g_is_login', getApp().globalData.g_is_login);
-
-      if (!util.isLogin()) {
-        wx.switchTab({
-          url: '/pages/my/my' });
-
-        return;
-      }
-
       var url = encodeURIComponent(event.currentTarget.dataset.url);
       var id = event.currentTarget.dataset.id;
       var idx = event.currentTarget.dataset.idx;

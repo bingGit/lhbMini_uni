@@ -136,7 +136,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(wx) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0; //
+/* WEBPACK VAR INJECTION */(function(wx, uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0; //
 //
 //
 //
@@ -552,6 +552,8 @@ var step = 15;var customModal = function customModal() {Promise.all(/*! require.
     getApp().globalData.g_has_rank = getApp().globalData.g_req_data[pid]['test_ti']['has_rank'];
     getApp().globalData.g_test_stime = getApp().globalData.g_req_data[pid]['test_ti']['stime'];
     getApp().globalData.g_test_etime = getApp().globalData.g_req_data[pid]['test_ti']['etime']; // app.globalData.g_audio_pid = pid;
+    //设置当前标题
+    uni.setNavigationBarTitle({ 'title': getApp().globalData.g_title });
     //判断是否有权限
     //app.globalData.g_audio_auth = false;
 
@@ -1071,9 +1073,23 @@ var step = 15;var customModal = function customModal() {Promise.all(/*! require.
     },
     goCustom: function goCustom() {
       console.log('gocustom--');
-      var system = wx.getSystemInfoSync().system;
-      var that = this;
-      console.log('g_app', getApp().globalData.g_app);
+      //活动领取福利
+      if (this.authMsg.status == '3') {
+        console.log('活动领取福利');
+        uni.showToast({
+          title: '领取中...',
+          duration: 1000 });
+
+        util.reqActivity();
+        util.reloadCurrPage();
+        setTimeout(function () {
+          uni.showToast({
+            title: '领取成功',
+            duration: 1500 });
+
+        }, 2000);
+        return;
+      }
       util.aliPay(this.authMsg.order_url);
     },
     bindChangeTap: function bindChangeTap(event) {
@@ -1454,7 +1470,7 @@ var step = 15;var customModal = function customModal() {Promise.all(/*! require.
       }
       console.log('back--', des);
     }, 200) } };exports.default = _default;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-alipay/dist/index.js */ 1)["default"]))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-alipay/dist/index.js */ 1)["default"], __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-alipay/dist/index.js */ 1)["default"]))
 
 /***/ }),
 

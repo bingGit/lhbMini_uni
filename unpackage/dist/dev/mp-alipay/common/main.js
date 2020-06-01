@@ -132,7 +132,6 @@ var _default =
       this.globalData.g_is_login = true;
     } //app跳小程序 || App 分享消息卡片
 
-
     if (e.scene == 1069 || e.scene == 1036) {
       this.globalData.g_from_app = true;
     } else {
@@ -149,6 +148,16 @@ var _default =
     //这个最初我是在组件中获取，但是出现了一个问题，当第一次进入小程序时导航栏会把
     //页面内容盖住一部分,当打开调试重新进入时就没有问题，这个问题弄得我是莫名其妙
 
+    //app启动和h5启动 book参数设置
+    if (e.query) {
+      var arr = e.query.id.split('_');
+      console.log('onshow arr', arr);
+      this.globalData.g_audio_bookid = arr[0] || 7; //默认词源故事bookid
+      this.globalData.g_channel = arr[1] || 0; //默认channel 为0
+      this.globalData.g_source = arr[2]; //默认channel 为0
+    } else {
+      this.globalData.g_source = 'linner';
+    }
 
     wx.getSystemInfo({
       success: function success(res) {
@@ -182,6 +191,19 @@ var _default =
     var version = wx.getSystemInfoSync().SDKVersion;
     console.log('onLaunch', e); //兼容新版本库
   },
+  onShow: function onShow(e) {
+    console.log('app.js onshow', e);
+    //app启动和h5启动 book参数设置
+    if (e.query) {
+      var arr = e.query.id.split('_');
+      console.log('onshow arr', arr);
+      this.globalData.g_audio_bookid = arr[0] || 7; //默认词源故事bookid
+      this.globalData.g_channel = arr[1] || 0; //默认channel 为0
+      this.globalData.g_source = arr[2]; //默认channel 为0
+    } else {
+      this.globalData.g_source = 'linner';
+    }
+  },
   globalData: {
     /**
                  * 收集表单标识
@@ -200,6 +222,7 @@ var _default =
       console.log('expire-time', expireTime, _util.default.isExpire());
       if (expireTime && _util.default.isExpire()) {
         wx.clearStorageSync();
+        _util.default.getRequest("https://passport.xueweigui.com/login/logout", { json: true });
       } else if (!expireTime && _util.default.isLogin()) {
         _util.default.setExpireTime();
       }
@@ -279,6 +302,10 @@ var _default =
     headerBtnPosi: {},
     // 胶囊按钮位置信息
     g_old_version: false,
+    //设置当前标题
+    g_title: '刘洪波讲单词',
+    g_channel: '0', //活动渠道
+    g_source: 'inner', //活动跳转来源 linner 内部跳转 | out app或h5跳转
     //是否是旧版本
     formIdList: [], //收集表单数据
     //当前运行环境 alipay 支付宝

@@ -97,6 +97,15 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
+  var g0 = ["0", "3"].includes(_vm.authMsg.status)
+  _vm.$mp.data = Object.assign(
+    {},
+    {
+      $root: {
+        g0: g0
+      }
+    }
+  )
 }
 var recyclableRender = false
 var staticRenderFns = []
@@ -130,7 +139,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(wx) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _regenerator = _interopRequireDefault(__webpack_require__(/*! ./node_modules/@vue/babel-preset-app/node_modules/@babel/runtime/regenerator */ 13));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function ownKeys(object, enumerableOnly) {var keys = Object.keys(object);if (Object.getOwnPropertySymbols) {var symbols = Object.getOwnPropertySymbols(object);if (enumerableOnly) symbols = symbols.filter(function (sym) {return Object.getOwnPropertyDescriptor(object, sym).enumerable;});keys.push.apply(keys, symbols);}return keys;}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};if (i % 2) {ownKeys(Object(source), true).forEach(function (key) {_defineProperty(target, key, source[key]);});} else if (Object.getOwnPropertyDescriptors) {Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));} else {ownKeys(Object(source)).forEach(function (key) {Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));});}}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {try {var info = gen[key](arg);var value = info.value;} catch (error) {reject(error);return;}if (info.done) {resolve(value);} else {Promise.resolve(value).then(_next, _throw);}}function _asyncToGenerator(fn) {return function () {var self = this,args = arguments;return new Promise(function (resolve, reject) {var gen = fn.apply(self, args);function _next(value) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);}function _throw(err) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);}_next(undefined);});};} //
+/* WEBPACK VAR INJECTION */(function(wx, uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _regenerator = _interopRequireDefault(__webpack_require__(/*! ./node_modules/@vue/babel-preset-app/node_modules/@babel/runtime/regenerator */ 13));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function ownKeys(object, enumerableOnly) {var keys = Object.keys(object);if (Object.getOwnPropertySymbols) {var symbols = Object.getOwnPropertySymbols(object);if (enumerableOnly) symbols = symbols.filter(function (sym) {return Object.getOwnPropertyDescriptor(object, sym).enumerable;});keys.push.apply(keys, symbols);}return keys;}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};if (i % 2) {ownKeys(Object(source), true).forEach(function (key) {_defineProperty(target, key, source[key]);});} else if (Object.getOwnPropertyDescriptors) {Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));} else {ownKeys(Object(source)).forEach(function (key) {Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));});}}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {try {var info = gen[key](arg);var value = info.value;} catch (error) {reject(error);return;}if (info.done) {resolve(value);} else {Promise.resolve(value).then(_next, _throw);}}function _asyncToGenerator(fn) {return function () {var self = this,args = arguments;return new Promise(function (resolve, reject) {var gen = fn.apply(self, args);function _next(value) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);}function _throw(err) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);}_next(undefined);});};} //
 //
 //
 //
@@ -314,11 +323,7 @@ var customModal = function customModal() {Promise.all(/*! require.ensure | compo
               * 生命周期函数--监听页面加载
               */
   onLoad: function onLoad(options) {
-    // wx.showLoading({
-    //   title: '加载中...'
-    // });
     var share_idx = options.share_idx || 0; //分享的音频下标-默认第一个
-
     this.setData({
       share_idx: share_idx });
 
@@ -330,7 +335,11 @@ var customModal = function customModal() {Promise.all(/*! require.ensure | compo
       url = unitUrl + id;
     }
     if (options.channel) {
-      url = url + '&channel=' + options.channel;
+      getApp().globalData.g_channel = options.channel;
+    }
+    console.log('ablum-detail-onload2', getApp().globalData.g_audio_bookid);
+    if (!options.id) {
+      url = unitUrl + getApp().globalData.g_audio_bookid;
     }
 
     var title = '';
@@ -381,6 +390,11 @@ var customModal = function customModal() {Promise.all(/*! require.ensure | compo
         getApp().globalData.g_audio_plen = res.data.data.length;
         getApp().globalData.g_share_img = res.data.mini_share.url;
         getApp().globalData.g_req_data = res.data.data;
+        getApp().globalData.g_title = res.data.title;
+        //设置当前标题
+        uni.setNavigationBarTitle({
+          'title': res.data.title });
+
         console.log(res);
       }
     }); //判断是播放视频or 音频
@@ -389,7 +403,7 @@ var customModal = function customModal() {Promise.all(/*! require.ensure | compo
       getApp().globalData.g_audio_obj = wx.getBackgroundAudioManager();
       console.log('****create getBackgroundAudioManager');
     } //初始化数据
-    console.log('onLoad1');
+    console.log('onLoad1', getApp().globalData.g_audio_obj);
   },
 
   /**
@@ -406,8 +420,8 @@ var customModal = function customModal() {Promise.all(/*! require.ensure | compo
   /**
       * 生命周期函数--监听页面显示
       */
-  onShow: function onShow() {var _this = this;return _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee() {var that, res, isPlaying, tryListen, currentIdx;return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:
-              console.log('ablum-detail--onshow'); //TODO 判断是否有购买后开通权限操作
+  onShow: function onShow(e) {var _this = this;return _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee() {var that, res, isPlaying, tryListen, currentIdx;return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:
+              console.log('ablum-detail--onshow', _this.reqUrl, e, getApp().globalData.g_audio_bookid); //TODO 判断是否有购买后开通权限操作
               that = _this;_context.next = 4;return (
                 _this.reqData(_this.reqUrl));case 4:res = _context.sent;
               _this.setData({
@@ -473,10 +487,18 @@ var customModal = function customModal() {Promise.all(/*! require.ensure | compo
                   currentIdx: currentIdx });
 
               }
+              //为了防止切换页面后  onTimeUpdate失效
+              getApp().globalData.g_audio_obj.onPlay(function (res) {
+                console.log('g_audio_obj_play');
+                // console.log('backgroundAudioManager onTimeUpdate onTimeUpdate ')
+              });
               _this.audioManagerLister();
+              setTimeout(function (res) {
+                that.audioManagerLister();
+              }, 1000);
               _this.isCurrentEvnet();
               _this.upTryTime(currentIdx);
-              wx.hideLoading();case 27:case "end":return _context.stop();}}}, _callee);}))();
+              wx.hideLoading();case 29:case "end":return _context.stop();}}}, _callee);}))();
   },
 
   /**
@@ -636,6 +658,17 @@ var customModal = function customModal() {Promise.all(/*! require.ensure | compo
     },
     //跳转详情
     goContent: function goContent(event) {
+      console.log('goContent');
+      if (this.authMsg.status == '3') {
+        this.activityOpt();
+        return;
+      }
+      if (!util.isLogin()) {
+        wx.navigateTo({
+          url: '/pages/my/my' });
+
+        return;
+      }
       var pid = event.currentTarget.dataset.pid;
       console.log('pid-', pid);
       wx.navigateTo({
@@ -747,10 +780,21 @@ var customModal = function customModal() {Promise.all(/*! require.ensure | compo
     },
     goCustom: function goCustom() {var _this2 = this;return _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee2() {var that, system;return _regenerator.default.wrap(function _callee2$(_context2) {while (1) {switch (_context2.prev = _context2.next) {case 0:
                 console.log('gocustom--');
+                //活动领取福利
+                if (!(_this2.authMsg.status == '3')) {_context2.next = 4;break;}
+                _this2.activityOpt();return _context2.abrupt("return");case 4:if (
+
+
+                util.isLogin()) {_context2.next = 7;break;}
+                wx.navigateTo({
+                  url: '/pages/my/my' });return _context2.abrupt("return");case 7:
+
+
+
                 that = _this2;
                 system = wx.getSystemInfoSync().system;
                 console.log('g_app', getApp().globalData.g_app);
-                util.aliPay(_this2.authMsg.order_url);case 5:case "end":return _context2.stop();}}}, _callee2);}))();
+                util.aliPay(_this2.authMsg.order_url);case 11:case "end":return _context2.stop();}}}, _callee2);}))();
     },
     //保存收听记录
     saveListenRecord: function saveListenRecord() {
@@ -763,6 +807,47 @@ var customModal = function customModal() {Promise.all(/*! require.ensure | compo
         tmp_id: getApp().globalData.g_audio_ablum_temid };
 
       util.saveListenRecord(_reg);
+    },
+    /**
+        * 活动领取福利判断
+        */
+    activityOpt: function activityOpt() {
+      if (!util.isLogin()) {
+        uni.showModal({
+          title: '提醒',
+          content: '登录后获得听课权限',
+          success: function success(res) {
+            if (res.confirm) {
+              wx.navigateTo({
+                url: '/pages/login/login' });
+
+            }
+          } });
+
+        return;
+      } else {
+        console.log('活动领取福利');
+        uni.showToast({
+          title: '领取中...',
+          duration: 1000 });
+
+        var reg = util.reqActivity();
+        reg.then(function (data) {
+          if (data.e == '1003') {
+            return;
+          }
+          if (data.e == '9999') {
+            util.reloadCurrPage();
+          }
+          setTimeout(function () {
+            uni.showToast({
+              title: '领取成功',
+              duration: 1500 });
+
+          }, 2000);
+          console.log('activityOpt', data);
+        });
+      }
     },
     /**
         * 设置时长
@@ -909,7 +994,7 @@ var customModal = function customModal() {Promise.all(/*! require.ensure | compo
       console.log('navigator', e);
     },
     invitShareEventFun: function invitShareEventFun() {} } };exports.default = _default;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-alipay/dist/index.js */ 1)["default"]))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-alipay/dist/index.js */ 1)["default"], __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-alipay/dist/index.js */ 1)["default"]))
 
 /***/ }),
 

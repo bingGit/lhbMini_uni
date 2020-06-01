@@ -2,6 +2,8 @@ const CryptoJS = require("./cryptojs.js");
 
 const source = 1; //copy 需修改
 
+const baseUrl = "https://v.guixue.com";
+
 const listen_type = 0;
 const uidKey = 'uid1'; //copy 需修改
 
@@ -216,8 +218,9 @@ function getRequest(netUrl, data, success = function(){}) {
   var cookie = getCookie();
   if (!data) {
     data = {};
+	
   }
-
+  data['channel_type'] = getApp().globalData.g_channel;
   wx.request({
     url: netUrl.replace("http:", "https:").replace("v.guixue.com", "v.xueweigui.com").replace("fast.guixue.com", "v.xueweigui.com"),
     data: data,
@@ -1307,6 +1310,19 @@ function debounce(fn, delay) {
   };
 }
 /**
+ * 请求活动福利
+ */
+function reqActivity(){
+	let channel = getApp().globalData.g_channel;
+	let url = baseUrl + '/ApiWordCourse/activity';
+	return new Promise((resolve, reject)=>{
+		getRequest(url,{},(res)=>{
+			resolve(res.data);
+			console.log('reqActivity', res);
+		});
+	});
+}
+/**
  * 设置缓存时间
  * @param key 过期key ，默认为全局过期key
  * @param duration 单位s 默认 7days
@@ -1336,6 +1352,14 @@ function isExpire(key = 'global_expiration_time') {
 
   let expireTime = getExpireTime(key);
   return expireTime <= timestamp;
+}
+/**
+ * 刷新当前页面
+ */
+function reloadCurrPage() {
+  var pages = getCurrentPages() //获取加载的页面
+  var currentPage = pages[pages.length - 1] //获取当前页面的对象
+  currentPage.onShow()
 }
 module.exports = {
   formatTime: formatTime,
@@ -1385,6 +1409,8 @@ module.exports = {
   setExpireTime,
   getExpireTime,
   reportAnalytics,
+  reqActivity,
+  reloadCurrPage,
   AJAX: function (url, data = {}, fn, method = "get", header = {}) {
     wx.request({
       url: url,

@@ -92,7 +92,7 @@
 				</view>
 				<navigator :hidden="!playerHidden" class="ablum-lock-view-text" v-if="bookid == 79 && authMsg.status == 0" target="miniProgram"
 				 open-type="navigate" app-id="wx4d08202062ac8130" path="/pages/service-card/service-card?id=100010" version="release">{{authMsg.text}}</navigator>
-				<text v-else-if="authMsg.status == 0 && playerHidden" @tap.stop="goCustom" class="ablum-lock-view-text">
+				<text v-else-if="['0','3'].includes(authMsg.status)&& playerHidden" @tap.stop="goCustom" class="ablum-lock-view-text">
 					<text>{{authMsg.text}}\n<text class="ablum-lock-expire-text">{{authMsg.expire}}</text>
 					</text>
 				</text>
@@ -182,11 +182,7 @@
 		 * 生命周期函数--监听页面加载
 		 */
 		onLoad: function(options) {
-			// wx.showLoading({
-			//   title: '加载中...'
-			// });
 			let share_idx = options.share_idx || 0; //分享的音频下标-默认第一个
-
 			this.setData({
 				share_idx: share_idx
 			});
@@ -198,7 +194,11 @@
 				url = unitUrl + id;
 			}
 			if (options.channel) {
-				url = url + '&channel=' + options.channel;
+				getApp().globalData.g_channel = options.channel;
+			}
+			console.log('ablum-detail-onload2',getApp().globalData.g_audio_bookid)
+			if(!options.id){
+				url = unitUrl + getApp().globalData.g_audio_bookid;
 			}
 
 			let title = '';
@@ -249,6 +249,11 @@
 					getApp().globalData.g_audio_plen = res.data.data.length;
 					getApp().globalData.g_share_img = res.data.mini_share.url;
 					getApp().globalData.g_req_data = res.data.data;
+					getApp().globalData.g_title = res.data.title;
+					//设置当前标题
+					uni.setNavigationBarTitle({
+						'title': res.data.title
+					})
 					console.log(res);
 				}
 			}); //判断是播放视频or 音频
@@ -257,7 +262,7 @@
 				getApp().globalData.g_audio_obj = wx.getBackgroundAudioManager();
 				console.log('****create getBackgroundAudioManager');
 			} //初始化数据
-			console.log('onLoad1');
+			console.log('onLoad1',getApp().globalData.g_audio_obj);
 		},
 
 		/**
@@ -274,8 +279,8 @@
 		/**
 		 * 生命周期函数--监听页面显示
 		 */
-		async onShow() {
-			console.log('ablum-detail--onshow'); //TODO 判断是否有购买后开通权限操作
+		async onShow(e) {
+			console.log('ablum-detail--onshow',this.reqUrl,e,getApp().globalData.g_audio_bookid); //TODO 判断是否有购买后开通权限操作
 			var that = this;
 			const res = await this.reqData(this.reqUrl);
 			this.setData({
@@ -341,7 +346,15 @@
 					currentIdx: currentIdx
 				});
 			}
+			//为了防止切换页面后  onTimeUpdate失效
+			getApp().globalData.g_audio_obj.onPlay((res) => {
+				console.log('g_audio_obj_play');
+				// console.log('backgroundAudioManager onTimeUpdate onTimeUpdate ')
+			});
 			this.audioManagerLister();
+			setTimeout((res)=>{
+				that.audioManagerLister();
+			},1000);
 			this.isCurrentEvnet();
 			this.upTryTime(currentIdx);
 			wx.hideLoading();
@@ -504,6 +517,17 @@
 			},
 			//跳转详情
 			goContent: function(event) {
+				console.log('goContent')
+				if (this.authMsg.status == '3') {
+					this.activityOpt();
+					return;
+				}
+				if (!util.isLogin()) {
+					wx.navigateTo({
+						url: '/pages/my/my'
+					});
+					return;
+				}
 				let pid = event.currentTarget.dataset.pid;
 				console.log('pid-', pid);
 				wx.navigateTo({
@@ -615,6 +639,17 @@
 			},
 			async goCustom() {
 				console.log('gocustom--');
+				//活动领取福利
+				if(this.authMsg.status == '3'){
+					this.activityOpt();
+					return;
+				}
+				if (!util.isLogin()) {
+					wx.navigateTo({
+						url: '/pages/my/my'
+					});
+					return;
+				}
 				var that = this;
 				var system = wx.getSystemInfoSync().system;
 				console.log('g_app', getApp().globalData.g_app);
@@ -631,6 +666,47 @@
 					tmp_id: getApp().globalData.g_audio_ablum_temid
 				};
 				util.saveListenRecord(_reg);
+			},
+			/**
+			 * 活动领取福利判断
+			 */
+			activityOpt: function() {
+				if (!util.isLogin()) {
+					uni.showModal({
+						title: '提醒',
+						content: '登录后获得听课权限',
+						success: function(res) {
+							if (res.confirm) {
+								wx.navigateTo({
+									url: '/pages/login/login'
+								});
+							}
+						}
+					});
+					return;
+				}else {
+					console.log('活动领取福利');
+					uni.showToast({
+						title: '领取中...',
+						duration: 1000
+					})
+					let reg = util.reqActivity();
+					reg.then((data)=>{
+						if(data.e == '1003'){
+							return;
+						}
+						if(data.e == '9999') {
+							util.reloadCurrPage();
+						}
+						setTimeout(() => {
+							uni.showToast({
+								title: '领取成功',
+								duration: 1500
+							})
+						}, 2000);
+						console.log('activityOpt',data);
+					});
+				}
 			},
 			/**
 			 * 设置时长

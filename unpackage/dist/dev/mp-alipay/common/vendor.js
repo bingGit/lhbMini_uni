@@ -2453,6 +2453,8 @@ module.exports = {
 
 var source = 1; //copy 需修改
 
+var baseUrl = "https://v.guixue.com";
+
 var listen_type = 0;
 var uidKey = 'uid1'; //copy 需修改
 
@@ -2667,8 +2669,9 @@ function getRequest(netUrl, data) {var _success2 = arguments.length > 2 && argum
   var cookie = getCookie();
   if (!data) {
     data = {};
-  }
 
+  }
+  data['channel_type'] = getApp().globalData.g_channel;
   wx.request({
     url: netUrl.replace("http:", "https:").replace("v.guixue.com", "v.xueweigui.com").replace("fast.guixue.com", "v.xueweigui.com"),
     data: data,
@@ -3758,6 +3761,19 @@ function debounce(fn, delay) {
   };
 }
 /**
+   * 请求活动福利
+   */
+function reqActivity() {
+  var channel = getApp().globalData.g_channel;
+  var url = baseUrl + '/ApiWordCourse/activity';
+  return new Promise(function (resolve, reject) {
+    getRequest(url, {}, function (res) {
+      resolve(res.data);
+      console.log('reqActivity', res);
+    });
+  });
+}
+/**
    * 设置缓存时间
    * @param key 过期key ，默认为全局过期key
    * @param duration 单位s 默认 7days
@@ -3787,6 +3803,14 @@ function isExpire() {var key = arguments.length > 0 && arguments[0] !== undefine
 
   var expireTime = getExpireTime(key);
   return expireTime <= timestamp;
+}
+/**
+   * 刷新当前页面
+   */
+function reloadCurrPage() {
+  var pages = getCurrentPages(); //获取加载的页面
+  var currentPage = pages[pages.length - 1]; //获取当前页面的对象
+  currentPage.onShow();
 }
 module.exports = {
   formatTime: formatTime,
@@ -3836,6 +3860,8 @@ module.exports = {
   setExpireTime: setExpireTime,
   getExpireTime: getExpireTime,
   reportAnalytics: reportAnalytics,
+  reqActivity: reqActivity,
+  reloadCurrPage: reloadCurrPage,
   AJAX: function AJAX(url) {var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};var fn = arguments.length > 2 ? arguments[2] : undefined;var method = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "get";var header = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
     wx.request({
       url: url,

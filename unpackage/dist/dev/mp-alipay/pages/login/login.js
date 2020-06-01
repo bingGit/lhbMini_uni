@@ -335,6 +335,7 @@ var md5 = __webpack_require__(/*! ../../utils/md5.js */ 42);var util = __webpack
                 util.saveCookie(cookieVal);
                 util.setExpireTime();
                 //util.saveCookie(res.header["Set-Cookie"]);
+                util.reqActivity();
                 wx.navigateBack();
               }, 1500);
             } else {

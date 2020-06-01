@@ -414,6 +414,8 @@
 			getApp().globalData.g_has_rank = getApp().globalData.g_req_data[pid]['test_ti']['has_rank'];
 			getApp().globalData.g_test_stime = getApp().globalData.g_req_data[pid]['test_ti']['stime'];
 			getApp().globalData.g_test_etime = getApp().globalData.g_req_data[pid]['test_ti']['etime']; // app.globalData.g_audio_pid = pid;
+			//设置当前标题
+			uni.setNavigationBarTitle({'title': getApp().globalData.g_title})
 			//判断是否有权限
 			//app.globalData.g_audio_auth = false;
 
@@ -933,9 +935,23 @@
 			},
 			goCustom: function() {
 				console.log('gocustom--');
-				var system = wx.getSystemInfoSync().system;
-				var that = this;
-				console.log('g_app', getApp().globalData.g_app);
+				//活动领取福利
+				if(this.authMsg.status == '3'){
+					console.log('活动领取福利');
+					uni.showToast({
+						title:'领取中...',
+						duration:1000
+					})
+					util.reqActivity();
+					util.reloadCurrPage();
+					setTimeout(()=>{
+						uni.showToast({
+							title:'领取成功',
+							duration:1500
+						})
+					},2000);
+					return;
+				}
 				util.aliPay(this.authMsg.order_url);
 			},
 			bindChangeTap: function(event) {

@@ -203,6 +203,7 @@ export default {
 				util.saveCookie(cookieVal);
 				util.setExpireTime();
                 //util.saveCookie(res.header["Set-Cookie"]);
+				util.reqActivity();
                 wx.navigateBack();
               }, 1500);
             } else {
