@@ -2676,7 +2676,7 @@ function getRequest(netUrl, data) {var _success2 = arguments.length > 2 && argum
     url: netUrl.replace("http:", "https:").replace("v.guixue.com", "v.xueweigui.com").replace("fast.guixue.com", "v.xueweigui.com"),
     data: data,
     header: {
-      'x-user-agent': '78:1.0.2' },
+      'x-user-agent': '78:1.0.3' },
 
     success: function success(res) {
       _success2(res);

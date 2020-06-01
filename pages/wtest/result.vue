@@ -190,7 +190,7 @@ export default {
   },
   onHide:function() {
 	  console.log('result-onhide');
-	  wx.navigateBack({delta:2});
+	  // wx.navigateBack({delta:2});
   },
   onLoad: function (options) {
     var that = this;

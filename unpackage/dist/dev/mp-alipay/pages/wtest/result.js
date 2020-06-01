@@ -322,7 +322,7 @@ var userinfo = 'userinfo';var canvasdrawer = function canvasdrawer() {__webpack_
   },
   onHide: function onHide() {
     console.log('result-onhide');
-    wx.navigateBack({ delta: 2 });
+    // wx.navigateBack({delta:2});
   },
   onLoad: function onLoad(options) {
     var that = this;
